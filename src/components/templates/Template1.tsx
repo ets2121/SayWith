@@ -53,6 +53,7 @@ export default function Template1({ data }: Template1Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
+  const [userInteracted, setUserInteracted] = useState(false);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -72,15 +73,20 @@ export default function Template1({ data }: Template1Props) {
   }, [srtContent]);
 
   const playMedia = useCallback(() => {
-    const audioPromise = audioRef.current?.play();
+    if (!audioRef.current) return;
+    
+    const audioPromise = audioRef.current.play();
     const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
     
-    Promise.all([audioPromise, videoPromise]).then(() => {
-      setIsPlaying(true);
-    }).catch(error => {
-      console.error("Error playing media:", error);
-      setIsPlaying(false);
-    });
+    if (audioPromise !== undefined) {
+      Promise.all([audioPromise, videoPromise]).then(() => {
+        setIsPlaying(true);
+      }).catch(error => {
+        console.error("Error playing media:", error);
+        // If autoplay fails, we'll wait for user interaction.
+        setIsPlaying(false);
+      });
+    }
   }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
@@ -88,7 +94,7 @@ export default function Template1({ data }: Template1Props) {
     if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
   }, [isVideo]);
-
+  
   const handlePlayPause = useCallback(() => {
     if (isPlaying) {
       pauseMedia();
@@ -97,13 +103,27 @@ export default function Template1({ data }: Template1Props) {
     }
   }, [isPlaying, playMedia, pauseMedia]);
 
+  const handleInitialInteraction = useCallback(() => {
+    if (userInteracted) return;
+    setUserInteracted(true);
+    playMedia();
+  }, [userInteracted, playMedia]);
+
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    
+    // Set the initial state of the audio element.
+    audio.loop = true;
+    audio.autoplay = true;
+    audio.muted = false; // Start unmuted, but playback will be blocked until interaction
 
     const onVisChange = () => {
       if (document.hidden) {
         pauseMedia();
+      } else if (isPlaying && userInteracted) {
+        playMedia();
       }
     }
     document.addEventListener("visibilitychange", onVisChange);
@@ -111,7 +131,16 @@ export default function Template1({ data }: Template1Props) {
     return () => {
       document.removeEventListener("visibilitychange", onVisChange)
     }
-  }, [pauseMedia]);
+  }, [pauseMedia, playMedia, isPlaying, userInteracted]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if(video) {
+        video.muted = mute ?? false;
+        video.loop = true;
+        video.autoplay = true;
+    }
+  }, [mute]);
 
 
   useEffect(() => {
@@ -136,6 +165,7 @@ export default function Template1({ data }: Template1Props) {
         if (videoRef.current) {
           videoRef.current.currentTime = 0;
         }
+        playMedia();
     }
 
     audio.addEventListener('timeupdate', timeUpdateHandler);
@@ -147,19 +177,16 @@ export default function Template1({ data }: Template1Props) {
           audio.removeEventListener('ended', handleAudioEnd);
         }
     };
-  }, [subtitles]);
+  }, [subtitles, playMedia]);
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden font-sans">
+    <div className="relative h-screen w-screen overflow-hidden font-sans" onClick={handleInitialInteraction}>
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10" />
       {isVideo ? (
         <video
           ref={videoRef}
           src={mediaUrl}
-          loop
-          muted={mute}
           playsInline
-          autoPlay
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
@@ -169,9 +196,9 @@ export default function Template1({ data }: Template1Props) {
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
-      <audio ref={audioRef} src={audioUrl} loop autoPlay />
+      <audio ref={audioRef} src={audioUrl} />
 
-      <div className="relative z-20 flex flex-col h-full text-white">
+      <div className="relative z-20 flex flex-col h-full text-white pointer-events-none">
         <header className="text-center pt-8 animate-fade-in-down">
           <p className="text-xs font-extralight tracking-wider opacity-90">{name}</p>
           <p className="font-headline text-sm font-semibold text-gray-200/90">Saywith</p>
@@ -179,6 +206,9 @@ export default function Template1({ data }: Template1Props) {
 
         <main className="flex-grow flex items-center justify-center">
             <div className="text-center px-4">
+                {!userInteracted && !isPlaying && (
+                  <p className="text-sm font-light mb-4 animate-fade-in">Click anywhere to play</p>
+                )}
                 {currentSubtitle.split('\n').map((line, index) => (
                     <p key={`${currentSubtitle}-${index}`} className="text-xl md:text-2xl font-serif font-extralight drop-shadow-md animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
                         {line}
@@ -187,14 +217,14 @@ export default function Template1({ data }: Template1Props) {
             </div>
         </main>
 
-        <footer className="pb-8 flex justify-center animate-fade-in-up">
+        <footer className="pb-8 flex justify-center animate-fade-in-up pointer-events-auto">
           <Button
             onClick={handlePlayPause}
             variant="outline"
             size="icon"
-            className="bg-transparent text-white border-white/60 rounded-full h-10 w-10 hover:bg-white/10 transition-all duration-300 ease-in-out transform hover:scale-110"
+            className="bg-black/20 text-white border-white/80 backdrop-blur-sm rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-105"
           >
-            {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5"/>}
+            {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1"/>}
           </Button>
         </footer>
       </div>
