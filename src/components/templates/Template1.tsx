@@ -77,7 +77,10 @@ export default function Template1({ data }: Template1Props) {
     if (audio) {
       const audioPromise = audio.play();
       if (audioPromise !== undefined) {
-        audioPromise.catch(e => console.error("Audio play failed", e));
+        audioPromise.then(() => setIsPlaying(true)).catch(e => {
+            console.error("Audio play failed", e);
+            setIsPlaying(false);
+        });
       }
     }
     if (video) {
@@ -86,7 +89,6 @@ export default function Template1({ data }: Template1Props) {
             videoPromise.catch(e => console.error("Video play failed", e));
         }
     }
-    setIsPlaying(true);
   }, []);
 
   const pauseMedia = useCallback(() => {
@@ -106,20 +108,34 @@ export default function Template1({ data }: Template1Props) {
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if(isPlaying) pauseMedia();
-      } else {
-        if(userHasInteracted.current || isPlaying) playMedia();
-      }
+        if (document.hidden) {
+            if (isPlaying) {
+                pauseMedia();
+            }
+        } else {
+            if (userHasInteracted.current && !isPlaying) {
+                playMedia();
+            }
+        }
     };
     
-    // Attempt to autoplay on mount
     const tryAutoplay = async () => {
         try {
-            await audioRef.current?.play();
-            videoRef.current?.play();
-            setIsPlaying(true);
-            userHasInteracted.current = true;
+            // Muted autoplay is usually allowed
+            if (videoRef.current) videoRef.current.muted = true;
+            if (audioRef.current) audioRef.current.muted = true;
+
+            if (videoRef.current) await videoRef.current.play();
+            if (audioRef.current) await audioRef.current.play();
+            
+            // Unmute after a short delay
+            setTimeout(() => {
+                if (videoRef.current) videoRef.current.muted = false;
+                if (audioRef.current) audioRef.current.muted = false;
+                userHasInteracted.current = true;
+                setIsPlaying(true);
+            }, 100);
+
         } catch (error) {
             console.log("Autoplay was prevented. Waiting for user interaction.");
             setIsPlaying(false);
@@ -141,14 +157,21 @@ export default function Template1({ data }: Template1Props) {
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
         const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-        setCurrentSubtitle(activeLine ? activeLine.text : '');
+        
+        const newSubtitle = activeLine ? activeLine.text : '';
+
+        if (newSubtitle !== currentSubtitle) {
+            setCurrentSubtitle(newSubtitle);
+        }
     };
 
     audio.addEventListener('timeupdate', timeUpdateHandler);
     return () => {
-        audio.removeEventListener('timeupdate', timeUpdateHandler);
+        if (audio) {
+          audio.removeEventListener('timeupdate', timeUpdateHandler);
+        }
     };
-  }, [subtitles]);
+  }, [subtitles, currentSubtitle]);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans">
@@ -173,14 +196,14 @@ export default function Template1({ data }: Template1Props) {
 
       <div className="relative z-20 flex flex-col h-full text-white">
         <header className="text-center pt-8 animate-fade-in-down">
-          <p className="text-md font-light tracking-wider">{name}</p>
-          <p className="font-headline text-lg font-bold text-gray-200">Saywith</p>
+          <p className="text-sm font-extralight tracking-wider">{name}</p>
+          <p className="font-headline text-base font-semibold text-gray-200">Saywith</p>
         </header>
 
         <main className="flex-grow flex items-center justify-center">
             <div className="text-center px-4">
                 {currentSubtitle.split('\n').map((line, index) => (
-                    <p key={index} className="text-2xl md:text-3xl lg:text-4xl font-serif font-light drop-shadow-md animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
+                    <p key={`${currentSubtitle}-${index}`} className="text-2xl md:text-3xl font-serif font-light drop-shadow-md animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
                         {line}
                     </p>
                 ))}
@@ -192,7 +215,7 @@ export default function Template1({ data }: Template1Props) {
             onClick={handlePlayPause}
             variant="outline"
             size="icon"
-            className="bg-transparent text-white border-white rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-110"
+            className="bg-transparent text-white border-white/80 rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-110"
           >
             {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1"/>}
           </Button>
