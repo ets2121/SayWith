@@ -77,11 +77,9 @@ export default function Template2({ data }: Template2Props) {
   }, [srtContent, name]);
 
   const playMedia = useCallback(() => {
-    if (!userInteracted) return;
-
     const audio = audioRef.current;
     if (!audio) return;
-    
+
     const audioPromise = audio.play();
     const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
     
@@ -93,7 +91,7 @@ export default function Template2({ data }: Template2Props) {
         setIsPlaying(false);
       });
     }
-  }, [isVideo, userInteracted]);
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
     audioRef.current?.pause();
@@ -102,28 +100,18 @@ export default function Template2({ data }: Template2Props) {
   }, [isVideo]);
   
   const handlePlayPause = useCallback(() => {
-    if (!userInteracted) {
-      setUserInteracted(true);
-      playMedia();
-    } else if (isPlaying) {
+    if (isPlaying) {
       pauseMedia();
     } else {
       playMedia();
     }
-  }, [isPlaying, playMedia, pauseMedia, userInteracted]);
+  }, [isPlaying, playMedia, pauseMedia]);
 
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
     setUserInteracted(true);
     playMedia();
   }, [userInteracted, playMedia]);
-
-  useEffect(() => {
-    if (userInteracted) {
-      playMedia();
-    }
-  }, [userInteracted, playMedia]);
-
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -149,6 +137,7 @@ export default function Template2({ data }: Template2Props) {
         video.muted = mute ?? true;
         video.loop = true;
         video.playsInline = true;
+        video.autoplay = userInteracted;
         if(userInteracted) {
           video.play().catch(e => console.error("Video autoplay failed", e));
         }
@@ -158,7 +147,7 @@ export default function Template2({ data }: Template2Props) {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !subtitles.length) return;
+    if (!audio || !srtContent) return;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
@@ -194,21 +183,23 @@ export default function Template2({ data }: Template2Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
-      {isVideo ? (
-        <video
-          ref={videoRef}
-          src={mediaUrl}
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
-        />
-      ) : (
-        <img
-          src={mediaUrl}
-          alt="background"
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
-        />
+      {mediaUrl && (
+        isVideo ? (
+          <video
+            ref={videoRef}
+            src={mediaUrl}
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-80"
+          />
+        ) : (
+          <img
+            src={mediaUrl}
+            alt="background"
+            className="absolute inset-0 w-full h-full object-cover opacity-80"
+          />
+        )
       )}
-      <audio ref={audioRef} src={audioUrl} />
+      {audioUrl && <audio ref={audioRef} src={audioUrl} loop />}
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
         <div className="relative w-full max-w-md h-[80vh] max-h-[700px] border-2 border-white/50 flex flex-col items-center justify-center text-white">
@@ -234,8 +225,8 @@ export default function Template2({ data }: Template2Props) {
             <div className="absolute bottom-4 right-4 pointer-events-auto">
                 <Button
                     onClick={(e) => {
-                    e.stopPropagation();
-                    handlePlayPause();
+                      e.stopPropagation();
+                      handlePlayPause();
                     }}
                     variant="ghost"
                     size="icon"
@@ -249,5 +240,3 @@ export default function Template2({ data }: Template2Props) {
     </div>
   );
 }
-
-    
