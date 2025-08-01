@@ -70,18 +70,19 @@ export default function Template2({ data }: Template2Props) {
         console.error("Failed to parse SRT data", error);
       }
     } else {
-        // Use name as the default subtitle if srtContent is not available
-        const [firstLine, secondLine, ...rest] = name.split(' ');
-        const thirdLine = rest.join(' ');
-        const defaultText = [firstLine, secondLine, thirdLine].filter(Boolean).join('\n');
+        const nameParts = name.split(' ');
+        const defaultText = nameParts.join('\n');
         setCurrentSubtitle(defaultText);
     }
   }, [srtContent, name]);
 
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
+    if (!userInteracted) return;
+
+    const audio = audioRef.current;
+    if (!audio) return;
     
-    const audioPromise = audioRef.current.play();
+    const audioPromise = audio.play();
     const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
     
     if (audioPromise !== undefined) {
@@ -92,7 +93,7 @@ export default function Template2({ data }: Template2Props) {
         setIsPlaying(false);
       });
     }
-  }, [isVideo]);
+  }, [isVideo, userInteracted]);
 
   const pauseMedia = useCallback(() => {
     audioRef.current?.pause();
@@ -101,8 +102,10 @@ export default function Template2({ data }: Template2Props) {
   }, [isVideo]);
   
   const handlePlayPause = useCallback(() => {
-    if(!userInteracted) setUserInteracted(true);
-    if (isPlaying) {
+    if (!userInteracted) {
+      setUserInteracted(true);
+      playMedia();
+    } else if (isPlaying) {
       pauseMedia();
     } else {
       playMedia();
@@ -114,6 +117,13 @@ export default function Template2({ data }: Template2Props) {
     setUserInteracted(true);
     playMedia();
   }, [userInteracted, playMedia]);
+
+  useEffect(() => {
+    if (userInteracted) {
+      playMedia();
+    }
+  }, [userInteracted, playMedia]);
+
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -138,10 +148,12 @@ export default function Template2({ data }: Template2Props) {
     if(video) {
         video.muted = mute ?? true;
         video.loop = true;
-        video.autoplay = true;
         video.playsInline = true;
+        if(userInteracted) {
+          video.play().catch(e => console.error("Video autoplay failed", e));
+        }
     }
-  }, [mute]);
+  }, [mute, userInteracted]);
 
 
   useEffect(() => {
@@ -237,3 +249,5 @@ export default function Template2({ data }: Template2Props) {
     </div>
   );
 }
+
+    
