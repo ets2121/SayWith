@@ -114,11 +114,6 @@ export default function Template1({ data }: Template1Props) {
     const audio = audioRef.current;
     if (!audio) return;
     
-    // Set the initial state of the audio element.
-    audio.loop = true;
-    audio.autoplay = true;
-    audio.muted = false; // Start unmuted, but playback will be blocked until interaction
-
     const onVisChange = () => {
       if (document.hidden) {
         pauseMedia();
@@ -196,12 +191,12 @@ export default function Template1({ data }: Template1Props) {
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
-      <audio ref={audioRef} src={audioUrl} />
+      <audio ref={audioRef} src={audioUrl} loop />
 
       <div className="relative z-20 flex flex-col h-full text-white pointer-events-none">
         <header className="text-center pt-8 animate-fade-in-down">
-          <p className="text-xs font-extralight tracking-wider opacity-90">{name}</p>
-          <p className="font-headline text-sm font-semibold text-gray-200/90">Saywith</p>
+          <p className="font-headline text-lg font-semibold text-gray-200/95">{name}</p>
+          <p className="text-xs font-light tracking-wider opacity-80">Saywith</p>
         </header>
 
         <main className="flex-grow flex items-center justify-center">
@@ -219,7 +214,10 @@ export default function Template1({ data }: Template1Props) {
 
         <footer className="pb-8 flex justify-center animate-fade-in-up pointer-events-auto">
           <Button
-            onClick={handlePlayPause}
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePlayPause();
+            }}
             variant="outline"
             size="icon"
             className="bg-black/20 text-white border-white/80 backdrop-blur-sm rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-105"
