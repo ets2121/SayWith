@@ -71,84 +71,74 @@ export default function Template1({ data }: Template1Props) {
     }
   }, [srtContent]);
 
-  const playMedia = useCallback(() => {
-    const video = videoRef.current;
-    const audio = audioRef.current;
-    if (audio) {
-      const audioPromise = audio.play();
-      if (audioPromise !== undefined) {
-        audioPromise.then(() => setIsPlaying(true)).catch(e => {
-            console.error("Audio play failed", e);
-            setIsPlaying(false);
-        });
-      }
+  const playMedia = useCallback(async () => {
+    try {
+      await audioRef.current?.play();
+      if(isVideo) await videoRef.current?.play();
+      setIsPlaying(true);
+    } catch (e) {
+      console.error("Media play failed", e);
+      setIsPlaying(false); // If play fails, set state to paused
     }
-    if (video) {
-        const videoPromise = video.play();
-        if (videoPromise !== undefined) {
-            videoPromise.catch(e => console.error("Video play failed", e));
-        }
-    }
-  }, []);
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
-    videoRef.current?.pause();
     audioRef.current?.pause();
+    if(isVideo) videoRef.current?.pause();
     setIsPlaying(false);
-  }, []);
+  }, [isVideo]);
 
   const handlePlayPause = useCallback(() => {
     userHasInteracted.current = true;
     if (isPlaying) {
-        pauseMedia();
+      pauseMedia();
     } else {
-        playMedia();
+      playMedia();
     }
   }, [isPlaying, playMedia, pauseMedia]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-        if (document.hidden) {
-            if (isPlaying) {
-                pauseMedia();
-            }
-        } else {
-            if (userHasInteracted.current && !isPlaying) {
-                playMedia();
-            }
+      if (document.hidden) {
+        if (isPlaying) {
+            pauseMedia();
         }
+      } else {
+        if (userHasInteracted.current && !isPlaying) {
+            playMedia();
+        }
+      }
     };
     
     const tryAutoplay = async () => {
         try {
-            // Muted autoplay is usually allowed
-            if (videoRef.current) videoRef.current.muted = true;
             if (audioRef.current) audioRef.current.muted = true;
+            if (videoRef.current) videoRef.current.muted = true;
 
-            if (videoRef.current) await videoRef.current.play();
-            if (audioRef.current) await audioRef.current.play();
+            await playMedia();
             
-            // Unmute after a short delay
             setTimeout(() => {
-                if (videoRef.current) videoRef.current.muted = false;
                 if (audioRef.current) audioRef.current.muted = false;
+                if (videoRef.current) videoRef.current.muted = false;
                 userHasInteracted.current = true;
-                setIsPlaying(true);
             }, 100);
 
         } catch (error) {
             console.log("Autoplay was prevented. Waiting for user interaction.");
-            setIsPlaying(false);
+            pauseMedia(); // Ensure we are in a paused state if autoplay fails
         }
     };
 
+    // Only try to autoplay once on mount.
+    // The play/pause button will handle user interaction after that.
     tryAutoplay();
     
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [playMedia, pauseMedia, isPlaying]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playMedia, pauseMedia]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -165,10 +155,17 @@ export default function Template1({ data }: Template1Props) {
         }
     };
 
+    const handleAudioEnd = () => {
+        setCurrentSubtitle('');
+    }
+
     audio.addEventListener('timeupdate', timeUpdateHandler);
+    audio.addEventListener('ended', handleAudioEnd);
+
     return () => {
         if (audio) {
           audio.removeEventListener('timeupdate', timeUpdateHandler);
+          audio.removeEventListener('ended', handleAudioEnd);
         }
     };
   }, [subtitles, currentSubtitle]);
@@ -196,8 +193,8 @@ export default function Template1({ data }: Template1Props) {
 
       <div className="relative z-20 flex flex-col h-full text-white">
         <header className="text-center pt-8 animate-fade-in-down">
-          <p className="text-sm font-extralight tracking-wider">{name}</p>
-          <p className="font-headline text-base font-semibold text-gray-200">Saywith</p>
+          <p className="text-xs font-extralight tracking-wider opacity-90">{name}</p>
+          <p className="font-headline text-sm font-semibold text-gray-200/90">Saywith</p>
         </header>
 
         <main className="flex-grow flex items-center justify-center">
