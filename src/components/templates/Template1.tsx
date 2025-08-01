@@ -24,8 +24,9 @@ const parseSrt = (srtText: string): SrtLine[] => {
     const entries: SrtLine[] = [];
     let i = 0;
     while (i < lines.length) {
-        if (lines[i].match(/^\d+$/)) {
+        if (lines[i] && lines[i].match(/^\d+$/)) {
             i++;
+            if (!lines[i]) continue;
             const timeMatch = lines[i].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/);
             if (timeMatch) {
                 const [, h1, m1, s1, ms1, h2, m2, s2, ms2] = timeMatch.map(Number);
@@ -33,7 +34,7 @@ const parseSrt = (srtText: string): SrtLine[] => {
                 const endTime = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000;
                 i++;
                 let text = '';
-                while (i < lines.length && lines[i].trim() !== '') {
+                while (i < lines.length && lines[i] && lines[i].trim() !== '') {
                     text += (text ? '\n' : '') + lines[i];
                     i++;
                 }
@@ -58,18 +59,21 @@ export default function Template1({ data }: Template1Props) {
 
   useEffect(() => {
     const fetchSrt = async () => {
+      if (!srtUrl) return;
       try {
         const response = await fetch(srtUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const text = await response.text();
-        setSubtitles(parseSrt(text));
+        const parsedSubtitles = parseSrt(text);
+        setSubtitles(parsedSubtitles);
       } catch (error) {
         console.error("Failed to fetch or parse SRT file", error);
         setCurrentSubtitle("Could not load subtitles.");
       }
     };
-    if (srtUrl) {
-      fetchSrt();
-    }
+    fetchSrt();
   }, [srtUrl]);
 
 
@@ -94,12 +98,10 @@ export default function Template1({ data }: Template1Props) {
     const audio = audioRef.current;
 
     const handleVisibilityChange = () => {
-      if (document.hidden) {
+      if (document.hidden && isPlaying) {
         video?.pause();
         audio?.pause();
-      } else if(isPlaying) {
-        video?.play().catch(e => console.error("Video play failed", e));
-        audio?.play().catch(e => console.error("Audio play failed", e));
+        setIsPlaying(false);
       }
     };
 
@@ -108,6 +110,9 @@ export default function Template1({ data }: Template1Props) {
         if(video){
             video.currentTime = 0;
             video.pause();
+        }
+        if(audio){
+            audio.currentTime = 0;
         }
     }
 
@@ -120,13 +125,13 @@ export default function Template1({ data }: Template1Props) {
     };
   }, [isPlaying]);
 
-    useEffect(() => {
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !subtitles.length) return;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
-        const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime <= line.endTime);
+        const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
         setCurrentSubtitle(activeLine ? activeLine.text : '');
     };
 
@@ -134,7 +139,7 @@ export default function Template1({ data }: Template1Props) {
     return () => {
         audio.removeEventListener('timeupdate', timeUpdateHandler);
     };
-  }, [subtitles]);
+  }, [subtitles, isPlaying]);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans">
@@ -155,7 +160,7 @@ export default function Template1({ data }: Template1Props) {
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
-      <audio ref={audioRef} src={audioUrl} loop />
+      <audio ref={audioRef} src={audioUrl} />
 
       <div className="relative z-20 flex flex-col h-full text-white">
         <header className="text-center pt-8">
