@@ -137,7 +137,7 @@ export default function Template1({ data }: Template1Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-md z-10" />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10" />
       {isVideo ? (
         <video
           ref={videoRef}
@@ -157,7 +157,7 @@ export default function Template1({ data }: Template1Props) {
       <audio ref={audioRef} src={audioUrl} />
 
       <div className="relative z-20 flex flex-col h-full text-white">
-        <header className="text-center pt-8">
+        <header className="text-center pt-8 animate-fade-in-down">
           <p className="text-lg font-light tracking-wider">{name}</p>
           <p className="font-headline text-xl font-bold text-gray-200">Saywith</p>
         </header>
@@ -165,19 +165,19 @@ export default function Template1({ data }: Template1Props) {
         <main className="flex-grow flex items-center justify-center">
             <div className="text-center px-4">
                 {currentSubtitle.split('\n').map((line, index) => (
-                    <p key={index} className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold drop-shadow-lg animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
+                    <p key={index} className="text-3xl md:text-4xl lg:text-5xl font-serif font-semibold drop-shadow-lg animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
                         {line}
                     </p>
                 ))}
             </div>
         </main>
 
-        <footer className="pb-8 flex justify-center">
+        <footer className="pb-8 flex justify-center animate-fade-in-up">
           <Button
             onClick={handlePlayPause}
             variant="outline"
             size="icon"
-            className="bg-transparent text-white border-white rounded-full h-16 w-16 hover:bg-white/20"
+            className="bg-transparent text-white border-white rounded-full h-16 w-16 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-110"
           >
             {isPlaying ? <Pause size={32} /> : <Play size={32} className="ml-1"/>}
           </Button>
