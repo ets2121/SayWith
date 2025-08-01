@@ -76,12 +76,13 @@ export default function Template1({ data }: Template1Props) {
   const handlePlayPause = useCallback(() => {
     const video = videoRef.current;
     const audio = audioRef.current;
-    if (video && audio) {
+    
+    if (audio) { // Main control is audio
         if (isPlaying) {
-            video.pause();
+            video?.pause();
             audio.pause();
         } else {
-            video.play().catch(e => console.error("Video play failed", e));
+            video?.play().catch(e => console.error("Video play failed", e));
             audio.play().catch(e => console.error("Audio play failed", e));
         }
         setIsPlaying(!isPlaying);
@@ -89,19 +90,33 @@ export default function Template1({ data }: Template1Props) {
   }, [isPlaying]);
 
   useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        videoRef.current?.pause();
-        audioRef.current?.pause();
+        video?.pause();
+        audio?.pause();
       } else if(isPlaying) {
-        videoRef.current?.play().catch(e => console.error("Video play failed", e));
-        audioRef.current?.play().catch(e => console.error("Audio play failed", e));
+        video?.play().catch(e => console.error("Video play failed", e));
+        audio?.play().catch(e => console.error("Audio play failed", e));
       }
     };
 
+    const handleAudioEnd = () => {
+        setIsPlaying(false);
+        if(video){
+            video.currentTime = 0;
+            video.pause();
+        }
+    }
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    audio?.addEventListener('ended', handleAudioEnd);
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      audio?.removeEventListener('ended', handleAudioEnd);
     };
   }, [isPlaying]);
 
@@ -128,9 +143,9 @@ export default function Template1({ data }: Template1Props) {
         <video
           ref={videoRef}
           src={mediaUrl}
-          autoPlay={isPlaying}
           loop
           muted
+          playsInline
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
