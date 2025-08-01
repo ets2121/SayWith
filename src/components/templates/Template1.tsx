@@ -8,7 +8,7 @@ interface Template1Props {
   data: {
     mediaUrl: string;
     audioUrl: string;
-    srtUrl: string;
+    srtContent: string;
     name: string;
   };
 }
@@ -48,7 +48,7 @@ const parseSrt = (srtText: string): SrtLine[] => {
 };
 
 export default function Template1({ data }: Template1Props) {
-  const { mediaUrl, audioUrl, srtUrl, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -59,16 +59,16 @@ export default function Template1({ data }: Template1Props) {
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
   useEffect(() => {
-    if (srtUrl) {
+    if (srtContent) {
       try {
-        const parsedSubtitles = parseSrt(srtUrl);
+        const parsedSubtitles = parseSrt(srtContent);
         setSubtitles(parsedSubtitles);
       } catch (error) {
         console.error("Failed to parse SRT data", error);
         setCurrentSubtitle("Could not load subtitles.");
       }
     }
-  }, [srtUrl]);
+  }, [srtContent]);
 
 
   const handlePlayPause = useCallback(() => {

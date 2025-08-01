@@ -12,7 +12,7 @@ interface SaywithData {
   enabled: boolean;
   mediaUrl: string;
   audioUrl: string;
-  srtUrl: string;
+  srtContent: string;
   name: string;
 }
 
