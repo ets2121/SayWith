@@ -20,6 +20,7 @@ interface SrtLine {
 }
 
 const parseSrt = (srtText: string): SrtLine[] => {
+    if (!srtText) return [];
     const lines = srtText.trim().split(/\r?\n/);
     const entries: SrtLine[] = [];
     let i = 0;
@@ -58,22 +59,15 @@ export default function Template1({ data }: Template1Props) {
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
   useEffect(() => {
-    const fetchSrt = async () => {
-      if (!srtUrl) return;
+    if (srtUrl) {
       try {
-        const response = await fetch(srtUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const text = await response.text();
-        const parsedSubtitles = parseSrt(text);
+        const parsedSubtitles = parseSrt(srtUrl);
         setSubtitles(parsedSubtitles);
       } catch (error) {
-        console.error("Failed to fetch or parse SRT file", error);
+        console.error("Failed to parse SRT data", error);
         setCurrentSubtitle("Could not load subtitles.");
       }
-    };
-    fetchSrt();
+    }
   }, [srtUrl]);
 
 
