@@ -55,7 +55,6 @@ export default function Template1({ data }: Template1Props) {
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const userHasInteracted = useRef(false);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
@@ -71,25 +70,25 @@ export default function Template1({ data }: Template1Props) {
     }
   }, [srtContent]);
 
-  const playMedia = useCallback(async () => {
-    try {
-      await audioRef.current?.play();
-      if(isVideo) await videoRef.current?.play();
+  const playMedia = useCallback(() => {
+    const audioPromise = audioRef.current?.play();
+    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
+    
+    Promise.all([audioPromise, videoPromise]).then(() => {
       setIsPlaying(true);
-    } catch (e) {
-      console.error("Media play failed", e);
-      setIsPlaying(false); // If play fails, set state to paused
-    }
+    }).catch(error => {
+      console.error("Error playing media:", error);
+      setIsPlaying(false);
+    });
   }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
     audioRef.current?.pause();
-    if(isVideo) videoRef.current?.pause();
+    if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
   }, [isVideo]);
 
   const handlePlayPause = useCallback(() => {
-    userHasInteracted.current = true;
     if (isPlaying) {
       pauseMedia();
     } else {
@@ -98,47 +97,21 @@ export default function Template1({ data }: Template1Props) {
   }, [isPlaying, playMedia, pauseMedia]);
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onVisChange = () => {
       if (document.hidden) {
-        if (isPlaying) {
-            pauseMedia();
-        }
-      } else {
-        if (userHasInteracted.current && !isPlaying) {
-            playMedia();
-        }
+        pauseMedia();
       }
-    };
-    
-    const tryAutoplay = async () => {
-        try {
-            if (audioRef.current) audioRef.current.muted = true;
-            if (videoRef.current) videoRef.current.muted = true;
+    }
+    document.addEventListener("visibilitychange", onVisChange);
 
-            await playMedia();
-            
-            setTimeout(() => {
-                if (audioRef.current) audioRef.current.muted = false;
-                if (videoRef.current) videoRef.current.muted = false;
-                userHasInteracted.current = true;
-            }, 100);
-
-        } catch (error) {
-            console.log("Autoplay was prevented. Waiting for user interaction.");
-            pauseMedia(); // Ensure we are in a paused state if autoplay fails
-        }
-    };
-
-    // Only try to autoplay once on mount.
-    // The play/pause button will handle user interaction after that.
-    tryAutoplay();
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playMedia, pauseMedia]);
+      document.removeEventListener("visibilitychange", onVisChange)
+    }
+  }, [pauseMedia]);
+
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -150,13 +123,12 @@ export default function Template1({ data }: Template1Props) {
         
         const newSubtitle = activeLine ? activeLine.text : '';
 
-        if (newSubtitle !== currentSubtitle) {
-            setCurrentSubtitle(newSubtitle);
-        }
+        setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
     };
 
     const handleAudioEnd = () => {
         setCurrentSubtitle('');
+        setIsPlaying(false);
     }
 
     audio.addEventListener('timeupdate', timeUpdateHandler);
@@ -168,17 +140,17 @@ export default function Template1({ data }: Template1Props) {
           audio.removeEventListener('ended', handleAudioEnd);
         }
     };
-  }, [subtitles, currentSubtitle]);
+  }, [subtitles]);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans">
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px] z-10" />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10" />
       {isVideo ? (
         <video
           ref={videoRef}
           src={mediaUrl}
           loop
-          muted
+          muted // Keep video muted; audio comes from the <audio> tag
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -200,7 +172,7 @@ export default function Template1({ data }: Template1Props) {
         <main className="flex-grow flex items-center justify-center">
             <div className="text-center px-4">
                 {currentSubtitle.split('\n').map((line, index) => (
-                    <p key={`${currentSubtitle}-${index}`} className="text-2xl md:text-3xl font-serif font-light drop-shadow-md animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
+                    <p key={`${currentSubtitle}-${index}`} className="text-xl md:text-2xl font-serif font-extralight drop-shadow-md animate-fade-in" style={{animationDelay: `${index * 150}ms`}}>
                         {line}
                     </p>
                 ))}
@@ -212,9 +184,9 @@ export default function Template1({ data }: Template1Props) {
             onClick={handlePlayPause}
             variant="outline"
             size="icon"
-            className="bg-transparent text-white border-white/80 rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-110"
+            className="bg-transparent text-white border-white/60 rounded-full h-10 w-10 hover:bg-white/10 transition-all duration-300 ease-in-out transform hover:scale-110"
           >
-            {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1"/>}
+            {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5"/>}
           </Button>
         </footer>
       </div>
