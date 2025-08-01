@@ -14,6 +14,7 @@ interface SaywithData {
   audioUrl: string;
   srtContent: string;
   name: string;
+  mute?: boolean;
 }
 
 export default function ForYouPage() {

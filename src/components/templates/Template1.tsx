@@ -10,6 +10,7 @@ interface Template1Props {
     audioUrl: string;
     srtContent: string;
     name: string;
+    mute?: boolean;
   };
 }
 
@@ -48,7 +49,7 @@ const parseSrt = (srtText: string): SrtLine[] => {
 };
 
 export default function Template1({ data }: Template1Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -129,6 +130,12 @@ export default function Template1({ data }: Template1Props) {
     const handleAudioEnd = () => {
         setCurrentSubtitle('');
         setIsPlaying(false);
+        if (audio) {
+          audio.currentTime = 0;
+        }
+        if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+        }
     }
 
     audio.addEventListener('timeupdate', timeUpdateHandler);
@@ -150,8 +157,9 @@ export default function Template1({ data }: Template1Props) {
           ref={videoRef}
           src={mediaUrl}
           loop
-          muted // Keep video muted; audio comes from the <audio> tag
+          muted={mute}
           playsInline
+          autoPlay
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
@@ -161,7 +169,7 @@ export default function Template1({ data }: Template1Props) {
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
-      <audio ref={audioRef} src={audioUrl} loop />
+      <audio ref={audioRef} src={audioUrl} loop autoPlay />
 
       <div className="relative z-20 flex flex-col h-full text-white">
         <header className="text-center pt-8 animate-fade-in-down">
