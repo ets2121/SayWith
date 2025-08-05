@@ -186,13 +186,16 @@ export default function Template2({ data }: Template2Props) {
       ref: isVideo ? videoRef : undefined,
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
+      muted: isVideo ? true : undefined,
+      loop: isVideo ? true : undefined,
+      autoPlay: isVideo ? userInteracted : undefined,
   };
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
       {mediaUrl && (
         <MediaComponent
-          {...mediaProps}
+          src={mediaUrl}
           className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110"
         />
       )}
@@ -200,24 +203,29 @@ export default function Template2({ data }: Template2Props) {
       {audioUrl && <audio ref={audioRef} src={audioUrl} loop />}
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-md h-[70vh] max-h-[600px] flex flex-col items-center justify-center text-white">
+        
+        <div className="bg-black text-white py-2 px-6 mb-4">
+          <p className="font-serif text-lg tracking-wider">{name}</p>
+        </div>
+
+        <div className="relative w-full max-w-md h-[60vh] max-h-[500px] flex flex-col items-center justify-center text-white">
             <div className="relative w-full h-full border-4 border-white/80 rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
             </div>
-
-            <div className="text-center mt-6">
-                {currentSubtitle.split('\n').map((line, index) => (
-                    <p key={`${currentSubtitle}-${index}`} className="font-serif text-lg font-light tracking-wide leading-tight animate-fade-in" style={{animationDelay: `${index * 200}ms`}}>
-                        {line}
-                    </p>
-                ))}
-            </div>
             
             {!userInteracted && !isPlaying && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center animate-fade-in">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center animate-fade-in pointer-events-none">
                     <p className="text-xs font-light tracking-wider opacity-80">Click anywhere to play</p>
                 </div>
             )}
+        </div>
+        
+        <div className="text-center mt-6 h-16">
+            {currentSubtitle.split('\n').map((line, index) => (
+                <p key={`${currentSubtitle}-${index}`} className="font-serif text-lg text-white font-light tracking-wide leading-tight animate-fade-in" style={{animationDelay: `${index * 200}ms`}}>
+                    {line}
+                </p>
+            ))}
         </div>
 
         <div className="absolute bottom-8 pointer-events-auto">
