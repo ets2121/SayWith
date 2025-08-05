@@ -196,7 +196,7 @@ export default function Template2({ data }: Template2Props) {
       {mediaUrl && (
         <MediaComponent
           src={mediaUrl}
-          className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110"
+          className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
         />
       )}
       <div className="absolute inset-0 bg-black/50" />
