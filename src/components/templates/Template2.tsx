@@ -204,13 +204,12 @@ export default function Template2({ data }: Template2Props) {
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
         
-        <div className="bg-black text-white py-2 px-6 mb-4">
-          <p className="font-serif text-lg tracking-wider">{name}</p>
-        </div>
-
-        <div className="relative w-full max-w-md h-[60vh] max-h-[500px] flex flex-col items-center justify-center text-white">
-            <div className="relative w-full h-full border-4 border-white/80 rounded-lg overflow-hidden shadow-2xl">
+        <div className="relative w-full max-w-md h-[70vh] max-h-[600px] flex flex-col items-center justify-center text-white">
+            <div className="relative w-full h-full border-8 border-white/80 rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
+                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/50 backdrop-blur-sm text-center">
+                    <p className="font-serif text-lg tracking-wider text-white">{name}</p>
+                </div>
             </div>
             
             {!userInteracted && !isPlaying && (
@@ -220,7 +219,7 @@ export default function Template2({ data }: Template2Props) {
             )}
         </div>
         
-        <div className="text-center mt-6 h-16">
+        <div className="text-center mt-6 h-16 z-30">
             {currentSubtitle.split('\n').map((line, index) => (
                 <p key={`${currentSubtitle}-${index}`} className="font-serif text-lg text-white font-light tracking-wide leading-tight animate-fade-in" style={{animationDelay: `${index * 200}ms`}}>
                     {line}
@@ -228,7 +227,7 @@ export default function Template2({ data }: Template2Props) {
             ))}
         </div>
 
-        <div className="absolute bottom-8 pointer-events-auto">
+        <div className="absolute bottom-8 right-8 pointer-events-auto">
             <Button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -245,3 +244,5 @@ export default function Template2({ data }: Template2Props) {
     </div>
   );
 }
+
+    
