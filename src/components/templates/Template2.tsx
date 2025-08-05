@@ -205,7 +205,7 @@ export default function Template2({ data }: Template2Props) {
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
         
         <div className="relative w-full max-w-md h-[65vh] max-h-[500px] flex flex-col items-center justify-center text-white">
-            <div className="relative w-full h-full border border-white rounded-lg overflow-hidden shadow-2xl">
+            <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
                  <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/50 backdrop-blur-sm text-center">
                     <p className="font-serif text-xs tracking-wider text-white">{name}</p>
