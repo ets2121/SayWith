@@ -205,8 +205,8 @@ export default function Template3({ data }: Template3Props) {
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
         
         <div className="relative w-full max-w-md h-[65vh] max-h-[500px] flex flex-col items-center justify-center text-white">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 z-10">
-                <p className="font-serif text-sm tracking-wider text-white whitespace-nowrap bg-black px-2">{name}</p>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 z-10">
+                <p className="font-serif text-sm tracking-wider text-white whitespace-nowrap">{name}</p>
             </div>
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
@@ -244,5 +244,3 @@ export default function Template3({ data }: Template3Props) {
     </div>
   );
 }
-
-    
