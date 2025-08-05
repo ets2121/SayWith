@@ -181,60 +181,57 @@ export default function Template2({ data }: Template2Props) {
     };
   }, [subtitles, playMedia, srtContent]);
 
+  const MediaComponent = isVideo ? 'video' : 'img';
+  const mediaProps = {
+      ref: isVideo ? videoRef : undefined,
+      src: mediaUrl,
+      playsInline: isVideo ? true : undefined,
+  };
+
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
       {mediaUrl && (
-        isVideo ? (
-          <video
-            ref={videoRef}
-            src={mediaUrl}
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-80"
-          />
-        ) : (
-          <img
-            src={mediaUrl}
-            alt="background"
-            className="absolute inset-0 w-full h-full object-cover opacity-80"
-          />
-        )
+        <MediaComponent
+          {...mediaProps}
+          className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110"
+        />
       )}
+      <div className="absolute inset-0 bg-black/50" />
       {audioUrl && <audio ref={audioRef} src={audioUrl} loop />}
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-md h-[80vh] max-h-[700px] border-2 border-white/50 flex flex-col items-center justify-center text-white">
-            
-            <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2" style={{writingMode: 'vertical-rl', transform: 'rotate(180deg) translateX(50%) translateY(calc(50% - 20px))' }}>
-                <p className="font-sans text-sm font-light tracking-widest uppercase">Complete your look.</p>
+        <div className="relative w-full max-w-md h-[70vh] max-h-[600px] flex flex-col items-center justify-center text-white">
+            <div className="relative w-full h-full border-4 border-white/80 rounded-lg overflow-hidden shadow-2xl">
+                 {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
             </div>
 
-            <main className="text-center">
+            <div className="text-center mt-6">
                 {currentSubtitle.split('\n').map((line, index) => (
-                    <p key={`${currentSubtitle}-${index}`} className="font-headline text-5xl md:text-6xl font-bold uppercase tracking-wider leading-tight animate-fade-in" style={{animationDelay: `${index * 200}ms`}}>
+                    <p key={`${currentSubtitle}-${index}`} className="font-serif text-lg font-light tracking-wide leading-tight animate-fade-in" style={{animationDelay: `${index * 200}ms`}}>
                         {line}
                     </p>
                 ))}
-            </main>
+            </div>
             
             {!userInteracted && !isPlaying && (
-                <div className="absolute bottom-16 text-center animate-fade-in">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center animate-fade-in">
                     <p className="text-xs font-light tracking-wider opacity-80">Click anywhere to play</p>
                 </div>
             )}
+        </div>
 
-            <div className="absolute bottom-4 right-4 pointer-events-auto">
-                <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePlayPause();
-                    }}
-                    variant="ghost"
-                    size="icon"
-                    className="text-white h-10 w-10 hover:bg-white/10"
-                >
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1"/>}
-                </Button>
-            </div>
+        <div className="absolute bottom-8 pointer-events-auto">
+            <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePlayPause();
+                }}
+                variant="outline"
+                size="icon"
+                className="bg-black/20 text-white border-white/80 backdrop-blur-sm rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+                {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1"/>}
+            </Button>
         </div>
       </div>
     </div>
