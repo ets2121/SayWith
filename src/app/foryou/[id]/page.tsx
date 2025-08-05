@@ -7,6 +7,7 @@ import { ref, get } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import Template1 from '@/components/templates/Template1';
 import Template2 from '@/components/templates/Template2';
+import Template3 from '@/components/templates/Template3';
 
 // Define the type for your data structure
 interface SaywithData {
@@ -84,6 +85,8 @@ export default function ForYouPage() {
         return <Template1 data={data} />;
       case 'template2':
         return <Template2 data={data} />;
+      case 'template3':
+        return <Template3 data={data} />;
       default:
         return (
           <div className="flex items-center justify-center h-screen bg-background">
