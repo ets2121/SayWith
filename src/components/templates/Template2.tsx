@@ -196,7 +196,7 @@ export default function Template2({ data }: Template2Props) {
       {mediaUrl && (
         <MediaComponent
           src={mediaUrl}
-          className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110"
+          className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
         />
       )}
       <div className="absolute inset-0 bg-black/50" />
@@ -204,11 +204,11 @@ export default function Template2({ data }: Template2Props) {
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
         
-        <div className="relative w-full max-w-md h-[70vh] max-h-[600px] flex flex-col items-center justify-center text-white">
-            <div className="relative w-full h-full border-8 border-white/80 rounded-lg overflow-hidden shadow-2xl">
+        <div className="relative w-full max-w-md h-[65vh] max-h-[500px] flex flex-col items-center justify-center text-white">
+            <div className="relative w-full h-full border-4 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
-                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/50 backdrop-blur-sm text-center">
-                    <p className="font-serif text-lg tracking-wider text-white">{name}</p>
+                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 backdrop-blur-sm text-center">
+                    <p className="font-serif text-base tracking-wider text-white">{name}</p>
                 </div>
             </div>
             
@@ -227,7 +227,7 @@ export default function Template2({ data }: Template2Props) {
             ))}
         </div>
 
-        <div className="absolute bottom-8 right-8 pointer-events-auto">
+        <div className="absolute bottom-6 right-6 pointer-events-auto">
             <Button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -244,5 +244,3 @@ export default function Template2({ data }: Template2Props) {
     </div>
   );
 }
-
-    
