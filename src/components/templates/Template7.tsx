@@ -62,6 +62,15 @@ export default function Template7({ data }: Template7Props) {
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
   
+  const handleInitialInteraction = useCallback(() => {
+    if (userInteracted) return;
+    setUserInteracted(true);
+    if(audioRef.current) {
+        audioRef.current.muted = false;
+    }
+    playMedia();
+  }, [userInteracted, playMedia]);
+  
   const playMedia = useCallback(() => {
     if (!audioRef.current) return;
     
@@ -84,15 +93,6 @@ export default function Template7({ data }: Template7Props) {
     setIsPlaying(false);
   }, [isVideo]);
 
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    if(audioRef.current) {
-        audioRef.current.muted = false;
-    }
-    playMedia();
-  }, [userInteracted, playMedia]);
-  
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (!userInteracted) {
