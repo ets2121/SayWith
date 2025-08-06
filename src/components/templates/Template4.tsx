@@ -108,7 +108,7 @@ export default function Template4({ data }: Template4Props) {
     } else {
       playMedia();
     }
-  }, [isPlaying, playMedia, pauseMedia, userInteracted]);
+  }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
 
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
@@ -188,17 +188,17 @@ export default function Template4({ data }: Template4Props) {
         <div className="w-full max-w-sm h-full flex flex-col items-center justify-center">
             <audio ref={audioRef} src={audioUrl} loop playsInline />
 
-            <div className="text-xl font-normal text-black w-full text-center">{name}</div>
+            <div className="text-xl font-light text-black w-full text-center">{name}</div>
             
             <div className="mt-4 w-full aspect-[350/300] max-h-[300px] rounded-lg overflow-hidden">
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" />
+                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-contain" />
                 )}
             </div>
 
-            <div className="mt-6 text-base font-normal text-black w-full text-center h-12 flex items-center justify-center px-4">
+            <div className="mt-6 text-sm font-light text-black w-full text-center h-12 flex items-center justify-center px-4">
                 <div className="h-full">
                   {currentSubtitle.split('\n').map((line, index) => (
                       <p key={index}>{line}</p>
@@ -207,7 +207,7 @@ export default function Template4({ data }: Template4Props) {
             </div>
             
             <div className="mt-4 w-full max-w-[200px] flex-shrink-0">
-                <p className="text-xs text-black mb-2">you are my favorite song</p>
+                <p className="text-xs text-white mb-2">you are my favorite song</p>
                 <div className="relative w-full h-0.5 bg-white">
                     <div 
                         className="absolute top-[-3px] w-2 h-2 rounded-full bg-white"
