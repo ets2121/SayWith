@@ -76,9 +76,11 @@ export default function Template4({ data }: Template4Props) {
 
   const playMedia = useCallback(() => {
     if (!audioRef.current) return;
+    if (audioRef.current.muted) {
+        audioRef.current.muted = false;
+    }
     audioRef.current.play().then(() => {
       setIsPlaying(true);
-      if (audioRef.current) audioRef.current.muted = false;
     }).catch(error => {
       console.error("Error playing media:", error);
       setIsPlaying(false);
@@ -152,50 +154,53 @@ export default function Template4({ data }: Template4Props) {
 
   return (
     <div 
-      className="w-[400px] h-[600px] bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center"
+      className="w-full h-full bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center font-['Montserrat']"
       onClick={handleInitialInteraction}
-      style={{ fontFamily: "'Montserrat', sans-serif" }}
     >
-        <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" muted={!userInteracted} />
+        <div className="w-[400px] h-[600px] bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center">
+            <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" muted={!userInteracted} />
 
-        <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
-        
-        <div className="mt-10 w-[350px] h-[300px] rounded-lg overflow-hidden">
-            {isVideo ? (
-                <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline crossOrigin="anonymous" />
-            ) : (
-                <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" crossOrigin="anonymous" />
-            )}
-        </div>
-
-        <div className="mt-[30px] text-3xl font-bold text-black w-full text-center h-16 flex items-center justify-center">
-            <div className="h-full">
-              {currentSubtitle.split('\n').map((line, index) => (
-                  <p key={index}>{line}</p>
-              ))}
+            <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
+            
+            <div className="mt-10 w-[350px] h-[300px] rounded-lg overflow-hidden">
+                {isVideo ? (
+                    <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline crossOrigin="anonymous" />
+                ) : (
+                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" crossOrigin="anonymous" />
+                )}
             </div>
-        </div>
 
-        <div className="mt-5 w-[120px]">
-            <div className="relative w-[120px] h-0.5">
-                <div className="w-full h-full bg-black"></div>
-                <div 
-                    className="absolute top-[-3px] w-2 h-2 rounded-full bg-black"
-                    style={{ left: `${progress}%`}}
-                ></div>
-            </div>
-            <div className="flex justify-center gap-5 mt-2.5">
-                <div className="h-10 flex items-center">
-                    <button onClick={(e) => { e.stopPropagation(); seek(-5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[20px] border-r-black" aria-label="Rewind"></button>
+            <div className="mt-[30px] text-3xl font-bold text-black w-full text-center h-16 flex items-center justify-center">
+                <div className="h-full">
+                  {currentSubtitle.split('\n').map((line, index) => (
+                      <p key={index}>{line}</p>
+                  ))}
                 </div>
-                <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-black flex justify-center items-center text-white" aria-label="Play/Pause">
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
-                </button>
-                <div className="h-10 flex items-center">
-                    <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-black" aria-label="Fast Forward"></button>
+            </div>
+
+            <div className="mt-5 w-[120px]">
+                <div className="relative w-[120px] h-0.5">
+                    <div className="w-full h-full bg-black"></div>
+                    <div 
+                        className="absolute top-[-3px] w-2 h-2 rounded-full bg-black"
+                        style={{ left: `${progress}%`}}
+                    ></div>
+                </div>
+                <div className="flex justify-center gap-5 mt-2.5">
+                    <div className="h-10 flex items-center">
+                        <button onClick={(e) => { e.stopPropagation(); seek(-5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[20px] border-r-black" aria-label="Rewind"></button>
+                    </div>
+                    <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-black flex justify-center items-center text-white" aria-label="Play/Pause">
+                        {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
+                    </button>
+                    <div className="h-10 flex items-center">
+                        <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-black" aria-label="Fast Forward"></button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
   );
 }
+
+    
