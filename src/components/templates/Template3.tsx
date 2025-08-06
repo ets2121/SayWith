@@ -78,19 +78,18 @@ export default function Template3({ data }: Template3Props) {
 
   const playMedia = useCallback(() => {
     const audio = audioRef.current;
+    const video = videoRef.current;
     if (!audio) return;
 
     const audioPromise = audio.play();
-    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
     
-    if (audioPromise !== undefined) {
-      Promise.all([audioPromise, videoPromise]).then(() => {
-        setIsPlaying(true);
-      }).catch(error => {
-        console.error("Error playing media:", error);
-        setIsPlaying(false);
-      });
-    }
+    Promise.all([audioPromise, videoPromise]).then(() => {
+      setIsPlaying(true);
+    }).catch(error => {
+      console.error("Error playing media:", error);
+      setIsPlaying(false);
+    });
   }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
@@ -183,7 +182,7 @@ export default function Template3({ data }: Template3Props) {
 
   const MediaComponent = isVideo ? 'video' : 'img';
   const mediaProps = {
-      ref: isVideo ? videoRef : undefined,
+      ...(isVideo ? { ref: videoRef } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
       muted: isVideo ? true : undefined,
@@ -195,7 +194,7 @@ export default function Template3({ data }: Template3Props) {
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
       {mediaUrl && (
         <MediaComponent
-          src={mediaUrl}
+          {...mediaProps}
           className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110"
         />
       )}

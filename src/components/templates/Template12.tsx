@@ -67,19 +67,23 @@ export default function Template12({ data }: Template12Props) {
   const [duration, setDuration] = useState(0);
   
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
   
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
-  }, []);
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+    Promise.all([audioPromise, videoPromise]).then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-    }
+    if (audioRef.current) audioRef.current.pause();
+    if (videoRef.current) videoRef.current.pause();
+    setIsPlaying(false);
   }, []);
   
   const handleInitialInteraction = useCallback(() => {
@@ -139,6 +143,7 @@ export default function Template12({ data }: Template12Props) {
     const onEnded = () => {
         setIsPlaying(false);
         if (audio) { audio.currentTime = 0; }
+        if (videoRef.current) videoRef.current.currentTime = 0;
         playMedia();
     }
     
@@ -165,7 +170,7 @@ export default function Template12({ data }: Template12Props) {
         <div className="relative w-full max-w-xs flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-2xl">
           <div className="w-full aspect-square rounded-lg overflow-hidden shadow-lg">
               {isVideo ? (
-                  <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                  <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
               ) : (
                   <Image src={mediaUrl} alt="Album Art" width={300} height={300} className="w-full h-full object-cover" />
               )}

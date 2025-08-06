@@ -69,19 +69,23 @@ export default function Template20({ data }: Template20Props) {
   const [duration, setDuration] = useState(0);
   
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
   
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
-  }, []);
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+    Promise.all([audioPromise, videoPromise]).then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-    }
+    if (audioRef.current) audioRef.current.pause();
+    if (videoRef.current) videoRef.current.pause();
+    setIsPlaying(false);
   }, []);
   
   const handleInitialInteraction = useCallback(() => {
@@ -182,26 +186,21 @@ export default function Template20({ data }: Template20Props) {
       onClick={handleInitialInteraction}
     >
       <style jsx global>{`
-        :root {
-          --slider-track: #083344;
-          --slider-range: #06b6d4;
-          --slider-thumb: #06b6d4;
-        }
         .neon-slider .bg-secondary {
-          background-color: var(--slider-track);
+          background-color: #083344;
         }
         .neon-slider .bg-primary {
-          background-color: var(--slider-range);
+          background-color: #06b6d4;
         }
         .neon-slider .border-primary {
-           border-color: var(--slider-thumb);
+           border-color: #06b6d4;
         }
         .neon-slider .ring-ring:focus-visible {
-           --tw-ring-color: var(--slider-thumb);
+           --tw-ring-color: #06b6d4;
         }
       `}</style>
       {isVideo ? (
-        <video src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" muted loop autoPlay playsInline />
+        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" muted loop autoPlay playsInline />
       ) : (
         <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
       )}
@@ -211,7 +210,7 @@ export default function Template20({ data }: Template20Props) {
       <div className="relative w-full max-w-md h-full flex flex-col items-center justify-center py-8">
         <div className={`w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl ${neonShadow}`}>
             {isVideo ? (
-                <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
             ) : (
                 <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
             )}

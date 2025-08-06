@@ -62,9 +62,11 @@ export default function Template27({ data }: Template27Props) {
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    const audioPromise = audioRef.current.play();
-    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
     Promise.all([audioPromise, videoPromise]).then(() => {
       setIsPlaying(true);
       setIsRevealed(true);

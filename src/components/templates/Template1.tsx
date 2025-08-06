@@ -74,20 +74,19 @@ export default function Template1({ data }: Template1Props) {
   }, [srtContent]);
 
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    
-    const audioPromise = audioRef.current.play();
-    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
-    
-    if (audioPromise !== undefined) {
-      Promise.all([audioPromise, videoPromise]).then(() => {
-        setIsPlaying(true);
-      }).catch(error => {
-        console.error("Error playing media:", error);
-        // If autoplay fails, we'll wait for user interaction.
-        setIsPlaying(false);
-      });
-    }
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+
+    Promise.all([audioPromise, videoPromise]).then(() => {
+      setIsPlaying(true);
+    }).catch(error => {
+      console.error("Error playing media:", error);
+      setIsPlaying(false);
+    });
   }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
@@ -135,6 +134,7 @@ export default function Template1({ data }: Template1Props) {
         video.muted = mute ?? false;
         video.loop = true;
         video.autoplay = true;
+        video.playsInline = true;
     }
   }, [mute]);
 

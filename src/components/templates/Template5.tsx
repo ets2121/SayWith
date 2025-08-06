@@ -63,19 +63,19 @@ export default function Template5({ data }: Template5Props) {
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
   
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
     
-    const audioPromise = audioRef.current.play();
-    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
     
-    if (audioPromise !== undefined) {
-      Promise.all([audioPromise, videoPromise]).then(() => {
-        setIsPlaying(true);
-      }).catch(error => {
-        console.error("Error playing media:", error);
-        setIsPlaying(false);
-      });
-    }
+    Promise.all([audioPromise, videoPromise]).then(() => {
+      setIsPlaying(true);
+    }).catch(error => {
+      console.error("Error playing media:", error);
+      setIsPlaying(false);
+    });
   }, [isVideo]);
 
   const pauseMedia = useCallback(() => {

@@ -57,18 +57,22 @@ export default function Template13({ data }: Template13Props) {
   const [progress, setProgress] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
-  }, []);
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+    Promise.all([audioPromise, videoPromise]).then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    }
+    if (audioRef.current) audioRef.current.pause();
+    if (videoRef.current) videoRef.current.pause();
+    setIsPlaying(false);
   }, []);
   
   const handleInitialInteraction = useCallback(() => {
@@ -111,6 +115,7 @@ export default function Template13({ data }: Template13Props) {
     const onEnded = () => {
         setIsPlaying(false);
         if (audio) { audio.currentTime = 0; }
+        if (videoRef.current) videoRef.current.currentTime = 0;
         playMedia();
     }
     
@@ -136,7 +141,7 @@ export default function Template13({ data }: Template13Props) {
         {/* Media Player */}
         <div className="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden rounded-lg shadow-xl">
           {isVideo ? (
-            <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
           ) : (
             <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
           )}

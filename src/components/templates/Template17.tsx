@@ -69,19 +69,23 @@ export default function Template17({ data }: Template17Props) {
   const [duration, setDuration] = useState(0);
   
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
   
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
-  }, []);
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+    Promise.all([audioPromise, videoPromise]).then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-    }
+    if (audioRef.current) audioRef.current.pause();
+    if (videoRef.current) videoRef.current.pause();
+    setIsPlaying(false);
   }, []);
   
   const handleInitialInteraction = useCallback(() => {
@@ -179,7 +183,7 @@ export default function Template17({ data }: Template17Props) {
       onClick={handleInitialInteraction}
     >
       {isVideo ? (
-        <video src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50" muted loop autoPlay playsInline />
+        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50" muted loop autoPlay playsInline />
       ) : (
         <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50" />
       )}
@@ -189,7 +193,7 @@ export default function Template17({ data }: Template17Props) {
       <div className="relative w-full max-w-md h-full flex flex-col items-center justify-center py-8">
         <div className="w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
             {isVideo ? (
-                <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
             ) : (
                 <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
             )}

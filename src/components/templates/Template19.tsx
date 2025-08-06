@@ -74,9 +74,11 @@ export default function Template19({ data }: Template19Props) {
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
   
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    const audioPromise = audioRef.current.play();
-    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
+    const audio = audioRef.current;
+    const video = videoRef.current;
+    if (!audio) return;
+    const audioPromise = audio.play();
+    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
     
     Promise.all([audioPromise, videoPromise]).then(() => {
       setIsPlaying(true);
@@ -87,10 +89,10 @@ export default function Template19({ data }: Template19Props) {
   }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
-    audioRef.current?.pause();
-    if (isVideo) videoRef.current?.pause();
+    if (audioRef.current) audioRef.current.pause();
+    if (videoRef.current) videoRef.current.pause();
     setIsPlaying(false);
-  }, [isVideo]);
+  }, []);
   
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
