@@ -58,6 +58,7 @@ export default function Template4({ data }: Template4Props) {
   const [progress, setProgress] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
@@ -76,21 +77,25 @@ export default function Template4({ data }: Template4Props) {
 
   const playMedia = useCallback(() => {
     if (!audioRef.current) return;
-    if (audioRef.current.muted) {
-        audioRef.current.muted = false;
+    
+    const audioPromise = audioRef.current.play();
+    const videoPromise = isVideo ? videoRef.current?.play() : Promise.resolve();
+    
+    if (audioPromise !== undefined) {
+      Promise.all([audioPromise, videoPromise]).then(() => {
+        setIsPlaying(true);
+      }).catch(error => {
+        console.error("Error playing media:", error);
+        setIsPlaying(false);
+      });
     }
-    audioRef.current.play().then(() => {
-      setIsPlaying(true);
-    }).catch(error => {
-      console.error("Error playing media:", error);
-      setIsPlaying(false);
-    });
-  }, []);
+  }, [isVideo]);
 
   const pauseMedia = useCallback(() => {
     audioRef.current?.pause();
+    if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
-  }, []);
+  }, [isVideo]);
 
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -114,6 +119,17 @@ export default function Template4({ data }: Template4Props) {
   }
 
   useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.play().catch(e => console.log("Video autoplay blocked"));
+    }
+  }, [videoRef, isVideo]);
+
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -127,8 +143,8 @@ export default function Template4({ data }: Template4Props) {
         
         if (srtContent) {
             const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-            const newSubtitle = activeLine ? activeLine.text : (currentSubtitle || '');
-            if (newSubtitle !== currentSubtitle) {
+            const newSubtitle = activeLine ? activeLine.text : '';
+             if (newSubtitle !== currentSubtitle) {
               setCurrentSubtitle(newSubtitle);
             }
         }
@@ -158,15 +174,15 @@ export default function Template4({ data }: Template4Props) {
       onClick={handleInitialInteraction}
     >
         <div className="w-[400px] h-[600px] bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center">
-            <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" muted={!userInteracted} />
+            <audio ref={audioRef} src={audioUrl} />
 
             <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
             
             <div className="mt-10 w-[350px] h-[300px] rounded-lg overflow-hidden">
                 {isVideo ? (
-                    <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline crossOrigin="anonymous" />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" crossOrigin="anonymous" />
+                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" />
                 )}
             </div>
 
@@ -202,5 +218,3 @@ export default function Template4({ data }: Template4Props) {
     </div>
   );
 }
-
-    
