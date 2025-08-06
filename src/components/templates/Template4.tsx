@@ -61,13 +61,7 @@ export default function Template4({ data }: Template4Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    playMedia();
-  }, [userInteracted]);
-
+  
   const playMedia = useCallback(() => {
     if (!audioRef.current) return;
     
@@ -89,6 +83,15 @@ export default function Template4({ data }: Template4Props) {
     if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
   }, [isVideo]);
+
+  const handleInitialInteraction = useCallback(() => {
+    if (userInteracted) return;
+    setUserInteracted(true);
+    if(audioRef.current) {
+        audioRef.current.muted = false;
+    }
+    playMedia();
+  }, [userInteracted, playMedia]);
   
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -136,7 +139,6 @@ export default function Template4({ data }: Template4Props) {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-     audio.muted = !userInteracted;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
@@ -149,7 +151,9 @@ export default function Template4({ data }: Template4Props) {
         
         if (srtContent) {
           const newSubtitle = activeLine ? activeLine.text : '';
-          setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
+          if(newSubtitle !== currentSubtitle) {
+            setCurrentSubtitle(newSubtitle);
+          }
         }
     };
 
@@ -165,7 +169,7 @@ export default function Template4({ data }: Template4Props) {
         }
         playMedia();
     }
-
+    
     audio.addEventListener('timeupdate', timeUpdateHandler);
     audio.addEventListener('ended', handleAudioEnd);
 
@@ -175,15 +179,15 @@ export default function Template4({ data }: Template4Props) {
           audio.removeEventListener('ended', handleAudioEnd);
         }
     };
-  }, [subtitles, playMedia, srtContent, userInteracted]);
+  }, [subtitles, playMedia, srtContent, currentSubtitle]);
 
   return (
     <div 
       className="w-full h-screen bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center p-4 font-body"
       onClick={handleInitialInteraction}
     >
+        <audio ref={audioRef} src={audioUrl} loop playsInline muted />
         <div className="w-full max-w-sm h-full flex flex-col items-center justify-center">
-            <audio ref={audioRef} src={audioUrl} loop playsInline />
 
             <div className="text-xl font-light text-black w-full text-center">{name}</div>
             
