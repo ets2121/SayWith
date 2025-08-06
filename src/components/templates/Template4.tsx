@@ -119,6 +119,7 @@ export default function Template4({ data }: Template4Props) {
     }
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
 
+
   const seek = (delta: number) => {
     if (audioRef.current) {
         const newTime = audioRef.current.currentTime + delta;
