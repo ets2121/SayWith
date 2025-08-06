@@ -190,11 +190,11 @@ export default function Template9({ data }: Template9Props) {
                 </div>
             </div>
             
-            <div className="w-full aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
+            <div className="w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
                 {isVideo ? (
-                    <video src={mediaUrl} className="w-full h-full object-contain" muted loop autoPlay playsInline />
+                    <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={400} height={500} className="w-full h-full object-contain" />
+                    <Image src={mediaUrl} alt="Album Art" width={350} height={350} className="w-full h-full object-cover" />
                 )}
             </div>
 
@@ -233,3 +233,4 @@ export default function Template9({ data }: Template9Props) {
     </div>
   );
 }
+
