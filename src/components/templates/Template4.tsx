@@ -122,7 +122,6 @@ export default function Template4({ data }: Template4Props) {
     }
   }
 
-
   useEffect(() => {
     const video = videoRef.current;
     if(video) {
@@ -136,10 +135,9 @@ export default function Template4({ data }: Template4Props) {
     }
   }, [mute]);
 
-
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !subtitles.length) return;
+    if (!audio || !srtContent && !subtitles.length) return;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
@@ -152,7 +150,9 @@ export default function Template4({ data }: Template4Props) {
         const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
         const newSubtitle = activeLine ? activeLine.text : '';
 
-        setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
+        if (srtContent) {
+          setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
+        }
     };
 
     const handleAudioEnd = () => {
@@ -197,7 +197,7 @@ export default function Template4({ data }: Template4Props) {
                 )}
             </div>
 
-            <div className="mt-[30px] text-2xl font-bold text-black w-full text-center h-16 flex items-center justify-center px-4">
+            <div className="mt-[30px] text-xl font-bold text-black w-full text-center h-16 flex items-center justify-center px-4">
                 <div className="h-full">
                   {currentSubtitle.split('\n').map((line, index) => (
                       <p key={index}>{line}</p>
@@ -206,8 +206,7 @@ export default function Template4({ data }: Template4Props) {
             </div>
 
             <div className="mt-5 w-[120px]">
-                <div className="relative w-[120px] h-0.5">
-                    <div className="w-full h-full bg-white"></div>
+                <div className="relative w-[120px] h-0.5 bg-white">
                     <div 
                         className="absolute top-[-3px] w-2 h-2 rounded-full bg-white"
                         style={{ left: `${progress}%`}}
