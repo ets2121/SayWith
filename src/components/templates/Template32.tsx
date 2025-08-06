@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { Play } from 'lucide-react';
 
 interface Template32Props {
   data: {
@@ -131,11 +132,19 @@ export default function Template32({ data }: Template32Props) {
       <audio ref={audioRef} src={audioUrl} loop playsInline/>
       
       <div className="relative w-full max-w-sm h-4/5 flex flex-col justify-center items-center">
-        {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl" muted loop autoPlay playsInline />
-        ) : (
-            <Image src={mediaUrl} alt="background" layout="fill" className="w-full h-full object-cover rounded-2xl shadow-2xl" />
-        )}
+        <div className="relative w-full h-full">
+            {isVideo ? (
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl" muted loop autoPlay playsInline />
+            ) : (
+                <Image src={mediaUrl} alt="background" layout="fill" className="w-full h-full object-cover rounded-2xl shadow-2xl" />
+            )}
+             {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-2xl pointer-events-none">
+                    <Play size={64} className="text-white/80" fill="white"/>
+                </div>
+            )}
+        </div>
+
 
         <div className="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-4/5 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-1 rounded-2xl shadow-lg transform rotate-[-5deg]">
           <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4">

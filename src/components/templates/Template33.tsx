@@ -74,7 +74,8 @@ export default function Template33({ data }: Template33Props) {
     setIsPlaying(false);
   }, [isVideo]);
 
-  const handleInitialInteraction = useCallback(() => {
+  const handleInitialInteraction = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
     if (userInteracted) {
         if (isPlaying) pauseMedia();
         else playMedia();
@@ -125,7 +126,6 @@ export default function Template33({ data }: Template33Props) {
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
-      onClick={handleInitialInteraction}
     >
       {isVideo ? (
         <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" muted loop autoPlay playsInline />
@@ -151,7 +151,7 @@ export default function Template33({ data }: Template33Props) {
                     <div className="h-full bg-white" style={{ width: `${progress}%` }}></div>
                 </div>
             </div>
-            <button className="flex-shrink-0">
+            <button onClick={handleInitialInteraction} className="flex-shrink-0">
                 {isPlaying ? <Pause size={24} /> : <Play size={24} />}
             </button>
         </div>

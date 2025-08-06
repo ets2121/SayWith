@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { Play } from 'lucide-react';
 
 interface Template31Props {
   data: {
@@ -138,6 +139,12 @@ export default function Template31({ data }: Template31Props) {
       )}
       <div className="absolute inset-0 bg-black/20" />
       <audio ref={audioRef} src={audioUrl} loop playsInline/>
+      
+      {!isPlaying && (
+        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <Play size={64} className="text-white/70" fill="white" />
+        </div>
+      )}
       
       <div className="relative w-full h-full flex flex-col justify-between p-4 z-10">
         <div className="w-full">

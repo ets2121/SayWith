@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { Play } from 'lucide-react';
 
 interface Template34Props {
   data: {
@@ -141,6 +142,11 @@ export default function Template34({ data }: Template34Props) {
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
                     <Image src={mediaUrl} alt="Polaroid" layout="fill" className="w-full h-full object-cover" />
+                )}
+                 {!isPlaying && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                        <Play size={48} className="text-white/80" fill="white" />
+                    </div>
                 )}
             </div>
         </div>
