@@ -183,7 +183,7 @@ export default function Template6({ data }: Template6Props) {
 
   return (
     <div 
-      className="w-full h-screen bg-gradient-to-b from-zinc-900 to-zinc-700 flex flex-col items-center justify-center p-4 font-body"
+      className="w-full h-screen bg-gradient-to-b from-zinc-900 to-zinc-700 flex flex-col items-center justify-center p-4 font-body overflow-hidden"
       onClick={handleInitialInteraction}
     >
         <audio ref={audioRef} src={audioUrl} loop playsInline muted />

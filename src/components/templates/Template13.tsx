@@ -127,7 +127,7 @@ export default function Template13({ data }: Template13Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex items-center justify-center p-4 md:p-8 font-sans bg-[#f4f4f0] text-gray-800"
+      className="w-full h-screen relative flex items-center justify-center p-4 md:p-8 font-sans bg-[#f4f4f0] text-gray-800 overflow-hidden"
       onClick={handleInitialInteraction}
     >
       <audio ref={audioRef} src={audioUrl} loop playsInline />

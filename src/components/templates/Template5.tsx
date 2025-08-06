@@ -183,7 +183,7 @@ export default function Template5({ data }: Template5Props) {
 
   return (
     <div 
-      className="w-full h-screen bg-gradient-to-b from-fuchsia-500 to-cyan-500 flex flex-col items-center justify-center p-4 font-body"
+      className="w-full h-screen bg-gradient-to-b from-fuchsia-500 to-cyan-500 flex flex-col items-center justify-center p-4 font-body overflow-hidden"
       onClick={handleInitialInteraction}
     >
         <audio ref={audioRef} src={audioUrl} loop playsInline muted />

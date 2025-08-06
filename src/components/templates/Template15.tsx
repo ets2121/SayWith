@@ -141,7 +141,7 @@ export default function Template15({ data }: Template15Props) {
 
   return (
     <div 
-      className="w-full h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-red-200 via-rose-200 to-amber-100 font-sans"
+      className="w-full h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-red-200 via-rose-200 to-amber-100 font-sans overflow-hidden"
       onClick={handleInitialInteraction}
     >
       <audio ref={audioRef} src={audioUrl} loop playsInline />

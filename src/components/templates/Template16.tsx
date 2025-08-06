@@ -137,7 +137,7 @@ export default function Template16({ data }: Template16Props) {
 
   return (
     <div 
-      className="w-full h-screen flex items-center justify-center p-4 bg-gradient-to-br from-rose-100 to-pink-200"
+      className="w-full h-screen flex items-center justify-center p-4 bg-gradient-to-br from-rose-100 to-pink-200 overflow-hidden"
       style={{ fontFamily: "'Great Vibes', cursive" }}
       onClick={handleInitialInteraction}
     >

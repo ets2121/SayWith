@@ -175,7 +175,7 @@ export default function Template18({ data }: Template18Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans text-black bg-gray-100"
+      className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans text-black bg-gray-100 overflow-hidden"
       onClick={handleInitialInteraction}
     >
       {isVideo ? (

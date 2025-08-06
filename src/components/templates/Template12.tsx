@@ -157,7 +157,7 @@ export default function Template12({ data }: Template12Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans bg-gradient-to-br from-yellow-200 via-pink-300 to-blue-400"
+      className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans bg-gradient-to-br from-yellow-200 via-pink-300 to-blue-400 overflow-hidden"
       onClick={handleInitialInteraction}
     >
         <audio ref={audioRef} src={audioUrl} loop playsInline />

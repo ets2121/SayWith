@@ -175,7 +175,7 @@ export default function Template9({ data }: Template9Props) {
 
   return (
     <div 
-      className="w-full h-screen bg-black flex flex-col items-center justify-center p-4 font-sans text-white"
+      className="w-full h-screen bg-black flex flex-col items-center justify-center p-4 font-sans text-white overflow-hidden"
       onClick={handleInitialInteraction}
     >
         <audio ref={audioRef} src={audioUrl} loop playsInline />
@@ -190,7 +190,7 @@ export default function Template9({ data }: Template9Props) {
                 </div>
             </div>
             
-            <div className="w-full aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
+            <div className="w-10/12 aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
                 {isVideo ? (
                     <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (

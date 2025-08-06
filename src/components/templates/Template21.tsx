@@ -175,7 +175,7 @@ export default function Template21({ data }: Template21Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans bg-gray-100"
+      className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans bg-gray-100 overflow-hidden"
       onClick={handleInitialInteraction}
     >
       {isVideo ? (

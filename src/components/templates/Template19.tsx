@@ -192,7 +192,7 @@ export default function Template19({ data }: Template19Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex flex-col items-center justify-end p-4 font-sans text-white bg-black"
+      className="w-full h-screen relative flex flex-col items-center justify-end p-4 font-sans text-white bg-black overflow-hidden"
       onClick={handleInitialInteraction}
     >
       {isVideo ? (

@@ -183,7 +183,7 @@ export default function Template8({ data }: Template8Props) {
 
   return (
     <div 
-      className="w-full h-screen bg-gradient-to-b from-red-500 to-orange-500 flex flex-col items-center justify-center p-4 font-body"
+      className="w-full h-screen bg-gradient-to-b from-red-500 to-orange-500 flex flex-col items-center justify-center p-4 font-body overflow-hidden"
       onClick={handleInitialInteraction}
     >
         <audio ref={audioRef} src={audioUrl} loop playsInline muted />

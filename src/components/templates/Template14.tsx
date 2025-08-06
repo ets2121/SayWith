@@ -137,7 +137,7 @@ export default function Template14({ data }: Template14Props) {
 
   return (
     <div 
-      className="w-full h-screen flex items-center justify-center p-4 bg-[#fdf6e3] font-serif"
+      className="w-full h-screen flex items-center justify-center p-4 bg-[#fdf6e3] font-serif overflow-hidden"
       style={{ fontFamily: "'Caveat', cursive" }}
       onClick={handleInitialInteraction}
     >
