@@ -52,6 +52,7 @@ const parseSrt = (srtText: string): SrtLine[] => {
 
 
 const formatTime = (seconds: number): string => {
+    if (isNaN(seconds) || seconds < 0) return "0:00";
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
@@ -129,7 +130,8 @@ export default function Template9({ data }: Template9Props) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const timeUpdateHandler = () => {
+    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onTimeUpdate = () => {
         const currentTime = audio.currentTime;
         const duration = audio.duration;
         if (duration > 0) {
@@ -148,7 +150,7 @@ export default function Template9({ data }: Template9Props) {
         }
     };
 
-    const handleAudioEnd = () => {
+    const onEnded = () => {
         setIsPlaying(false);
         setProgress(0);
         setCurrentTime(0);
@@ -158,15 +160,15 @@ export default function Template9({ data }: Template9Props) {
         playMedia(); // Loop
     }
     
-    audio.addEventListener('timeupdate', timeUpdateHandler);
-    audio.addEventListener('loadedmetadata', () => setDuration(audio.duration));
-    audio.addEventListener('ended', handleAudioEnd);
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('loadedmetadata', onLoadedMetadata);
+    audio.addEventListener('ended', onEnded);
 
     return () => {
         if (audio) {
-          audio.removeEventListener('timeupdate', timeUpdateHandler);
-          audio.removeEventListener('loadedmetadata', () => setDuration(audio.duration));
-          audio.removeEventListener('ended', handleAudioEnd);
+          audio.removeEventListener('timeupdate', onTimeUpdate);
+          audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+          audio.removeEventListener('ended', onEnded);
         }
     };
   }, [subtitles, playMedia, srtContent, currentSubtitle]);
@@ -188,11 +190,11 @@ export default function Template9({ data }: Template9Props) {
                 </div>
             </div>
             
-            <div className="w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
+            <div className="w-full aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
                 {isVideo ? (
-                    <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                    <video src={mediaUrl} className="w-full h-full object-contain" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={350} height={350} className="w-full h-full object-cover" />
+                    <Image src={mediaUrl} alt="Album Art" width={400} height={500} className="w-full h-full object-contain" />
                 )}
             </div>
 
