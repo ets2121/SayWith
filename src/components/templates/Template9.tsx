@@ -184,17 +184,17 @@ export default function Template9({ data }: Template9Props) {
             <div className="w-full text-center">
                 <p className="text-xs uppercase text-gray-400">Playing from your library</p>
                 <div className="mt-1 h-14 flex items-center justify-center">
-                  <p className="text-base font-normal text-white">
+                  <p className="text-white text-base font-normal">
                     {currentSubtitle.split('\n').map((line, index) => <span key={index} className="block">{line}</span>)}
                   </p>
                 </div>
             </div>
             
-            <div className="w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
+            <div className="w-full aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
                 {isVideo ? (
                     <video src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={350} height={350} className="w-full h-full object-cover" />
+                    <Image src={mediaUrl} alt="Album Art" width={350} height={438} className="w-full h-full object-cover" />
                 )}
             </div>
 
@@ -233,4 +233,3 @@ export default function Template9({ data }: Template9Props) {
     </div>
   );
 }
-
