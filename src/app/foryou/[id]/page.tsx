@@ -18,6 +18,8 @@ import Template10 from '@/components/templates/Template10';
 import Template11 from '@/components/templates/Template11';
 import Template12 from '@/components/templates/Template12';
 import Template13 from '@/components/templates/Template13';
+import Template14 from '@/components/templates/Template14';
+import Template15 from '@/components/templates/Template15';
 
 // Define the type for your data structure
 interface SaywithData {
@@ -125,6 +127,10 @@ export default function ForYouPage() {
         return <Template12 data={data} />;
       case 'template13':
         return <Template13 data={data} />;
+      case 'template14':
+        return <Template14 data={data} />;
+      case 'template15':
+        return <Template15 data={data} />;
       default:
         return (
           <div className="flex items-center justify-center h-screen bg-background">
@@ -136,5 +142,3 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
-
-    
