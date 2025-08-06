@@ -110,16 +110,13 @@ export default function Template4({ data }: Template4Props) {
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
     setUserInteracted(true);
-    if (audioRef.current) {
-        audioRef.current.muted = false;
-    }
     playMedia();
   }, [userInteracted, playMedia]);
 
   const seek = (delta: number) => {
     if (audioRef.current) {
         const newTime = audioRef.current.currentTime + delta;
-        audioRef.current.currentTime = Math.max(0, Math.min(newTime, audioRef.current.duration));
+        audioRef.current.currentTime = Math.max(0, Math.min(newTime, audioRef.current.duration || 0));
     }
   }
 
@@ -131,10 +128,6 @@ export default function Template4({ data }: Template4Props) {
         video.playsInline = true;
         video.autoplay = true;
     }
-    if (audioRef.current) {
-        // Mute audio initially until user interacts, to allow video autoplay with sound
-        audioRef.current.muted = true;
-    }
   }, [mute]);
 
   useEffect(() => {
@@ -144,15 +137,14 @@ export default function Template4({ data }: Template4Props) {
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
         const duration = audio.duration;
-
         if (duration > 0) {
             setProgress((currentTime / duration) * 100);
         }
 
         const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-        const newSubtitle = activeLine ? activeLine.text : '';
-
+        
         if (srtContent) {
+          const newSubtitle = activeLine ? activeLine.text : '';
           setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
         }
     };
@@ -187,15 +179,15 @@ export default function Template4({ data }: Template4Props) {
       onClick={handleInitialInteraction}
     >
         <div className="w-[400px] h-[600px] bg-transparent flex flex-col items-center">
-            <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" loop />
+            <audio ref={audioRef} src={audioUrl} loop />
 
             <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
             
             <div className="mt-10 w-[350px] h-[300px] rounded-lg overflow-hidden">
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline crossOrigin="anonymous" />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" crossOrigin="anonymous" />
+                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" />
                 )}
             </div>
 
@@ -230,3 +222,5 @@ export default function Template4({ data }: Template4Props) {
     </div>
   );
 }
+
+    
