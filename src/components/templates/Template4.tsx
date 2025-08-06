@@ -98,6 +98,15 @@ export default function Template4({ data }: Template4Props) {
     if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
   }, [isVideo]);
+
+  const handleInitialInteraction = useCallback(() => {
+    if (userInteracted) return;
+    setUserInteracted(true);
+    if (audioRef.current) {
+        audioRef.current.muted = false;
+    }
+    playMedia();
+  }, [userInteracted, playMedia]);
   
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -109,15 +118,6 @@ export default function Template4({ data }: Template4Props) {
       playMedia();
     }
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    if (audioRef.current) {
-        audioRef.current.muted = false;
-    }
-    playMedia();
-  }, [userInteracted, playMedia]);
 
   const seek = (delta: number) => {
     if (audioRef.current) {
