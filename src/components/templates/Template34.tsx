@@ -86,7 +86,16 @@ export default function Template34({ data }: Template34Props) {
   }, [userInteracted, playMedia, isPlaying, pauseMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -130,20 +139,28 @@ export default function Template34({ data }: Template34Props) {
             @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
         `}</style>
 
-       {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" muted loop autoPlay playsInline />
-      ) : (
-        <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-      )}
+       {mediaUrl && (
+         <>
+           {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" loop playsInline />
+          ) : (
+            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+          )}
+         </>
+       )}
       <audio ref={audioRef} src={audioUrl} loop playsInline/>
       
       <div className="relative w-full max-w-xs flex flex-col items-center justify-center animate-fade-in">
         <div className="bg-white p-4 pb-16 rounded-sm shadow-xl transform rotate-3">
             <div className="relative w-[250px] h-[250px] bg-gray-200">
-                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-                ) : (
-                    <Image src={mediaUrl} alt="Polaroid" layout="fill" className="w-full h-full object-cover" />
+                {mediaUrl && (
+                  <>
+                    {isVideo ? (
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                    ) : (
+                        <Image src={mediaUrl} alt="Polaroid" layout="fill" className="w-full h-full object-cover" />
+                    )}
+                  </>
                 )}
                  {!isPlaying && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">

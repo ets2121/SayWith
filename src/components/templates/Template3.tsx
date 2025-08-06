@@ -132,13 +132,13 @@ export default function Template3({ data }: Template3Props) {
 
   useEffect(() => {
     const video = videoRef.current;
+    const audio = audioRef.current;
     if(video) {
-        video.muted = mute ?? true;
         video.loop = true;
         video.playsInline = true;
-        video.autoplay = userInteracted;
-        if(userInteracted) {
-          video.play().catch(e => console.error("Video autoplay failed", e));
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
         }
     }
   }, [mute, userInteracted]);
@@ -185,9 +185,7 @@ export default function Template3({ data }: Template3Props) {
       ...(isVideo ? { ref: videoRef } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
-      muted: isVideo ? true : undefined,
       loop: isVideo ? true : undefined,
-      autoPlay: isVideo ? userInteracted : undefined,
   };
 
   return (

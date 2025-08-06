@@ -11,6 +11,7 @@ interface Template11Props {
     audioUrl: string;
     srtContent: string;
     name: string;
+    mute?: boolean;
   };
 }
 
@@ -56,7 +57,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template11({ data }: Template11Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -171,7 +172,9 @@ export default function Template11({ data }: Template11Props) {
                     backgroundImage: 'repeating-radial-gradient(circle, #222, #222 1px, #111 1px, #111 2px)'
                 }}>
                 <div className="w-32 h-32 rounded-full overflow-hidden">
-                    <Image src={mediaUrl} alt="Album Art" width={128} height={128} className="w-full h-full object-cover" />
+                    {mediaUrl && (
+                      <Image src={mediaUrl} alt="Album Art" width={128} height={128} className="w-full h-full object-cover" />
+                    )}
                 </div>
             </div>
             {/* Tonearm */}

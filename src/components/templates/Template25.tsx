@@ -97,7 +97,16 @@ export default function Template25({ data }: Template25Props) {
   }
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -196,10 +205,14 @@ export default function Template25({ data }: Template25Props) {
         </div>
         
         <div className="w-full aspect-video relative overflow-hidden p-1 bg-cyan-900/30 border border-cyan-400/50">
-          {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-          ) : (
-            <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+          {mediaUrl && (
+            <>
+              {isVideo ? (
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+              ) : (
+                <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+              )}
+            </>
           )}
         </div>
 

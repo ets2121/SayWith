@@ -80,7 +80,16 @@ export default function Template27({ data }: Template27Props) {
   }, [userInteracted, playMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -127,10 +136,14 @@ export default function Template27({ data }: Template27Props) {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
       `}</style>
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20" muted loop autoPlay playsInline />
-      ) : (
-        <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20" loop playsInline />
+          ) : (
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20" />
+          )}
+        </>
       )}
       <audio ref={audioRef} src={audioUrl} />
       

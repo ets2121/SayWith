@@ -87,7 +87,16 @@ export default function Template35({ data }: Template35Props) {
   }, [userInteracted, playMedia, isPlaying, pauseMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -134,10 +143,14 @@ export default function Template35({ data }: Template35Props) {
         @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
       `}</style>
       
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" muted loop autoPlay playsInline />
-      ) : (
-        <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
+          ) : (
+            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+          )}
+        </>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/80" />
       <audio ref={audioRef} src={audioUrl} loop playsInline/>

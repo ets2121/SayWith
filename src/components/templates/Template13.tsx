@@ -11,6 +11,7 @@ interface Template13Props {
     audioUrl: string;
     srtContent: string;
     name: string;
+    mute?: boolean;
   };
 }
 
@@ -49,7 +50,7 @@ const parseSrt = (srtText: string): SrtLine[] => {
 };
 
 export default function Template13({ data }: Template13Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -91,6 +92,19 @@ export default function Template13({ data }: Template13Props) {
       playMedia();
     }
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
+  }, [mute]);
 
   useEffect(() => {
     if (srtContent) {
@@ -140,10 +154,14 @@ export default function Template13({ data }: Template13Props) {
       <div className="w-full max-w-4xl h-full md:h-auto md:max-h-[600px] flex flex-col md:flex-row items-center gap-8">
         {/* Media Player */}
         <div className="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden rounded-lg shadow-xl">
-          {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-          ) : (
-            <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+          {mediaUrl && (
+            <>
+              {isVideo ? (
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+              ) : (
+                <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+              )}
+            </>
           )}
            <div 
                 className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300"

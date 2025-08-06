@@ -87,7 +87,16 @@ export default function Template31({ data }: Template31Props) {
   }, [userInteracted, playMedia, isPlaying, pauseMedia]);
   
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -134,10 +143,14 @@ export default function Template31({ data }: Template31Props) {
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
       `}</style>
       
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" muted loop autoPlay playsInline />
-      ) : (
-        <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
+          ) : (
+            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+          )}
+        </>
       )}
       <div className="absolute inset-0 bg-black/20" />
       <audio ref={audioRef} src={audioUrl} loop playsInline/>
@@ -155,7 +168,7 @@ export default function Template31({ data }: Template31Props) {
             </div>
             <div className="flex items-center gap-2 mt-2">
                 <div className="w-8 h-8 rounded-full overflow-hidden">
-                    <Image src={mediaUrl} alt="avatar" width={32} height={32} className="w-full h-full object-cover"/>
+                    {mediaUrl && <Image src={mediaUrl} alt="avatar" width={32} height={32} className="w-full h-full object-cover"/>}
                 </div>
                 <p className="text-sm font-bold">{name}</p>
                 <p className="text-sm text-white/70">Saywith</p>

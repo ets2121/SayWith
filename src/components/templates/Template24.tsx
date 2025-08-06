@@ -90,7 +90,16 @@ export default function Template24({ data }: Template24Props) {
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -172,10 +181,14 @@ export default function Template24({ data }: Template24Props) {
               className="relative w-[280px] h-[280px] rounded-full overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.4),_inset_0_0_20px_rgba(0,0,0,0.5)]"
               onClick={handlePlayPause}
               >
-              {isVideo ? (
-                  <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-              ) : (
-                  <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+              {mediaUrl && (
+                <>
+                  {isVideo ? (
+                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                  ) : (
+                      <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+                  )}
+                </>
               )}
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
                   {isPlaying ? <Pause size={60} /> : <Play size={60} className="ml-2" />}

@@ -88,7 +88,16 @@ export default function Template37({ data }: Template37Props) {
   }, [userInteracted, playMedia, isPlaying, pauseMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -129,10 +138,14 @@ export default function Template37({ data }: Template37Props) {
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
     >
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg" muted loop autoPlay playsInline />
-      ) : (
-        <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-lg" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg" loop playsInline />
+          ) : (
+            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-lg" />
+          )}
+        </>
       )}
        <div className="absolute inset-0 bg-black/50"/>
       <audio ref={audioRef} src={audioUrl} loop playsInline/>
@@ -140,11 +153,15 @@ export default function Template37({ data }: Template37Props) {
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-4 animate-fade-in-up">
         <div className="w-full bg-gradient-to-br from-gray-800/80 to-gray-900/70 backdrop-blur-lg rounded-lg p-3 flex items-center gap-3 border border-white/10 shadow-lg">
             <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
-                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-                ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={64} height={64} className="w-full h-full object-cover" />
-                )}
+                 {mediaUrl && (
+                   <>
+                     {isVideo ? (
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                    ) : (
+                        <Image src={mediaUrl} alt="Album Art" width={64} height={64} className="w-full h-full object-cover" />
+                    )}
+                   </>
+                 )}
             </div>
             <div className="flex-grow overflow-hidden">
                 <p className="text-sm font-bold truncate text-white">{name}</p>

@@ -106,13 +106,17 @@ export default function Template15({ data }: Template15Props) {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-    
-    if (videoRef.current) {
-      videoRef.current.muted = mute ?? true;
-      videoRef.current.loop = true;
-      videoRef.current.autoplay = true;
+    const video = videoRef.current;
+
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
+    if (!audio) return;
 
     const timeUpdateHandler = () => {
       const currentTime = audio.currentTime;
@@ -156,10 +160,14 @@ export default function Template15({ data }: Template15Props) {
             style={{ clipPath: 'url(#heart-clip)' }}
             onClick={handlePlayPause}
         >
-          {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-          ) : (
-            <img src={mediaUrl} alt="Heart" className="w-full h-full object-cover" />
+          {mediaUrl && (
+            <>
+              {isVideo ? (
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+              ) : (
+                <img src={mediaUrl} alt="Heart" className="w-full h-full object-cover" />
+              )}
+            </>
           )}
           <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <Heart size={64} className={`transition-all duration-300 ${isPlaying ? 'fill-white text-white' : 'text-white'}`} />

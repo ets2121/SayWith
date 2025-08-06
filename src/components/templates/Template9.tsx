@@ -59,7 +59,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template9({ data }: Template9Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -119,6 +119,19 @@ export default function Template9({ data }: Template9Props) {
       setProgress(value[0]);
     }
   }
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
+  }, [mute]);
 
   useEffect(() => {
     if (srtContent) {
@@ -195,10 +208,14 @@ export default function Template9({ data }: Template9Props) {
             </div>
             
             <div className="w-10/12 aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
-                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-                ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={350} height={438} className="w-full h-full object-cover" />
+                {mediaUrl && (
+                  <>
+                    {isVideo ? (
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                    ) : (
+                        <Image src={mediaUrl} alt="Album Art" width={350} height={438} className="w-full h-full object-cover" />
+                    )}
+                  </>
                 )}
             </div>
 

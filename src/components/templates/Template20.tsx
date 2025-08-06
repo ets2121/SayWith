@@ -59,7 +59,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template20({ data }: Template20Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -119,6 +119,19 @@ export default function Template20({ data }: Template20Props) {
       setProgress(value[0]);
     }
   }
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
+  }, [mute]);
 
   useEffect(() => {
     if (srtContent) {
@@ -199,20 +212,28 @@ export default function Template20({ data }: Template20Props) {
            --tw-ring-color: #06b6d4;
         }
       `}</style>
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" muted loop autoPlay playsInline />
-      ) : (
-        <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" loop playsInline />
+          ) : (
+            <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
+          )}
+        </>
       )}
       
       <audio ref={audioRef} src={audioUrl} loop playsInline />
       
       <div className="relative w-full max-w-md h-full flex flex-col items-center justify-center py-8">
         <div className={`w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl ${neonShadow}`}>
-            {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-            ) : (
-                <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
+            {mediaUrl && (
+              <>
+                {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                ) : (
+                    <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
+                )}
+              </>
             )}
         </div>
 

@@ -128,11 +128,14 @@ export default function Template4({ data }: Template4Props) {
 
   useEffect(() => {
     const video = videoRef.current;
+    const audio = audioRef.current;
     if(video) {
-        video.muted = mute ?? true;
         video.loop = true;
         video.playsInline = true;
-        video.autoplay = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
   }, [mute]);
 
@@ -192,10 +195,14 @@ export default function Template4({ data }: Template4Props) {
             <div className="text-xl font-light text-black w-full text-center">{name}</div>
             
             <div className="mt-4 w-full aspect-[350/300] max-h-[300px] rounded-lg overflow-hidden">
-                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" muted loop autoPlay playsInline />
-                ) : (
-                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-contain" />
+                {mediaUrl && (
+                  <>
+                    {isVideo ? (
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
+                    ) : (
+                        <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-contain" />
+                    )}
+                  </>
                 )}
             </div>
 

@@ -12,6 +12,7 @@ interface Template12Props {
     audioUrl: string;
     srtContent: string;
     name: string;
+    mute?: boolean;
   };
 }
 
@@ -57,7 +58,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template12({ data }: Template12Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -119,6 +120,19 @@ export default function Template12({ data }: Template12Props) {
   }
 
   useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
+  }, [mute]);
+
+  useEffect(() => {
     if (srtContent) {
       setSubtitles(parseSrt(srtContent));
     }
@@ -169,10 +183,14 @@ export default function Template12({ data }: Template12Props) {
         
         <div className="relative w-full max-w-xs flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-2xl">
           <div className="w-full aspect-square rounded-lg overflow-hidden shadow-lg">
-              {isVideo ? (
-                  <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-              ) : (
-                  <Image src={mediaUrl} alt="Album Art" width={300} height={300} className="w-full h-full object-cover" />
+              {mediaUrl && (
+                <>
+                  {isVideo ? (
+                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                  ) : (
+                      <Image src={mediaUrl} alt="Album Art" width={300} height={300} className="w-full h-full object-cover" />
+                  )}
+                </>
               )}
           </div>
 

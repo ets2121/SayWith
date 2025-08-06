@@ -59,7 +59,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template21({ data }: Template21Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -119,6 +119,19 @@ export default function Template21({ data }: Template21Props) {
       setProgress(value[0]);
     }
   }
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
+  }, [mute]);
 
   useEffect(() => {
     if (srtContent) {
@@ -182,20 +195,28 @@ export default function Template21({ data }: Template21Props) {
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans bg-gray-100 overflow-hidden"
       onClick={handleInitialInteraction}
     >
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-30" muted loop autoPlay playsInline />
-      ) : (
-        <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-30" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-30" loop playsInline />
+          ) : (
+            <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-30" />
+          )}
+        </>
       )}
       
       <audio ref={audioRef} src={audioUrl} loop playsInline />
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-6">
         <div className="w-full aspect-square max-w-[320px] rounded-lg overflow-hidden shadow-lg">
-            {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-            ) : (
-                <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
+            {mediaUrl && (
+              <>
+                {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                ) : (
+                    <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
+                )}
+              </>
             )}
         </div>
 

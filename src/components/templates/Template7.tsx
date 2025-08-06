@@ -128,11 +128,14 @@ export default function Template7({ data }: Template7Props) {
 
   useEffect(() => {
     const video = videoRef.current;
+    const audio = audioRef.current;
     if(video) {
-        video.muted = mute ?? true;
         video.loop = true;
         video.playsInline = true;
-        video.autoplay = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
   }, [mute]);
 
@@ -192,10 +195,14 @@ export default function Template7({ data }: Template7Props) {
             <div className="text-lg font-thin text-slate-800 w-full text-center">{name}</div>
             
             <div className="mt-4 w-full aspect-square max-h-[350px] rounded-lg overflow-hidden">
-                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" muted loop autoPlay playsInline />
-                ) : (
-                    <Image src={mediaUrl} alt="background" width={350} height={350} className="w-full h-full object-contain" />
+                {mediaUrl && (
+                  <>
+                    {isVideo ? (
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
+                    ) : (
+                        <Image src={mediaUrl} alt="background" width={350} height={350} className="w-full h-full object-contain" />
+                    )}
+                  </>
                 )}
             </div>
 

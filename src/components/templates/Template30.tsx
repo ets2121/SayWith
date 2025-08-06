@@ -79,7 +79,16 @@ export default function Template30({ data }: Template30Props) {
   }, [userInteracted, playMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -137,11 +146,15 @@ export default function Template30({ data }: Template30Props) {
       
       <div className="relative w-full max-w-lg flex flex-col items-center justify-center space-y-6 z-10 text-center">
         <div className="w-full max-w-sm aspect-video bg-black border-4 border-gray-700 rounded-md p-2 shadow-2xl">
-           {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-            ) : (
-                <Image src={mediaUrl} alt="media" width={400} height={225} className="w-full h-full object-cover" />
-            )}
+           {mediaUrl && (
+             <>
+               {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                ) : (
+                    <Image src={mediaUrl} alt="media" width={400} height={225} className="w-full h-full object-cover" />
+                )}
+             </>
+           )}
         </div>
         <div className="min-h-[80px]">
             {currentSubtitle.split('\n').map((line, index) => (

@@ -106,13 +106,16 @@ export default function Template16({ data }: Template16Props) {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-    
-    if (videoRef.current) {
-        videoRef.current.muted = mute ?? false;
-        videoRef.current.loop = true;
-        videoRef.current.autoplay = true;
+    const video = videoRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
+    if (!audio) return;
 
     const timeUpdateHandler = () => {
       const currentTime = audio.currentTime;
@@ -151,10 +154,14 @@ export default function Template16({ data }: Template16Props) {
         {/* Media Container */}
         <div className="w-full md:w-1/2 p-2 border-4 border-white rounded-md shadow-lg">
             <div className="relative w-full aspect-square">
-                {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded" muted loop autoPlay playsInline />
-                ) : (
-                <Image src={mediaUrl} alt="Romantic Memory" layout="fill" className="w-full h-full object-cover rounded" />
+                {mediaUrl && (
+                  <>
+                    {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded" loop playsInline />
+                    ) : (
+                    <Image src={mediaUrl} alt="Romantic Memory" layout="fill" className="w-full h-full object-cover rounded" />
+                    )}
+                  </>
                 )}
                 <div 
                     className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"

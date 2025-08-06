@@ -78,7 +78,16 @@ export default function Template28({ data }: Template28Props) {
   }, [userInteracted, playMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -133,10 +142,14 @@ export default function Template28({ data }: Template28Props) {
             100% { background-position: 20% 20%; }
         }
         `}</style>
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter grayscale" muted loop autoPlay playsInline />
-      ) : (
-        <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter grayscale" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter grayscale" loop playsInline />
+          ) : (
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter grayscale" />
+          )}
+        </>
       )}
       <div className="absolute inset-0 bg-black/50 rain-effect" />
       <audio ref={audioRef} src={audioUrl} />

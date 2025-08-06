@@ -106,13 +106,17 @@ export default function Template14({ data }: Template14Props) {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-    
-    if (videoRef.current) {
-        videoRef.current.muted = mute ?? false;
-        videoRef.current.loop = true;
-        videoRef.current.autoplay = true;
+    const video = videoRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
+
+    if (!audio) return;
 
     const timeUpdateHandler = () => {
       const currentTime = audio.currentTime;
@@ -150,10 +154,14 @@ export default function Template14({ data }: Template14Props) {
         {/* Polaroid container */}
         <div className="bg-white p-4 pb-16 rounded-sm shadow-xl transform -rotate-3">
           <div className="relative w-[300px] h-[300px] bg-gray-200">
-            {isVideo ? (
-              <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-            ) : (
-              <Image src={mediaUrl} alt="Polaroid" layout="fill" className="w-full h-full object-cover" />
+            {mediaUrl && (
+              <>
+                {isVideo ? (
+                  <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                ) : (
+                  <Image src={mediaUrl} alt="Polaroid" layout="fill" className="w-full h-full object-cover" />
+                )}
+              </>
             )}
              <div 
                 className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"

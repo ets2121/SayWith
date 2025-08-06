@@ -130,11 +130,14 @@ export default function Template1({ data }: Template1Props) {
 
   useEffect(() => {
     const video = videoRef.current;
+    const audio = audioRef.current;
     if(video) {
-        video.muted = mute ?? false;
         video.loop = true;
-        video.autoplay = true;
         video.playsInline = true;
+        video.muted = mute ?? false;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
   }, [mute]);
 
@@ -178,19 +181,23 @@ export default function Template1({ data }: Template1Props) {
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans" onClick={handleInitialInteraction}>
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10" />
-      {isVideo ? (
-        <video
-          ref={videoRef}
-          src={mediaUrl}
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      ) : (
-        <img
-          src={mediaUrl}
-          alt="background"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video
+              ref={videoRef}
+              src={mediaUrl}
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <img
+              src={mediaUrl}
+              alt="background"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+        </>
       )}
       <audio ref={audioRef} src={audioUrl} loop />
 

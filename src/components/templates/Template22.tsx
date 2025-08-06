@@ -127,8 +127,15 @@ export default function Template22({ data }: Template22Props) {
   }
 
   useEffect(() => {
-    if (videoRef.current) {
-        videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
   }, [mute]);
 
@@ -197,10 +204,14 @@ export default function Template22({ data }: Template22Props) {
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-5">
         <div className="w-full aspect-square max-w-[340px] rounded-lg overflow-hidden shadow-2xl">
-            {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-            ) : (
-                <Image src={mediaUrl} alt="Album Art" width={340} height={340} className="w-full h-full object-cover" />
+            {mediaUrl && (
+              <>
+                {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                ) : (
+                    <Image src={mediaUrl} alt="Album Art" width={340} height={340} className="w-full h-full object-cover" />
+                )}
+              </>
             )}
         </div>
 

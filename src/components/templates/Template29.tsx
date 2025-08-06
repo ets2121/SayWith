@@ -79,7 +79,16 @@ export default function Template29({ data }: Template29Props) {
   }, [userInteracted, playMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -124,11 +133,15 @@ export default function Template29({ data }: Template29Props) {
       
       <div className="relative w-full max-w-4xl flex flex-col md:flex-row items-center justify-center gap-8 z-10">
         <div className="w-full md:w-1/2 aspect-video max-w-md">
-           {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl" muted loop autoPlay playsInline />
-            ) : (
-                <Image src={mediaUrl} alt="background" width={600} height={400} className="w-full h-full object-cover rounded-lg shadow-2xl" />
-            )}
+           {mediaUrl && (
+             <>
+               {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl" loop playsInline />
+                ) : (
+                    <Image src={mediaUrl} alt="background" width={600} height={400} className="w-full h-full object-cover rounded-lg shadow-2xl" />
+                )}
+             </>
+           )}
         </div>
         <div className="w-full md:w-1/2 text-center md:text-left">
             <h2 className="text-lg font-semibold tracking-widest uppercase text-white/80">{name}</h2>

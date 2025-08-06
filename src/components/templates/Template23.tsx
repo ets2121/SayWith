@@ -110,8 +110,15 @@ export default function Template23({ data }: Template23Props) {
   }
 
   useEffect(() => {
-    if (videoRef.current) {
-        videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
     }
   }, [mute]);
 
@@ -178,10 +185,14 @@ export default function Template23({ data }: Template23Props) {
             border: '1px solid rgba(0, 255, 255, 0.3)',
           }}
         >
-            {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md" muted loop autoPlay playsInline />
-            ) : (
-                <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover rounded-md" />
+            {mediaUrl && (
+              <>
+                {isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md" loop playsInline />
+                ) : (
+                    <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover rounded-md" />
+                )}
+              </>
             )}
         </div>
 

@@ -80,7 +80,16 @@ export default function Template26({ data }: Template26Props) {
   }, [userInteracted, playMedia]);
 
   useEffect(() => {
-    if (videoRef.current) videoRef.current.muted = mute ?? true;
+    const video = videoRef.current;
+    const audio = audioRef.current;
+    if(video) {
+        video.loop = true;
+        video.playsInline = true;
+        video.muted = mute ?? true;
+        if(audio && !video.muted){
+            audio.muted = true;
+        }
+    }
   }, [mute]);
 
   useEffect(() => {
@@ -124,10 +133,14 @@ export default function Template26({ data }: Template26Props) {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap');
       `}</style>
-      {isVideo ? (
-        <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" muted loop autoPlay playsInline />
-      ) : (
-        <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" />
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" loop playsInline />
+          ) : (
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" />
+          )}
+        </>
       )}
       <audio ref={audioRef} src={audioUrl} />
       
