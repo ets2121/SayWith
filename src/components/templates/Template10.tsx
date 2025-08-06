@@ -138,9 +138,9 @@ export default function Template10({ data }: Template10Props) {
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-  }, [mute]);
+  }, [mute, useVideoAsAudioSource]);
 
   useEffect(() => {
     if (srtContent) {

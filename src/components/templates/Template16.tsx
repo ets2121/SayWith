@@ -59,27 +59,35 @@ export default function Template16({ data }: Template16Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
+  const useVideoAsAudioSource = isVideo && mute === false;
 
   const playMedia = useCallback(() => {
     const audio = audioRef.current;
     const video = videoRef.current;
-    if (!audio) return;
-    const audioPromise = audio.play();
-    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+    let playPromise: Promise<void> | undefined;
+
+    if (useVideoAsAudioSource && video) {
+        playPromise = video.play();
+    } else {
+        if (video) video.play();
+        if (audio) playPromise = audio.play();
+    }
     
-    Promise.all([audioPromise, videoPromise]).then(() => {
-      setIsPlaying(true);
-    }).catch(error => {
-      console.error("Error playing media:", error);
-      setIsPlaying(false);
-    });
-  }, [isVideo]);
+    if(playPromise){
+        playPromise.then(() => {
+        setIsPlaying(true);
+        }).catch(error => {
+        console.error("Error playing media:", error);
+        setIsPlaying(false);
+        });
+    }
+  }, [useVideoAsAudioSource]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) audioRef.current.pause();
-    if (videoRef.current) videoRef.current.pause();
+    videoRef.current?.pause();
+    if (!useVideoAsAudioSource) audioRef.current?.pause();
     setIsPlaying(false);
-  }, []);
+  }, [useVideoAsAudioSource]);
 
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
@@ -105,41 +113,39 @@ export default function Template16({ data }: Template16Props) {
   }, [srtContent]);
 
   useEffect(() => {
-    const audio = audioRef.current;
     const video = videoRef.current;
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
-        if(audio && !video.muted){
-            audio.muted = true;
-        }
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-    if (!audio) return;
+    
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (!audioSource) return;
 
     const timeUpdateHandler = () => {
-      const currentTime = audio.currentTime;
+      const currentTime = audioSource.currentTime;
       const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
       setCurrentSubtitle(activeLine ? activeLine.text : '');
     };
 
     const handleAudioEnd = () => {
       setIsPlaying(false);
-      if (audio) { audio.currentTime = 0; }
-      if (videoRef.current) videoRef.current.currentTime = 0;
+      if (audioSource) { audioSource.currentTime = 0; }
+      if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
       playMedia();
     }
 
-    audio.addEventListener('timeupdate', timeUpdateHandler);
-    audio.addEventListener('ended', handleAudioEnd);
+    audioSource.addEventListener('timeupdate', timeUpdateHandler);
+    audioSource.addEventListener('ended', handleAudioEnd);
 
     return () => {
-      if (audio) {
-        audio.removeEventListener('timeupdate', timeUpdateHandler);
-        audio.removeEventListener('ended', handleAudioEnd);
+      if (audioSource) {
+        audioSource.removeEventListener('timeupdate', timeUpdateHandler);
+        audioSource.removeEventListener('ended', handleAudioEnd);
       }
     };
-  }, [subtitles, playMedia, mute]);
+  }, [subtitles, playMedia, mute, useVideoAsAudioSource]);
 
   return (
     <div 
@@ -147,7 +153,7 @@ export default function Template16({ data }: Template16Props) {
       style={{ fontFamily: "'Great Vibes', cursive" }}
       onClick={handleInitialInteraction}
     >
-      <audio ref={audioRef} src={audioUrl} loop playsInline />
+      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline />}
       
       <div className="w-full max-w-2xl bg-white/70 backdrop-blur-sm shadow-2xl rounded-lg flex flex-col md:flex-row items-center p-6">
         

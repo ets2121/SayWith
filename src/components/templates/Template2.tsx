@@ -141,9 +141,9 @@ export default function Template2({ data }: Template2Props) {
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-  }, [mute, userInteracted]);
+  }, [mute, userInteracted, useVideoAsAudioSource]);
 
 
   useEffect(() => {

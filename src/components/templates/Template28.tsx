@@ -59,17 +59,26 @@ export default function Template28({ data }: Template28Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
+  const useVideoAsAudioSource = isVideo && mute === false;
 
   const playMedia = useCallback(() => {
     const audio = audioRef.current;
     const video = videoRef.current;
-    if (!audio) return;
-    const audioPromise = audio.play();
-    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
-    Promise.all([audioPromise, videoPromise]).then(() => {
-      setIsPlaying(true);
-    }).catch(e => console.error(e));
-  }, [isVideo]);
+    let playPromise: Promise<void> | undefined;
+
+    if (useVideoAsAudioSource && video) {
+        playPromise = video.play();
+    } else {
+        if (video) video.play();
+        if (audio) playPromise = audio.play();
+    }
+
+    if(playPromise){
+        playPromise.then(() => {
+        setIsPlaying(true);
+        }).catch(e => console.error(e));
+    }
+  }, [useVideoAsAudioSource]);
 
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
@@ -79,47 +88,43 @@ export default function Template28({ data }: Template28Props) {
 
   useEffect(() => {
     const video = videoRef.current;
-    const audio = audioRef.current;
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
-        if(audio && !video.muted){
-            audio.muted = true;
-        }
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-  }, [mute]);
+  }, [mute, useVideoAsAudioSource]);
 
   useEffect(() => {
     if (srtContent) setSubtitles(parseSrt(srtContent));
   }, [srtContent]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (!audioSource) return;
 
     const onTimeUpdate = () => {
-      const currentTime = audio.currentTime;
+      const currentTime = audioSource.currentTime;
       const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
       setCurrentSubtitle(activeLine ? activeLine.text : '');
     };
 
     const onEnded = () => {
       setIsPlaying(false);
-      if (audio) audio.currentTime = 0;
-      if (videoRef.current) videoRef.current.currentTime = 0;
+      if (audioSource) audioSource.currentTime = 0;
+      if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
     }
     
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('ended', onEnded);
+    audioSource.addEventListener('timeupdate', onTimeUpdate);
+    audioSource.addEventListener('ended', onEnded);
 
     return () => {
-      if (audio) {
-        audio.removeEventListener('timeupdate', onTimeUpdate);
-        audio.removeEventListener('ended', onEnded);
+      if (audioSource) {
+        audioSource.removeEventListener('timeupdate', onTimeUpdate);
+        audioSource.removeEventListener('ended', onEnded);
       }
     };
-  }, [subtitles, playMedia]);
+  }, [subtitles, playMedia, useVideoAsAudioSource]);
 
   return (
     <div 
@@ -152,7 +157,7 @@ export default function Template28({ data }: Template28Props) {
         </>
       )}
       <div className="absolute inset-0 bg-black/50 rain-effect" />
-      <audio ref={audioRef} src={audioUrl} />
+      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} />}
       
       <div className="relative w-full max-w-2xl h-full flex flex-col items-center justify-center space-y-8 z-10 text-center">
 

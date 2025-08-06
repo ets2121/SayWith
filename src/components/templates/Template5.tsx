@@ -138,9 +138,9 @@ export default function Template5({ data }: Template5Props) {
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-  }, [mute]);
+  }, [mute, useVideoAsAudioSource]);
 
   useEffect(() => {
     const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;

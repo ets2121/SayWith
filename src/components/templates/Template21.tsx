@@ -72,21 +72,30 @@ export default function Template21({ data }: Template21Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  
+  const useVideoAsAudioSource = isVideo && mute === false;
+
   const playMedia = useCallback(() => {
     const audio = audioRef.current;
     const video = videoRef.current;
-    if (!audio) return;
-    const audioPromise = audio.play();
-    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
-    Promise.all([audioPromise, videoPromise]).then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
-  }, [isVideo]);
+    let playPromise: Promise<void> | undefined;
+
+    if (useVideoAsAudioSource && video) {
+        playPromise = video.play();
+    } else {
+        if (video) video.play();
+        if (audio) playPromise = audio.play();
+    }
+    
+    if(playPromise){
+        playPromise.then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
+    }
+  }, [useVideoAsAudioSource]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) audioRef.current.pause();
-    if (videoRef.current) videoRef.current.pause();
+    videoRef.current?.pause();
+    if (!useVideoAsAudioSource) audioRef.current?.pause();
     setIsPlaying(false);
-  }, []);
+  }, [useVideoAsAudioSource]);
   
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
@@ -106,32 +115,30 @@ export default function Template21({ data }: Template21Props) {
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
 
   const seek = (delta: number) => {
-    if (audioRef.current) {
-      const newTime = audioRef.current.currentTime + delta;
-      audioRef.current.currentTime = Math.max(0, Math.min(newTime, audioRef.current.duration || 0));
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (audioSource) {
+      const newTime = audioSource.currentTime + delta;
+      audioSource.currentTime = Math.max(0, Math.min(newTime, audioSource.duration || 0));
     }
   }
 
   const handleSeek = (value: number[]) => {
-    if (audioRef.current && audioRef.current.duration) {
-      const newTime = (value[0] / 100) * audioRef.current.duration;
-      audioRef.current.currentTime = newTime;
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (audioSource && audioSource.duration) {
+      const newTime = (value[0] / 100) * audioSource.duration;
+      audioSource.currentTime = newTime;
       setProgress(value[0]);
     }
   }
 
   useEffect(() => {
     const video = videoRef.current;
-    const audio = audioRef.current;
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
-        if(audio && !video.muted){
-            audio.muted = true;
-        }
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-  }, [mute]);
+  }, [mute, useVideoAsAudioSource]);
 
   useEffect(() => {
     if (srtContent) {
@@ -144,13 +151,13 @@ export default function Template21({ data }: Template21Props) {
   }, [srtContent]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (!audioSource) return;
 
-    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onLoadedMetadata = () => setDuration(audioSource.duration);
     const onTimeUpdate = () => {
-        const currentTime = audio.currentTime;
-        const duration = audio.duration;
+        const currentTime = audioSource.currentTime;
+        const duration = audioSource.duration;
         if (duration > 0) {
             setProgress((currentTime / duration) * 100);
             setCurrentTime(currentTime);
@@ -171,24 +178,25 @@ export default function Template21({ data }: Template21Props) {
         setIsPlaying(false);
         setProgress(0);
         setCurrentTime(0);
-        if (audio) {
-          audio.currentTime = 0;
+        if (audioSource) {
+          audioSource.currentTime = 0;
         }
+        if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
         playMedia(); // Loop
     }
     
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('loadedmetadata', onLoadedMetadata);
-    audio.addEventListener('ended', onEnded);
+    audioSource.addEventListener('timeupdate', onTimeUpdate);
+    audioSource.addEventListener('loadedmetadata', onLoadedMetadata);
+    audioSource.addEventListener('ended', onEnded);
 
     return () => {
-        if (audio) {
-          audio.removeEventListener('timeupdate', onTimeUpdate);
-          audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-          audio.removeEventListener('ended', onEnded);
+        if (audioSource) {
+          audioSource.removeEventListener('timeupdate', onTimeUpdate);
+          audioSource.removeEventListener('loadedmetadata', onLoadedMetadata);
+          audioSource.removeEventListener('ended', onEnded);
         }
     };
-  }, [subtitles, playMedia, srtContent, currentSubtitle]);
+  }, [subtitles, playMedia, srtContent, currentSubtitle, useVideoAsAudioSource]);
 
   return (
     <div 
@@ -205,7 +213,7 @@ export default function Template21({ data }: Template21Props) {
         </>
       )}
       
-      <audio ref={audioRef} src={audioUrl} loop playsInline />
+      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline />}
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-6">
         <div className="w-full aspect-square max-w-[320px] rounded-lg overflow-hidden shadow-lg">

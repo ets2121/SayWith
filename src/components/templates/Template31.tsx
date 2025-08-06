@@ -60,21 +60,30 @@ export default function Template31({ data }: Template31Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
+  const useVideoAsAudioSource = isVideo && mute === false;
 
   const playMedia = useCallback(() => {
     const audio = audioRef.current;
     const video = videoRef.current;
-    if (!audio) return;
-    const audioPromise = audio.play();
-    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
-    Promise.all([audioPromise, videoPromise]).then(() => setIsPlaying(true)).catch(e => console.error(e));
-  }, [isVideo]);
+    let playPromise: Promise<void> | undefined;
+
+    if (useVideoAsAudioSource && video) {
+        playPromise = video.play();
+    } else {
+        if (video) video.play();
+        if (audio) playPromise = audio.play();
+    }
+    
+    if(playPromise){
+        playPromise.then(() => setIsPlaying(true)).catch(e => console.error(e));
+    }
+  }, [useVideoAsAudioSource]);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) audioRef.current.pause();
-    if (videoRef.current) videoRef.current.pause();
+    videoRef.current?.pause();
+    if (!useVideoAsAudioSource) audioRef.current?.pause();
     setIsPlaying(false);
-  }, []);
+  }, [useVideoAsAudioSource]);
 
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) {
@@ -88,28 +97,24 @@ export default function Template31({ data }: Template31Props) {
   
   useEffect(() => {
     const video = videoRef.current;
-    const audio = audioRef.current;
     if(video) {
         video.loop = true;
         video.playsInline = true;
-        video.muted = mute ?? true;
-        if(audio && !video.muted){
-            audio.muted = true;
-        }
+        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
     }
-  }, [mute]);
+  }, [mute, useVideoAsAudioSource]);
 
   useEffect(() => {
     if (srtContent) setSubtitles(parseSrt(srtContent));
   }, [srtContent]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (!audioSource) return;
 
     const onTimeUpdate = () => {
-      const currentTime = audio.currentTime;
-      const duration = audio.duration;
+      const currentTime = audioSource.currentTime;
+      const duration = audioSource.duration;
       if (duration > 0) setProgress((currentTime / duration) * 100);
       const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
       setCurrentSubtitle(activeLine ? activeLine.text : '');
@@ -117,21 +122,21 @@ export default function Template31({ data }: Template31Props) {
 
     const onEnded = () => {
       setIsPlaying(false);
-      if (audio) audio.currentTime = 0;
-      if (videoRef.current) videoRef.current.currentTime = 0;
+      if (audioSource) audioSource.currentTime = 0;
+      if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
       playMedia();
     }
     
-    audio.addEventListener('timeupdate', onTimeUpdate);
-    audio.addEventListener('ended', onEnded);
+    audioSource.addEventListener('timeupdate', onTimeUpdate);
+    audioSource.addEventListener('ended', onEnded);
 
     return () => {
-      if (audio) {
-        audio.removeEventListener('timeupdate', onTimeUpdate);
-        audio.removeEventListener('ended', onEnded);
+      if (audioSource) {
+        audioSource.removeEventListener('timeupdate', onTimeUpdate);
+        audioSource.removeEventListener('ended', onEnded);
       }
     };
-  }, [subtitles, playMedia]);
+  }, [subtitles, playMedia, useVideoAsAudioSource]);
 
   return (
     <div 
@@ -153,7 +158,7 @@ export default function Template31({ data }: Template31Props) {
         </>
       )}
       <div className="absolute inset-0 bg-black/20" />
-      <audio ref={audioRef} src={audioUrl} loop playsInline/>
+      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline/>}
       
       {!isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
