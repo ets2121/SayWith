@@ -184,7 +184,7 @@ export default function Template9({ data }: Template9Props) {
             <div className="w-full text-center">
                 <p className="text-xs uppercase text-gray-400">Playing from your library</p>
                 <div className="mt-1 h-14 flex items-center justify-center">
-                  <p className="text-base font-normal text-gray-300">
+                  <p className="text-base font-normal text-white">
                     {currentSubtitle.split('\n').map((line, index) => <span key={index} className="block">{line}</span>)}
                   </p>
                 </div>
