@@ -118,7 +118,8 @@ export default function Template4({ data }: Template4Props) {
 
   const seek = (delta: number) => {
     if (audioRef.current) {
-        audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime + delta);
+        const newTime = audioRef.current.currentTime + delta;
+        audioRef.current.currentTime = Math.max(0, Math.min(newTime, audioRef.current.duration));
     }
   }
 
@@ -131,13 +132,14 @@ export default function Template4({ data }: Template4Props) {
         video.autoplay = true;
     }
     if (audioRef.current) {
+        // Mute audio initially until user interacts, to allow video autoplay with sound
         audioRef.current.muted = true;
     }
   }, [mute]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !srtContent && !subtitles.length) return;
+    if (!audio) return;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
@@ -185,7 +187,7 @@ export default function Template4({ data }: Template4Props) {
       onClick={handleInitialInteraction}
     >
         <div className="w-[400px] h-[600px] bg-transparent flex flex-col items-center">
-            <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" />
+            <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" loop />
 
             <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
             
@@ -200,13 +202,13 @@ export default function Template4({ data }: Template4Props) {
             <div className="mt-[30px] text-xl font-bold text-black w-full text-center h-16 flex items-center justify-center px-4">
                 <div className="h-full">
                   {currentSubtitle.split('\n').map((line, index) => (
-                      <p key={index}>{line}</p>
+                      <p key={index} className="text-xl">{line}</p>
                   ))}
                 </div>
             </div>
 
             <div className="mt-5 w-[120px]">
-                <div className="relative w-[120px] h-0.5 bg-white">
+                <div className="relative w-full h-0.5 bg-white">
                     <div 
                         className="absolute top-[-3px] w-2 h-2 rounded-full bg-white"
                         style={{ left: `${progress}%`}}
