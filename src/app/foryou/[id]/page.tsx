@@ -8,6 +8,7 @@ import { db } from '@/lib/firebase';
 import Template1 from '@/components/templates/Template1';
 import Template2 from '@/components/templates/Template2';
 import Template3 from '@/components/templates/Template3';
+import Template4 from '@/components/templates/Template4';
 
 // Define the type for your data structure
 interface SaywithData {
@@ -80,6 +81,14 @@ export default function ForYouPage() {
   }
 
   const renderTemplate = () => {
+    if (!data.mediaUrl || !data.audioUrl) {
+      return (
+        <div className="flex items-center justify-center h-screen bg-background">
+          <p className="text-red-500">Media or audio URL is missing.</p>
+        </div>
+      );
+    }
+      
     switch (data.template) {
       case 'template1':
         return <Template1 data={data} />;
@@ -87,6 +96,8 @@ export default function ForYouPage() {
         return <Template2 data={data} />;
       case 'template3':
         return <Template3 data={data} />;
+      case 'template4':
+        return <Template4 data={data} />;
       default:
         return (
           <div className="flex items-center justify-center h-screen bg-background">
