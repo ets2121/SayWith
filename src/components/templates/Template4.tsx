@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Rewind, FastForward, Pause, Play } from 'lucide-react';
+import { Pause, Play } from 'lucide-react';
 import Image from 'next/image';
 
 interface Template4Props {
@@ -50,26 +50,27 @@ const parseSrt = (srtText: string): SrtLine[] => {
 };
 
 export default function Template4({ data }: Template4Props) {
-  const { mediaUrl, audioUrl, srtContent, name } = data;
+  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
   const [userInteracted, setUserInteracted] = useState(false);
   const [progress, setProgress] = useState(0);
-
-  const audioRef = useRef<HTMLAudioElement>(null);
+  
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
   useEffect(() => {
     if (srtContent) {
-        try {
-            const parsedSubtitles = parseSrt(srtContent);
-            setSubtitles(parsedSubtitles);
-        } catch (error) {
-            console.error("Failed to parse SRT data", error);
-        }
+      try {
+        const parsedSubtitles = parseSrt(srtContent);
+        setSubtitles(parsedSubtitles);
+      } catch (error) {
+        console.error("Failed to parse SRT data", error);
+        setCurrentSubtitle("Could not load subtitles.");
+      }
     } else {
         setCurrentSubtitle("YOU ARE MY FAVORITE SONG");
     }
@@ -96,7 +97,7 @@ export default function Template4({ data }: Template4Props) {
     if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
   }, [isVideo]);
-
+  
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isPlaying) {
@@ -109,6 +110,9 @@ export default function Template4({ data }: Template4Props) {
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
     setUserInteracted(true);
+    if (audioRef.current) {
+        audioRef.current.muted = false;
+    }
     playMedia();
   }, [userInteracted, playMedia]);
 
@@ -118,75 +122,82 @@ export default function Template4({ data }: Template4Props) {
     }
   }
 
+
   useEffect(() => {
     const video = videoRef.current;
-    if (video) {
-        video.muted = true;
+    if(video) {
+        video.muted = mute ?? true;
         video.loop = true;
         video.playsInline = true;
-        video.play().catch(e => console.log("Video autoplay blocked"));
+        video.autoplay = true;
     }
-  }, [videoRef, isVideo]);
+    if (audioRef.current) {
+        audioRef.current.muted = true;
+    }
+  }, [mute]);
 
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !subtitles.length) return;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
         const duration = audio.duration;
-        
-        if(duration > 0) {
+
+        if (duration > 0) {
             setProgress((currentTime / duration) * 100);
         }
-        
-        if (srtContent) {
-            const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-            const newSubtitle = activeLine ? activeLine.text : '';
-             if (newSubtitle !== currentSubtitle) {
-              setCurrentSubtitle(newSubtitle);
-            }
-        }
+
+        const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
+        const newSubtitle = activeLine ? activeLine.text : '';
+
+        setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
     };
-    
+
     const handleAudioEnd = () => {
+        setCurrentSubtitle(srtContent ? '' : "YOU ARE MY FAVORITE SONG");
         setIsPlaying(false);
         setProgress(0);
-        if (audio) audio.currentTime = 0;
-        if (!srtContent) setCurrentSubtitle("YOU ARE MY FAVORITE SONG");
+        if (audio) {
+          audio.currentTime = 0;
+        }
+        if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+        }
+        playMedia();
     }
 
     audio.addEventListener('timeupdate', timeUpdateHandler);
     audio.addEventListener('ended', handleAudioEnd);
 
     return () => {
-      if (audio) {
-        audio.removeEventListener('timeupdate', timeUpdateHandler);
-        audio.removeEventListener('ended', handleAudioEnd);
-      }
+        if (audio) {
+          audio.removeEventListener('timeupdate', timeUpdateHandler);
+          audio.removeEventListener('ended', handleAudioEnd);
+        }
     };
-  }, [subtitles, srtContent, currentSubtitle]);
+  }, [subtitles, playMedia, srtContent]);
 
   return (
     <div 
-      className="w-full h-full bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center font-['Montserrat']"
+      className="w-full h-screen bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center font-['Montserrat']"
       onClick={handleInitialInteraction}
     >
-        <div className="w-[400px] h-[600px] bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center">
-            <audio ref={audioRef} src={audioUrl} />
+        <div className="w-[400px] h-[600px] bg-transparent flex flex-col items-center">
+            <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" />
 
             <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
             
             <div className="mt-10 w-[350px] h-[300px] rounded-lg overflow-hidden">
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline crossOrigin="anonymous" />
                 ) : (
-                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" />
+                    <Image src={mediaUrl} alt="background" width={350} height={300} className="w-full h-full object-cover" crossOrigin="anonymous" />
                 )}
             </div>
 
-            <div className="mt-[30px] text-3xl font-bold text-black w-full text-center h-16 flex items-center justify-center">
+            <div className="mt-[30px] text-2xl font-bold text-black w-full text-center h-16 flex items-center justify-center px-4">
                 <div className="h-full">
                   {currentSubtitle.split('\n').map((line, index) => (
                       <p key={index}>{line}</p>
@@ -196,21 +207,21 @@ export default function Template4({ data }: Template4Props) {
 
             <div className="mt-5 w-[120px]">
                 <div className="relative w-[120px] h-0.5">
-                    <div className="w-full h-full bg-black"></div>
+                    <div className="w-full h-full bg-white"></div>
                     <div 
-                        className="absolute top-[-3px] w-2 h-2 rounded-full bg-black"
+                        className="absolute top-[-3px] w-2 h-2 rounded-full bg-white"
                         style={{ left: `${progress}%`}}
                     ></div>
                 </div>
                 <div className="flex justify-center gap-5 mt-2.5">
                     <div className="h-10 flex items-center">
-                        <button onClick={(e) => { e.stopPropagation(); seek(-5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[20px] border-r-black" aria-label="Rewind"></button>
+                        <button onClick={(e) => { e.stopPropagation(); seek(-5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[20px] border-r-white" aria-label="Rewind"></button>
                     </div>
-                    <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-black flex justify-center items-center text-white" aria-label="Play/Pause">
+                    <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-white flex justify-center items-center text-black" aria-label="Play/Pause">
                         {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
                     </button>
                     <div className="h-10 flex items-center">
-                        <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-black" aria-label="Fast Forward"></button>
+                        <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-white" aria-label="Fast Forward"></button>
                     </div>
                 </div>
             </div>
