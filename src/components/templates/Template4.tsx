@@ -207,22 +207,22 @@ export default function Template4({ data }: Template4Props) {
             </div>
             
             <div className="mt-4 w-full max-w-[200px] flex-shrink-0">
-                <p className="text-xs text-white mb-2">you are my favorite song</p>
-                <div className="relative w-full h-0.5 bg-white">
+                <p className="text-xs text-black mb-2">you are my favorite song</p>
+                <div className="relative w-full h-0.5 bg-black">
                     <div 
-                        className="absolute top-[-3px] w-2 h-2 rounded-full bg-white"
+                        className="absolute top-[-3px] w-2 h-2 rounded-full bg-black"
                         style={{ left: `${progress}%`}}
                     ></div>
                 </div>
                 <div className="flex justify-center gap-5 mt-2.5">
                     <div className="h-10 flex items-center">
-                        <button onClick={(e) => { e.stopPropagation(); seek(-5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[20px] border-r-white" aria-label="Rewind"></button>
+                        <button onClick={(e) => { e.stopPropagation(); seek(-5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[20px] border-r-black" aria-label="Rewind"></button>
                     </div>
-                    <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-white flex justify-center items-center text-black" aria-label="Play/Pause">
+                    <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-black flex justify-center items-center text-white" aria-label="Play/Pause">
                         {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
                     </button>
                     <div className="h-10 flex items-center">
-                        <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-white" aria-label="Fast Forward"></button>
+                        <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-black" aria-label="Fast Forward"></button>
                     </div>
                 </div>
             </div>
