@@ -126,7 +126,9 @@ export default function Template4({ data }: Template4Props) {
         if (srtContent) {
             const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
             const newSubtitle = activeLine ? activeLine.text : (currentSubtitle || '');
-            setCurrentSubtitle(newSubtitle);
+            if (newSubtitle !== currentSubtitle) {
+              setCurrentSubtitle(newSubtitle);
+            }
         }
     };
     
@@ -141,14 +143,16 @@ export default function Template4({ data }: Template4Props) {
     audio.addEventListener('ended', handleAudioEnd);
 
     return () => {
+      if (audio) {
         audio.removeEventListener('timeupdate', timeUpdateHandler);
         audio.removeEventListener('ended', handleAudioEnd);
+      }
     };
   }, [subtitles, srtContent, currentSubtitle]);
 
   return (
     <div 
-      className="w-[400px] h-[600px] bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center font-['Montserrat']"
+      className="w-[400px] h-[600px] bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center"
       onClick={handleInitialInteraction}
       style={{ fontFamily: "'Montserrat', sans-serif" }}
     >
@@ -164,10 +168,12 @@ export default function Template4({ data }: Template4Props) {
             )}
         </div>
 
-        <div className="mt-[30px] text-3xl font-bold text-black w-full text-center h-16">
-            {currentSubtitle.split('\n').map((line, index) => (
-                <p key={index}>{line}</p>
-            ))}
+        <div className="mt-[30px] text-3xl font-bold text-black w-full text-center h-16 flex items-center justify-center">
+            <div className="h-full">
+              {currentSubtitle.split('\n').map((line, index) => (
+                  <p key={index}>{line}</p>
+              ))}
+            </div>
         </div>
 
         <div className="mt-5 w-[120px]">
