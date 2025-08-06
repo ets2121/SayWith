@@ -61,35 +61,41 @@ export default function Template6({ data }: Template6Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  
+  const useVideoAsAudioSource = isVideo && mute === false;
+
   const playMedia = useCallback(() => {
-    const audio = audioRef.current;
     const video = videoRef.current;
-    if (!audio) return;
+    const audio = audioRef.current;
+    let playPromise: Promise<void> | undefined;
+
+    if (useVideoAsAudioSource && video) {
+      playPromise = video.play();
+    } else {
+      if (video) video.play();
+      if (audio) playPromise = audio.play();
+    }
     
-    const audioPromise = audio.play();
-    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
-    
-    Promise.all([audioPromise, videoPromise]).then(() => {
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        setIsPlaying(true);
+      }).catch(error => {
+        console.error("Error playing media:", error);
+        setIsPlaying(false);
+      });
+    } else if (isVideo) {
       setIsPlaying(true);
-    }).catch(error => {
-      console.error("Error playing media:", error);
-      setIsPlaying(false);
-    });
-  }, [isVideo]);
+    }
+  }, [useVideoAsAudioSource, isVideo]);
 
   const pauseMedia = useCallback(() => {
-    audioRef.current?.pause();
-    if (isVideo) videoRef.current?.pause();
+    videoRef.current?.pause();
+    if (!useVideoAsAudioSource) audioRef.current?.pause();
     setIsPlaying(false);
-  }, [isVideo]);
+  }, [useVideoAsAudioSource]);
   
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
     setUserInteracted(true);
-    if(audioRef.current) {
-        audioRef.current.muted = false;
-    }
     playMedia();
   }, [userInteracted, playMedia]);
   
@@ -120,32 +126,29 @@ export default function Template6({ data }: Template6Props) {
   }, [srtContent]);
   
   const seek = (delta: number) => {
-    if (audioRef.current) {
-        const newTime = audioRef.current.currentTime + delta;
-        audioRef.current.currentTime = Math.max(0, Math.min(newTime, audioRef.current.duration || 0));
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (audioSource) {
+        const newTime = audioSource.currentTime + delta;
+        audioSource.currentTime = Math.max(0, Math.min(newTime, audioSource.duration || 0));
     }
   }
 
   useEffect(() => {
     const video = videoRef.current;
-    const audio = audioRef.current;
     if(video) {
         video.loop = true;
         video.playsInline = true;
         video.muted = mute ?? true;
-        if(audio && !video.muted){
-            audio.muted = true;
-        }
     }
   }, [mute]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (!audioSource) return;
 
     const timeUpdateHandler = () => {
-        const currentTime = audio.currentTime;
-        const duration = audio.duration;
+        const currentTime = audioSource.currentTime;
+        const duration = audioSource.duration;
         if (duration > 0) {
             setProgress((currentTime / duration) * 100);
         }
@@ -164,32 +167,32 @@ export default function Template6({ data }: Template6Props) {
         setCurrentSubtitle(srtContent ? '' : "YOU ARE MY FAVORITE SONG");
         setIsPlaying(false);
         setProgress(0);
-        if (audio) {
-          audio.currentTime = 0;
+        if (audioSource) {
+          audioSource.currentTime = 0;
         }
-        if (videoRef.current) {
+        if (videoRef.current && !useVideoAsAudioSource) {
           videoRef.current.currentTime = 0;
         }
         playMedia();
     }
     
-    audio.addEventListener('timeupdate', timeUpdateHandler);
-    audio.addEventListener('ended', handleAudioEnd);
+    audioSource.addEventListener('timeupdate', timeUpdateHandler);
+    audioSource.addEventListener('ended', handleAudioEnd);
 
     return () => {
-        if (audio) {
-          audio.removeEventListener('timeupdate', timeUpdateHandler);
-          audio.removeEventListener('ended', handleAudioEnd);
+        if (audioSource) {
+          audioSource.removeEventListener('timeupdate', timeUpdateHandler);
+          audioSource.removeEventListener('ended', handleAudioEnd);
         }
     };
-  }, [subtitles, playMedia, srtContent, currentSubtitle]);
+  }, [subtitles, playMedia, srtContent, currentSubtitle, useVideoAsAudioSource]);
 
   return (
     <div 
       className="w-full h-screen bg-gradient-to-b from-zinc-900 to-zinc-700 flex flex-col items-center justify-center p-4 font-body overflow-hidden"
       onClick={handleInitialInteraction}
     >
-        <audio ref={audioRef} src={audioUrl} loop playsInline muted />
+        {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline />}
         <div className="w-full max-w-sm h-full flex flex-col items-center justify-center">
 
             <div className="text-lg font-thin text-lime-400 w-full text-center">{name}</div>

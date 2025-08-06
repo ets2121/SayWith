@@ -60,6 +60,7 @@ export default function Template1({ data }: Template1Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
+  const useVideoAsAudioSource = isVideo && mute === false;
 
   useEffect(() => {
     if (srtContent) {
@@ -74,26 +75,35 @@ export default function Template1({ data }: Template1Props) {
   }, [srtContent]);
 
   const playMedia = useCallback(() => {
-    const audio = audioRef.current;
     const video = videoRef.current;
-    if (!audio) return;
+    const audio = audioRef.current;
 
-    const audioPromise = audio.play();
-    const videoPromise = isVideo && video ? video.play() : Promise.resolve();
+    let playPromise: Promise<void> | undefined;
 
-    Promise.all([audioPromise, videoPromise]).then(() => {
-      setIsPlaying(true);
-    }).catch(error => {
-      console.error("Error playing media:", error);
-      setIsPlaying(false);
-    });
-  }, [isVideo]);
+    if (useVideoAsAudioSource && video) {
+      playPromise = video.play();
+    } else {
+      if(video) video.play();
+      if(audio) playPromise = audio.play();
+    }
+
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            setIsPlaying(true);
+        }).catch(error => {
+            console.error("Error playing media:", error);
+            setIsPlaying(false);
+        });
+    } else if (isVideo) {
+        setIsPlaying(true);
+    }
+  }, [useVideoAsAudioSource, isVideo]);
 
   const pauseMedia = useCallback(() => {
-    audioRef.current?.pause();
-    if (isVideo) videoRef.current?.pause();
+    videoRef.current?.pause();
+    if(!useVideoAsAudioSource) audioRef.current?.pause();
     setIsPlaying(false);
-  }, [isVideo]);
+  }, [useVideoAsAudioSource]);
   
   const handlePlayPause = useCallback(() => {
     if (isPlaying) {
@@ -111,9 +121,6 @@ export default function Template1({ data }: Template1Props) {
 
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    
     const onVisChange = () => {
       if (document.hidden) {
         pauseMedia();
@@ -130,24 +137,19 @@ export default function Template1({ data }: Template1Props) {
 
   useEffect(() => {
     const video = videoRef.current;
-    const audio = audioRef.current;
     if(video) {
         video.loop = true;
         video.playsInline = true;
         video.muted = mute ?? false;
-        if(audio && !video.muted){
-            audio.muted = true;
-        }
     }
   }, [mute]);
 
-
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !subtitles.length) return;
+    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+    if (!audioSource || !subtitles.length) return;
 
     const timeUpdateHandler = () => {
-        const currentTime = audio.currentTime;
+        const currentTime = audioSource.currentTime;
         const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
         
         const newSubtitle = activeLine ? activeLine.text : '';
@@ -158,25 +160,25 @@ export default function Template1({ data }: Template1Props) {
     const handleAudioEnd = () => {
         setCurrentSubtitle('');
         setIsPlaying(false);
-        if (audio) {
-          audio.currentTime = 0;
+        if (audioSource) {
+          audioSource.currentTime = 0;
         }
-        if (videoRef.current) {
+        if (videoRef.current && !useVideoAsAudioSource) {
           videoRef.current.currentTime = 0;
         }
         playMedia();
     }
 
-    audio.addEventListener('timeupdate', timeUpdateHandler);
-    audio.addEventListener('ended', handleAudioEnd);
+    audioSource.addEventListener('timeupdate', timeUpdateHandler);
+    audioSource.addEventListener('ended', handleAudioEnd);
 
     return () => {
-        if (audio) {
-          audio.removeEventListener('timeupdate', timeUpdateHandler);
-          audio.removeEventListener('ended', handleAudioEnd);
+        if (audioSource) {
+          audioSource.removeEventListener('timeupdate', timeUpdateHandler);
+          audioSource.removeEventListener('ended', handleAudioEnd);
         }
     };
-  }, [subtitles, playMedia]);
+  }, [subtitles, playMedia, useVideoAsAudioSource]);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans" onClick={handleInitialInteraction}>
@@ -199,7 +201,7 @@ export default function Template1({ data }: Template1Props) {
           )}
         </>
       )}
-      <audio ref={audioRef} src={audioUrl} loop />
+      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop />}
 
       <div className="relative z-20 flex flex-col h-full text-white pointer-events-none">
         <header className="text-center pt-8 animate-fade-in-down">

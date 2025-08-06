@@ -68,15 +68,20 @@ export default function Template11({ data }: Template11Props) {
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const recordRef = useRef<HTMLDivElement>(null);
+  // Although this template is audio-focused, we check for video for consistency.
+  const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
+  const useVideoAsAudioSource = isVideo && mute === false;
 
   const playMedia = useCallback(() => {
-    if (!audioRef.current) return;
-    audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.play().then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
   }, []);
 
   const pauseMedia = useCallback(() => {
-    if (audioRef.current) {
-        audioRef.current.pause();
+    const audio = audioRef.current;
+    if (audio) {
+        audio.pause();
         setIsPlaying(false);
     }
   }, []);
@@ -99,17 +104,10 @@ export default function Template11({ data }: Template11Props) {
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
 
   const seek = (delta: number) => {
-    if (audioRef.current) {
-      const newTime = audioRef.current.currentTime + delta;
-      audioRef.current.currentTime = Math.max(0, Math.min(newTime, audioRef.current.duration || 0));
-    }
-  }
-
-  const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (audioRef.current && audioRef.current.duration) {
-      const newTime = (Number(event.target.value) / 100) * audioRef.current.duration;
-      audioRef.current.currentTime = newTime;
-      setProgress(Number(event.target.value));
+    const audio = audioRef.current;
+    if (audio) {
+      const newTime = audio.currentTime + delta;
+      audio.currentTime = Math.max(0, Math.min(newTime, audio.duration || 0));
     }
   }
 
@@ -125,14 +123,14 @@ export default function Template11({ data }: Template11Props) {
 
     const onLoadedMetadata = () => setDuration(audio.duration);
     const onTimeUpdate = () => {
-        const currentTime = audio.currentTime;
-        const duration = audio.duration;
-        if (duration > 0) {
-            setProgress((currentTime / duration) * 100);
-            setCurrentTime(currentTime);
+        const currentTimeValue = audio.currentTime;
+        const durationValue = audio.duration;
+        if (durationValue > 0) {
+            setProgress((currentTimeValue / durationValue) * 100);
+            setCurrentTime(currentTimeValue);
         }
 
-        const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
+        const activeLine = subtitles.find(line => currentTimeValue >= line.startTime && currentTimeValue < line.endTime);
         setCurrentSubtitle(activeLine ? activeLine.text : '');
     };
 
@@ -161,7 +159,7 @@ export default function Template11({ data }: Template11Props) {
       style={{ backgroundImage: 'url(https://www.transparenttextures.com/patterns/wood-pattern.png)' }}
       onClick={handleInitialInteraction}
     >
-      <audio ref={audioRef} src={audioUrl} loop playsInline />
+      {audioUrl && <audio ref={audioRef} src={audioUrl} loop playsInline />}
         
       <div className="relative w-full max-w-sm h-full flex flex-col items-center justify-center py-8">
         <div className="w-full aspect-square max-w-[300px] relative flex items-center justify-center">
