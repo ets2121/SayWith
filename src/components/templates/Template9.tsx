@@ -181,7 +181,11 @@ export default function Template9({ data }: Template9Props) {
 
             <div className="w-full text-center">
                 <p className="text-xs uppercase text-gray-400">Playing from your library</p>
-                <h2 className="text-lg font-bold mt-1">{currentSubtitle}</h2>
+                <div className="mt-1 h-14 flex items-center justify-center">
+                  <p className="text-base font-normal text-gray-300">
+                    {currentSubtitle.split('\n').map((line, index) => <span key={index} className="block">{line}</span>)}
+                  </p>
+                </div>
             </div>
             
             <div className="w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
@@ -227,5 +231,3 @@ export default function Template9({ data }: Template9Props) {
     </div>
   );
 }
-
-    
