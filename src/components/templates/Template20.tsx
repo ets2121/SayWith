@@ -175,15 +175,31 @@ export default function Template20({ data }: Template20Props) {
 
   const neonColor = 'text-cyan-400';
   const neonShadow = 'drop-shadow-[0_0_8px_rgba(0,255,255,0.7)]';
-  const neonSliderThumb = "bg-cyan-400 border-cyan-300";
-  const neonSliderTrack = "bg-cyan-400/30";
-  const neonSliderRange = "bg-cyan-400";
-
+  
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans text-white overflow-hidden bg-[#0a0a0a]"
       onClick={handleInitialInteraction}
     >
+      <style jsx global>{`
+        :root {
+          --slider-track: #083344;
+          --slider-range: #06b6d4;
+          --slider-thumb: #06b6d4;
+        }
+        .neon-slider .bg-secondary {
+          background-color: var(--slider-track);
+        }
+        .neon-slider .bg-primary {
+          background-color: var(--slider-range);
+        }
+        .neon-slider .border-primary {
+           border-color: var(--slider-thumb);
+        }
+        .neon-slider .ring-ring:focus-visible {
+           --tw-ring-color: var(--slider-thumb);
+        }
+      `}</style>
       {isVideo ? (
         <video src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" muted loop autoPlay playsInline />
       ) : (
@@ -216,12 +232,7 @@ export default function Template20({ data }: Template20Props) {
                 onValueChange={handleSeek}
                 max={100}
                 step={1}
-                className="w-full h-1.5"
-                classNames={{
-                    track: neonSliderTrack,
-                    range: neonSliderRange,
-                    thumb: neonSliderThumb
-                }}
+                className="w-full h-1.5 neon-slider"
             />
             <div className="flex justify-between text-xs text-gray-400 mt-2">
                 <span>{formatTime(currentTime)}</span>
