@@ -55,7 +55,6 @@ export default function Template39({ data }: Template39Props) {
   const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
   const [currentSubtitle, setCurrentSubtitle] = useState('');
   const [userInteracted, setUserInteracted] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -99,8 +98,6 @@ export default function Template39({ data }: Template39Props) {
 
     const onTimeUpdate = () => {
       const currentTime = audio.currentTime;
-      const duration = audio.duration;
-      if (duration > 0) setProgress((currentTime / duration) * 100);
       const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
       setCurrentSubtitle(activeLine ? activeLine.text : '');
     };
@@ -125,40 +122,38 @@ export default function Template39({ data }: Template39Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
+      className="w-full h-screen relative flex flex-col items-center justify-end p-8 bg-black text-white overflow-hidden"
+      onClick={handleInitialInteraction}
     >
       {isVideo ? (
         <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" muted loop autoPlay playsInline />
       ) : (
         <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
       )}
-       <div className="absolute inset-0 bg-black/60"/>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20"/>
       <audio ref={audioRef} src={audioUrl} loop playsInline/>
       
-      <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-4 animate-fade-in-up">
+      <div className="relative w-full flex flex-col items-center justify-center space-y-6 z-10">
         <div className="w-full text-center min-h-[120px] flex flex-col justify-center">
-            {subtitles.map((line, index) => (
-                <p key={index} className={`text-2xl font-bold drop-shadow-md transition-all duration-300 ${line.text === currentSubtitle ? 'text-yellow-400 scale-110' : 'text-white/70 scale-100'}`}>
-                    {line.text}
-                </p>
+            {currentSubtitle.split('\n').map((line, index) => (
+              <p key={index} className="text-3xl font-bold drop-shadow-lg leading-tight animate-fade-in-up">
+                  {line}
+              </p>
             ))}
         </div>
-        <div className="w-full bg-black/30 backdrop-blur-md rounded-lg p-3 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+        <div className="w-full max-w-sm bg-black/40 backdrop-blur-md rounded-full p-2 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                  {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={48} height={48} className="w-full h-full object-cover" />
+                    <Image src={mediaUrl} alt="Album Art" width={40} height={40} className="w-full h-full object-cover" />
                 )}
             </div>
-            <div className="flex-grow overflow-hidden">
+            <div className="flex-grow overflow-hidden pr-2">
                 <p className="text-sm font-bold truncate">{name}</p>
-                <div className="w-full h-1 bg-white/30 rounded-full mt-2 overflow-hidden">
-                    <div className="h-full bg-yellow-400" style={{ width: `${progress}%` }}></div>
-                </div>
             </div>
-            <button onClick={handleInitialInteraction} className="flex-shrink-0">
-                {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+            <button onClick={handleInitialInteraction} className="flex-shrink-0 bg-white/20 rounded-full p-2">
+                {isPlaying ? <Pause size={16} /> : <Play size={16} />}
             </button>
         </div>
       </div>
