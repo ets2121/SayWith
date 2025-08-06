@@ -62,20 +62,11 @@ export default function Template4({ data }: Template4Props) {
 
   const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
 
-  useEffect(() => {
-    if (srtContent) {
-      try {
-        const parsedSubtitles = parseSrt(srtContent);
-        setSubtitles(parsedSubtitles);
-        setCurrentSubtitle(''); 
-      } catch (error) {
-        console.error("Failed to parse SRT data", error);
-        setCurrentSubtitle("Could not load subtitles.");
-      }
-    } else {
-        setCurrentSubtitle("YOU ARE MY FAVORITE SONG");
-    }
-  }, [srtContent]);
+  const handleInitialInteraction = useCallback(() => {
+    if (userInteracted) return;
+    setUserInteracted(true);
+    playMedia();
+  }, [userInteracted]);
 
   const playMedia = useCallback(() => {
     if (!audioRef.current) return;
@@ -98,15 +89,6 @@ export default function Template4({ data }: Template4Props) {
     if (isVideo) videoRef.current?.pause();
     setIsPlaying(false);
   }, [isVideo]);
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    if (audioRef.current) {
-        audioRef.current.muted = false;
-    }
-    playMedia();
-  }, [userInteracted, playMedia]);
   
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -119,7 +101,21 @@ export default function Template4({ data }: Template4Props) {
     }
   }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
 
-
+  useEffect(() => {
+    if (srtContent) {
+      try {
+        const parsedSubtitles = parseSrt(srtContent);
+        setSubtitles(parsedSubtitles);
+        setCurrentSubtitle(''); 
+      } catch (error) {
+        console.error("Failed to parse SRT data", error);
+        setCurrentSubtitle("Could not load subtitles.");
+      }
+    } else {
+        setCurrentSubtitle("YOU ARE MY FAVORITE SONG");
+    }
+  }, [srtContent]);
+  
   const seek = (delta: number) => {
     if (audioRef.current) {
         const newTime = audioRef.current.currentTime + delta;
