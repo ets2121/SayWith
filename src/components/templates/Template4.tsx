@@ -67,6 +67,7 @@ export default function Template4({ data }: Template4Props) {
       try {
         const parsedSubtitles = parseSrt(srtContent);
         setSubtitles(parsedSubtitles);
+        setCurrentSubtitle(''); 
       } catch (error) {
         console.error("Failed to parse SRT data", error);
         setCurrentSubtitle("Could not load subtitles.");
@@ -100,16 +101,21 @@ export default function Template4({ data }: Template4Props) {
   
   const handlePlayPause = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isPlaying) {
+    if (!userInteracted) {
+        handleInitialInteraction();
+    } else if (isPlaying) {
       pauseMedia();
     } else {
       playMedia();
     }
-  }, [isPlaying, playMedia, pauseMedia]);
+  }, [isPlaying, playMedia, pauseMedia, userInteracted]);
 
   const handleInitialInteraction = useCallback(() => {
     if (userInteracted) return;
     setUserInteracted(true);
+    if (audioRef.current) {
+        audioRef.current.muted = false;
+    }
     playMedia();
   }, [userInteracted, playMedia]);
 
@@ -133,6 +139,7 @@ export default function Template4({ data }: Template4Props) {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+     audio.muted = !userInteracted;
 
     const timeUpdateHandler = () => {
         const currentTime = audio.currentTime;
@@ -171,19 +178,19 @@ export default function Template4({ data }: Template4Props) {
           audio.removeEventListener('ended', handleAudioEnd);
         }
     };
-  }, [subtitles, playMedia, srtContent]);
+  }, [subtitles, playMedia, srtContent, userInteracted]);
 
   return (
     <div 
-      className="w-full h-screen bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center font-['Montserrat']"
+      className="w-full h-screen bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center p-4 font-body"
       onClick={handleInitialInteraction}
     >
-        <div className="w-[400px] h-[600px] bg-transparent flex flex-col items-center">
-            <audio ref={audioRef} src={audioUrl} loop />
+        <div className="w-full max-w-sm h-full flex flex-col items-center justify-center">
+            <audio ref={audioRef} src={audioUrl} loop playsInline />
 
-            <div className="mt-5 text-2xl font-bold text-black w-full text-center">{name}</div>
+            <div className="text-xl font-normal text-black w-full text-center">{name}</div>
             
-            <div className="mt-10 w-[350px] h-[300px] rounded-lg overflow-hidden">
+            <div className="mt-4 w-full aspect-[350/300] max-h-[300px] rounded-lg overflow-hidden">
                 {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                 ) : (
@@ -191,15 +198,16 @@ export default function Template4({ data }: Template4Props) {
                 )}
             </div>
 
-            <div className="mt-[30px] text-xl font-bold text-black w-full text-center h-16 flex items-center justify-center px-4">
+            <div className="mt-6 text-base font-normal text-black w-full text-center h-12 flex items-center justify-center px-4">
                 <div className="h-full">
                   {currentSubtitle.split('\n').map((line, index) => (
-                      <p key={index} className="text-xl">{line}</p>
+                      <p key={index}>{line}</p>
                   ))}
                 </div>
             </div>
-
-            <div className="mt-5 w-[120px]">
+            
+            <div className="mt-4 w-full max-w-[200px] flex-shrink-0">
+                <p className="text-xs text-black mb-2">you are my favorite song</p>
                 <div className="relative w-full h-0.5 bg-white">
                     <div 
                         className="absolute top-[-3px] w-2 h-2 rounded-full bg-white"
@@ -222,5 +230,3 @@ export default function Template4({ data }: Template4Props) {
     </div>
   );
 }
-
-    
