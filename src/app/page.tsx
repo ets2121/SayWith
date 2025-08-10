@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useEffect, useRef, type SVGProps } from "react";
+import React, { useEffect, useRef, type SVGProps } from "react";
 import Image from "next/image";
 import { 
   PenTool,
@@ -14,6 +15,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem 
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import qrcodes from "../../../public/qrcodes.json";
+import templates from "../../../public/templates.json";
 
 const socialLinks = {
   facebook: "https://facebook.com",
@@ -91,6 +100,16 @@ const testimonials = [
     name: "Samantha B.",
     title: "Student",
   },
+  {
+    quote: "Finally, a tool that makes my content look professional without the hassle.",
+    name: "Casey L.",
+    title: "Small Business Owner",
+  },
+  {
+    quote: "The QR code feature is brilliant for events!",
+    name: "Morgan T.",
+    title: "Event Planner",
+  }
 ];
 
 const useFadeInSection = () => {
@@ -112,6 +131,7 @@ const useFadeInSection = () => {
     }
     return () => {
       if (ref.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(ref.current);
       }
     };
@@ -130,6 +150,10 @@ const Section = ({ children, className, ...props }: React.HTMLAttributes<HTMLEle
 
 
 export default function SayWithLandingPage() {
+  const carouselPlugin = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: true })
+  );
+
   return (
     <div className="bg-background text-foreground antialiased">
       {/* Header */}
@@ -198,6 +222,81 @@ export default function SayWithLandingPage() {
           </div>
         </Section>
         
+        {/* QR Codes Section */}
+        <Section id="qrcodes" className="py-20 bg-background">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold">Share with a Scan</h2>
+            <p className="mt-2 max-w-2xl mx-auto text-muted-foreground">
+              Generate stylish QR codes that match your brand and message.
+            </p>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[carouselPlugin.current]}
+              onMouseEnter={() => carouselPlugin.current.stop()}
+              onMouseLeave={() => carouselPlugin.current.reset()}
+              className="w-full max-w-4xl mx-auto mt-12"
+            >
+              <CarouselContent>
+                {qrcodes.map((qrcode, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <Image
+                        src={qrcode.imageUrl}
+                        alt={qrcode.alt}
+                        width={400}
+                        height={400}
+                        className="rounded-lg shadow-lg"
+                        data-ai-hint="qr code"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+        </Section>
+        
+        {/* Templates Section */}
+        <Section id="templates" className="py-20 bg-secondary">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold">40+ Beautiful Templates</h2>
+            <p className="mt-2 max-w-2xl mx-auto text-muted-foreground">
+              Find the perfect look for any occasion.
+            </p>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[carouselPlugin.current]}
+              onMouseEnter={() => carouselPlugin.current.stop()}
+              onMouseLeave={() => carouselPlugin.current.reset()}
+              className="w-full max-w-6xl mx-auto mt-12"
+            >
+              <CarouselContent>
+                {templates.map((template, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
+                    <div className="p-1">
+                      <Image
+                        src={template.imageUrl}
+                        alt={template.alt}
+                        width={400}
+                        height={800}
+                        className="rounded-lg shadow-lg"
+                        data-ai-hint="social media story"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+        </Section>
+
+
         {/* About Section */}
         <Section id="about" className="py-20">
           <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
@@ -243,22 +342,37 @@ export default function SayWithLandingPage() {
         <Section id="testimonials" className="py-20 bg-background">
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-headline font-bold text-center">Loved by Creators</h2>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-secondary p-8 rounded-lg shadow-md">
-                  <p className="text-lg italic text-foreground">"{testimonial.quote}"</p>
-                  <div className="mt-4 flex items-center">
-                    <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-                      {testimonial.name.charAt(0)}
+             <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[carouselPlugin.current]}
+              onMouseEnter={() => carouselPlugin.current.stop()}
+              onMouseLeave={() => carouselPlugin.current.reset()}
+              className="w-full max-w-4xl mx-auto mt-12"
+            >
+              <CarouselContent>
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-4">
+                      <div className="bg-secondary p-8 rounded-lg shadow-md h-full flex flex-col justify-between">
+                        <p className="text-lg italic text-foreground">"{testimonial.quote}"</p>
+                        <div className="mt-4 flex items-center">
+                          <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                            {testimonial.name.charAt(0)}
+                          </div>
+                          <div className="ml-4">
+                            <p className="font-bold">{testimonial.name}</p>
+                            <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="ml-4">
-                      <p className="font-bold">{testimonial.name}</p>
-                      <p className="text-sm text-muted-foreground">{testimonial.title}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           </div>
         </Section>
         
