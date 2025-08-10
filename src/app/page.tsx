@@ -77,34 +77,6 @@ const howItWorksSteps = [
   },
 ];
 
-const testimonials = [
-  {
-    quote: "This made my campaign pop — people loved it!",
-    name: "Alex R.",
-    title: "Marketing Manager",
-  },
-  {
-    quote: "So easy to use and the designs are next-level.",
-    name: "Jordan P.",
-    title: "Content Creator",
-  },
-  {
-    quote: "A game-changer for personal messages. My friends were wowed!",
-    name: "Samantha B.",
-    title: "Student",
-  },
-  {
-    quote: "Finally, a tool that makes my content look professional without the hassle.",
-    name: "Casey L.",
-    title: "Small Business Owner",
-  },
-  {
-    quote: "The QR code feature is brilliant for events!",
-    name: "Morgan T.",
-    title: "Event Planner",
-  }
-];
-
 interface QrCode {
   imageUrl: string;
   alt: string;
@@ -119,6 +91,13 @@ interface SocialLink {
   name: string;
   url: string;
 }
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  title: string;
+}
+
 
 const useFadeInSection = () => {
   const ref = useRef<HTMLElement>(null);
@@ -165,6 +144,7 @@ export default function SayWithLandingPage() {
   const [qrcodes, setQrcodes] = useState<QrCode[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
     fetch('/qrcodes.json')
@@ -181,6 +161,11 @@ export default function SayWithLandingPage() {
       .then((res) => res.json())
       .then((data) => setSocialLinks(data.socials))
       .catch((err) => console.error("Failed to load links.json", err));
+
+    fetch('/testimonials.json')
+      .then((res) => res.json())
+      .then((data) => setTestimonials(data))
+      .catch((err) => console.error("Failed to load testimonials.json", err));
   }, []);
 
   return (
