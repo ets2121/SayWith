@@ -12,8 +12,7 @@ import {
   Twitter,
   Instagram,
   Youtube,
-  MessageCircle,
-  Tiktok
+  MessageCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,7 +28,6 @@ const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>>
   twitter: Twitter,
   instagram: Instagram,
   youtube: Youtube,
-  tiktok: Tiktok,
   messenger: MessageCircle
 };
 
