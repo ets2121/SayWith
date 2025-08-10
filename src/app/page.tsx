@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, type SVGProps } from "react";
+import { useEffect, useRef, type SVGProps } from "react";
 import Image from "next/image";
 import { 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Youtube,
-  Linkedin,
   PenTool,
   Image as ImageIcon,
   QrCode,
   ShieldCheck,
-  CheckCircle2,
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -22,7 +20,6 @@ const socialLinks = {
   twitter: "https://twitter.com",
   instagram: "https://instagram.com",
   youtube: "https://youtube.com",
-  linkedin: "https://linkedin.com",
 };
 
 const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>> } = {
@@ -30,7 +27,6 @@ const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>>
   twitter: Twitter,
   instagram: Instagram,
   youtube: Youtube,
-  linkedin: Linkedin,
 };
 
 const features = [
@@ -139,8 +135,9 @@ export default function SayWithLandingPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
         <nav className="container mx-auto flex items-center justify-between p-4 px-6">
-          <a href="#" className="text-2xl font-bold text-primary">
-            SayWith
+          <a href="#" className="flex items-center gap-2 text-2xl font-bold text-primary">
+            <Image src="/icons/icon-192x192.png" alt="SayWith Logo" width={32} height={32} />
+            <span>SayWith</span>
           </a>
           <div className="hidden md:flex items-center gap-6">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
@@ -158,7 +155,7 @@ export default function SayWithLandingPage() {
                 <Image 
                     src="https://placehold.co/1920x1080.png"
                     data-ai-hint="abstract gradient ocean blue"
-                    alt="Ocean Blue Gradient"
+                    alt="Ocean Blue Gradient with subtle waves"
                     layout="fill"
                     objectFit="cover"
                     className="opacity-80"
@@ -266,7 +263,7 @@ export default function SayWithLandingPage() {
         </Section>
         
         {/* Contact Section */}
-        <Section id="contact" className="py-20 bg-gradient-to-b from-primary/5 to-white">
+        <Section id="contact" className="py-20 bg-gradient-to-b from-primary/5 to-transparent">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-headline font-bold">Let's Work Together</h2>
             <p className="mt-4 text-lg text-muted-foreground">
