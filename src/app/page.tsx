@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect, useRef, type SVGProps } from "react";
+import React, { useEffect, useRef, useState, type SVGProps } from "react";
 import Image from "next/image";
 import { 
   PenTool,
@@ -21,8 +21,6 @@ import {
   CarouselItem 
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import qrcodes from "../../../public/qrcodes.json";
-import templates from "../../../public/templates.json";
 
 const socialLinks = {
   facebook: "https://facebook.com",
@@ -112,6 +110,16 @@ const testimonials = [
   }
 ];
 
+interface QrCode {
+  imageUrl: string;
+  alt: string;
+}
+
+interface Template {
+  imageUrl: string;
+  alt: string;
+}
+
 const useFadeInSection = () => {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -153,6 +161,21 @@ export default function SayWithLandingPage() {
   const carouselPlugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true })
   );
+
+  const [qrcodes, setQrcodes] = useState<QrCode[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
+
+  useEffect(() => {
+    fetch('/qrcodes.json')
+      .then((res) => res.json())
+      .then((data) => setQrcodes(data))
+      .catch((err) => console.error("Failed to load qrcodes.json", err));
+
+    fetch('/templates.json')
+      .then((res) => res.json())
+      .then((data) => setTemplates(data))
+      .catch((err) => console.error("Failed to load templates.json", err));
+  }, []);
 
   return (
     <div className="bg-background text-foreground antialiased">
