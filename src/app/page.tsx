@@ -11,7 +11,9 @@ import {
   Facebook,
   Twitter,
   Instagram,
-  Youtube
+  Youtube,
+  MessageCircle,
+  Tiktok
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -22,18 +24,13 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
-const socialLinks = {
-  facebook: "https://facebook.com",
-  twitter: "https://twitter.com",
-  instagram: "https://instagram.com",
-  youtube: "https://youtube.com",
-};
-
 const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>> } = {
   facebook: Facebook,
   twitter: Twitter,
   instagram: Instagram,
   youtube: Youtube,
+  tiktok: Tiktok,
+  messenger: MessageCircle
 };
 
 const features = [
@@ -120,6 +117,11 @@ interface Template {
   alt: string;
 }
 
+interface SocialLink {
+  name: string;
+  url: string;
+}
+
 const useFadeInSection = () => {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -164,6 +166,7 @@ export default function SayWithLandingPage() {
 
   const [qrcodes, setQrcodes] = useState<QrCode[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
 
   useEffect(() => {
     fetch('/qrcodes.json')
@@ -175,6 +178,11 @@ export default function SayWithLandingPage() {
       .then((res) => res.json())
       .then((data) => setTemplates(data))
       .catch((err) => console.error("Failed to load templates.json", err));
+      
+    fetch('/links.json')
+      .then((res) => res.json())
+      .then((data) => setSocialLinks(data.socials))
+      .catch((err) => console.error("Failed to load links.json", err));
   }, []);
 
   return (
@@ -417,12 +425,13 @@ export default function SayWithLandingPage() {
       <footer className="bg-secondary py-8">
         <div className="container mx-auto px-6 text-center">
           <div className="flex justify-center items-center gap-6">
-              {Object.entries(socialLinks).map(([key, url]) => {
-                  const Icon = socialIcons[key];
+              {socialLinks.map((link) => {
+                  const Icon = socialIcons[link.name];
+                  if (!Icon) return null;
                   return (
-                    <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                       <Icon className="h-6 w-6" />
-                      <span className="sr-only">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                      <span className="sr-only">{link.name.charAt(0).toUpperCase() + link.name.slice(1)}</span>
                     </a>
                   );
                 })}
