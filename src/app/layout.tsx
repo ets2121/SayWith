@@ -4,8 +4,52 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SayWith – Send Messages That Matter",
-  description: "Create and send messages that truly resonate. A modern, animated landing page.",
+  metadataBase: new URL("https://www.saywith.com"),
+  title: "SayWith — Say it with style. Make it unforgettable.",
+  description: "Transform your words, media, and ideas into stunning, shareable templates. Create, customize, and share your vision with SayWith.",
+  keywords: ["SayWith", "templates", "QR code", "social media design", "Gen Z marketing", "creative media", "Instagram story templates", "Facebook story templates", "digital design", "QR code sharing", "logo design", "motivational templates", "video templates"],
+  authors: [{ name: "SayWith Team" }],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.saywith.com/",
+    title: "SayWith — Say it with style. Make it unforgettable.",
+    description: "Create stunning media templates, share via QR codes, and make your message pop. Perfect for Gen Z and beyond.",
+    images: ["/icons/icon-512x512.png"],
+    siteName: "SayWith",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SayWith — Say it with style. Make it unforgettable.",
+    description: "Transform your words, media, and ideas into stunning, shareable templates.",
+    images: ["/icons/icon-512x512.png"],
+  },
+  other: {
+    "tiktok:creator": "@saywith",
+    "tiktok:description": "Turn your message into a visual masterpiece with SayWith.",
+    "tiktok:image": "/icons/icon-384x384.png",
+  },
+  icons: {
+    icon: [
+      { url: '/icons/favicon.ico', type: 'image/x-icon' },
+      { url: '/icons/icon-96x96.png', type: 'image/png', sizes: '32x32' },
+      { url: '/icons/icon-72x72.png', type: 'image/png', sizes: '16x16' },
+    ],
+    apple: [
+      { url: '/icons/icon-192x192.png', sizes: '180x180' },
+      { url: '/icons/icon-128x128.png', sizes: '128x128' },
+      { url: '/icons/icon-144x144.png', sizes: '144x144' },
+      { url: '/icons/icon-152x152.png', sizes: '152x152' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192' },
+      { url: '/icons/icon-384x384.png', sizes: '384x384' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512' },
+    ],
+  },
+  manifest: "/site.webmanifest",
+  // The script tag needs to be handled separately in the component for now as per Next.js docs for ld+json
 };
 
 export default function RootLayout({
@@ -13,15 +57,43 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "SayWith",
+      "url": "https://www.saywith.com/",
+      "description": "Transform your words, media, and ideas into stunning, shareable templates. Create, customize, and share your vision with SayWith.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "SayWith",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.saywith.com/icons/icon-512x512.png",
+          "width": 512,
+          "height": 512
+        }
+      },
+      "sameAs": [
+        "https://www.facebook.com/YourPageHere",
+        "https://www.instagram.com/YourPageHere",
+        "https://www.tiktok.com/@YourPageHere",
+        "https://twitter.com/YourPageHere",
+        "https://www.youtube.com/@YourChannelHere"
+      ]
+  };
+
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/icons/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=PT+Sans:wght@400;700&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="font-body antialiased">
