@@ -1,167 +1,301 @@
 "use client";
 
-import { useState, useEffect, type SVGProps } from "react";
+import { useEffect, useRef, useState, type SVGProps } from "react";
 import Image from "next/image";
-import { Facebook, Twitter, Youtube, Instagram } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { 
+  Facebook, 
+  Twitter, 
+  Instagram, 
+  Youtube,
+  Linkedin,
+  PenTool,
+  Image as ImageIcon,
+  QrCode,
+  ShieldCheck,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-interface SocialLinks {
-  facebook: string;
-  twitter: string;
-  tiktok: string;
-  youtube: string;
-  instagram: string;
-}
-
-const TiktokIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M13.5 8.5v8" />
-    <path d="M10 11.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-    <path d="M13.5 16.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-  </svg>
-);
+const socialLinks = {
+  facebook: "https://facebook.com",
+  twitter: "https://twitter.com",
+  instagram: "https://instagram.com",
+  youtube: "https://youtube.com",
+  linkedin: "https://linkedin.com",
+};
 
 const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>> } = {
   facebook: Facebook,
   twitter: Twitter,
-  tiktok: TiktokIcon,
-  youtube: Youtube,
   instagram: Instagram,
+  youtube: Youtube,
+  linkedin: Linkedin,
 };
 
-const LoadingScreen = () => (
-  <div className="flex items-center justify-center h-screen w-screen fixed inset-0 bg-background z-50">
-    <div className="relative">
-      <h1 className="font-headline text-5xl font-bold text-accent animate-pulsate">
-        SayWith
-      </h1>
-    </div>
-  </div>
-);
+const features = [
+  {
+    icon: PenTool,
+    title: "Create Stunning Templates",
+    description: "Design beautiful, custom templates that make your message shine.",
+  },
+  {
+    icon: ImageIcon,
+    title: "Your Media, Your Message",
+    description: "Integrate your own images and videos for a personal touch.",
+  },
+  {
+    icon: QrCode,
+    title: "Easy QR Code Sharing",
+    description: "Generate and share QR codes for instant access to your content.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Secure and Flexible",
+    description: "Your content is protected and accessible wherever you need it.",
+  },
+];
 
-export default function SayWithLandingPage() {
-  const [loading, setLoading] = useState(true);
-  const [links, setLinks] = useState<SocialLinks | null>(null);
-  const [isContentVisible, setIsContentVisible] = useState(false);
-  const { toast } = useToast();
+const howItWorksSteps = [
+  {
+    step: 1,
+    title: "Upload Your Media",
+    description: "Upload your media and script.",
+  },
+  {
+    step: 2,
+    title: "Choose a Template",
+    description: "Choose from 40+ customizable templates.",
+  },
+  {
+    step: 3,
+    title: "Personalize and Preview",
+    description: "Personalize and preview instantly.",
+  },
+  {
+    step: 4,
+    title: "Share Your Story",
+    description: "Share via link or QR code.",
+  },
+];
 
+const testimonials = [
+  {
+    quote: "This made my campaign pop — people loved it!",
+    name: "Alex R.",
+    title: "Marketing Manager",
+  },
+  {
+    quote: "So easy to use and the designs are next-level.",
+    name: "Jordan P.",
+    title: "Content Creator",
+  },
+  {
+    quote: "A game-changer for personal messages. My friends were wowed!",
+    name: "Samantha B.",
+    title: "Student",
+  },
+];
+
+const useFadeInSection = () => {
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/links.json');
-        if (!response.ok) throw new Error('Failed to fetch links');
-        const data = await response.json();
-        setLinks(data);
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: 'destructive',
-          title: 'Error loading content',
-          description: 'Could not load social media links.',
-        });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
       }
     };
-    
-    Promise.all([
-      fetchData(),
-      new Promise((res) => setTimeout(res, 2000)),
-    ]).finally(() => {
-      setLoading(false);
-      setTimeout(() => setIsContentVisible(true), 100);
-    });
-  }, [toast]);
+  }, []);
+  return ref;
+};
 
+const Section = ({ children, className, ...props }: React.HTMLAttributes<HTMLElement>) => {
+  const ref = useFadeInSection();
   return (
-    <>
-      {loading && <LoadingScreen />}
-      <div className={cn('bg-background min-h-screen text-foreground transition-opacity duration-1000 ease-in', isContentVisible ? 'opacity-100' : 'opacity-0')}>
-        <div className="relative isolate overflow-hidden">
-          <svg
-            className="absolute inset-0 -z-10 h-full w-full stroke-gray-700/50 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
-            aria-hidden="true"
-          >
-            <defs>
-              <pattern id="grid-pattern" width={200} height={200} x="50%" y={-1} patternUnits="userSpaceOnUse">
-                <path d="M100 200V.5M.5 .5H200" fill="none" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" strokeWidth={0} fill="url(#grid-pattern)" />
-          </svg>
-          <div
-            className="absolute left-[calc(50%-4rem)] top-10 -z-10 transform-gpu blur-3xl sm:left-[calc(50%-18rem)] lg:left-48 lg:top-[calc(50%-30rem)] xl:left-[calc(50%-24rem)]"
-            aria-hidden="true"
-          >
-            <div
-              className="aspect-[1108/632] w-[69.25rem] bg-gradient-to-r from-primary to-accent opacity-20"
-              style={{
-                clipPath:
-                  'polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64.6%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)',
-              }}
-            />
+    <section ref={ref} className={cn("fade-in-section", className)} {...props}>
+      {children}
+    </section>
+  );
+};
+
+
+export default function SayWithLandingPage() {
+  return (
+    <div className="bg-background text-foreground antialiased">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
+        <nav className="container mx-auto flex items-center justify-between p-4 px-6">
+          <a href="#" className="text-2xl font-bold text-primary">
+            SayWith
+          </a>
+          <div className="hidden md:flex items-center gap-6">
+            <a href="#features" className="hover:text-primary transition-colors">Features</a>
+            <a href="#about" className="hover:text-primary transition-colors">About</a>
+            <a href="#contact" className="hover:text-primary transition-colors">Contact</a>
           </div>
-          
-          <header className="absolute inset-x-0 top-0 z-10 animate-fade-in-down">
-            <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
-              <div className="flex lg:flex-1">
-                <a href="#" className="-m-1.5 p-1.5">
-                  <span className="sr-only">SayWith</span>
-                  <h2 className="font-headline text-2xl font-bold text-accent">SayWith</h2>
-                </a>
-              </div>
-            </nav>
-          </header>
+          <Button>Get Started</Button>
+        </nav>
+      </header>
 
-          <main className="mx-auto max-w-7xl px-6 pb-24 pt-32 sm:pt-48 sm:pb-32 lg:flex lg:px-8 lg:py-40">
-            <div className="mx-auto max-w-2xl flex-shrink-0 lg:mx-0 lg:max-w-xl lg:pt-8">
-              <div className="mt-10 animate-fade-in-down" style={{ animationDelay: '0.2s' }}>
-                <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-6xl">
-                  SayWith – Send Messages That Matter
+      <main>
+        {/* Hero Section */}
+        <section className="relative h-[calc(100vh-68px)] flex items-center justify-center text-center text-white overflow-hidden">
+            <div className="absolute inset-0 z-0">
+                <Image 
+                    src="https://placehold.co/1920x1080.png"
+                    data-ai-hint="abstract gradient ocean blue"
+                    alt="Ocean Blue Gradient"
+                    layout="fill"
+                    objectFit="cover"
+                    className="opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+            </div>
+            <div className="relative z-10 p-6 animate-fade-in-down">
+                <h1 className="text-4xl md:text-6xl font-headline font-bold drop-shadow-md">
+                    Say it with style. Say it with SayWith.
                 </h1>
-                <p className="font-body mt-6 text-lg leading-8 text-gray-300">
-                  Craft meaningful connections with messages that resonate. Animate your words, express your true self, and make every interaction unforgettable.
+                <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl font-light drop-shadow-sm">
+                    Transform your words, media, and ideas into powerful, shareable experiences.
                 </p>
-                <div className="mt-10 flex items-center gap-x-6">
-                  <Button size="lg">Get Started</Button>
-                  <Button size="lg" variant="link" className="px-0">Learn more <span aria-hidden="true">→</span></Button>
+                <div className="mt-8 flex justify-center gap-4">
+                    <Button size="lg">Get Started</Button>
+                    <Button size="lg" variant="outline" className="bg-white/10 border-white text-white hover:bg-white/20">
+                        Explore Templates
+                    </Button>
                 </div>
-              </div>
             </div>
-            <div className="mx-auto mt-16 flex max-w-2xl sm:mt-24 lg:ml-10 lg:mr-0 lg:mt-0 lg:max-w-none lg:flex-none xl:ml-32">
-              <div className="max-w-3xl flex-none sm:max-w-5xl lg:max-w-none">
-                <div className="-m-2 rounded-xl bg-card/60 p-2 ring-1 ring-inset ring-border/20 backdrop-blur-md lg:-m-4 lg:rounded-2xl lg:p-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                  <Image
-                    src="https://placehold.co/800x600.png"
-                    data-ai-hint="digital communication chat"
-                    alt="App screenshot"
-                    width={2432}
-                    height={1442}
-                    className="w-[76rem] rounded-md shadow-2xl ring-1 ring-foreground/10"
-                  />
-                </div>
-              </div>
-            </div>
-          </main>
+        </section>
 
-          <footer className="w-full py-8">
-            <div className="container mx-auto flex flex-col items-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-              <div className="flex justify-center items-center gap-6">
-                {links && Object.entries(links).map(([key, url]) => {
+
+        {/* Features Section */}
+        <Section id="features" className="py-20 bg-secondary">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold">Everything You Need to Create</h2>
+            <p className="mt-2 max-w-2xl mx-auto text-muted-foreground">
+              Powerful tools to bring your stories to life, simply and beautifully.
+            </p>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {features.map((feature, index) => (
+                <div key={index} className="bg-background p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow text-left">
+                  <feature.icon className="w-10 h-10 text-primary mb-4" />
+                  <h3 className="text-xl font-bold">{feature.title}</h3>
+                  <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+        
+        {/* About Section */}
+        <Section id="about" className="py-20">
+          <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+            <div className="md:w-1/2">
+                <Image
+                    src="https://placehold.co/800x800.png"
+                    data-ai-hint="minimal workspace ocean blue"
+                    alt="About SayWith"
+                    width={800}
+                    height={800}
+                    className="rounded-lg shadow-2xl"
+                />
+            </div>
+            <div className="md:w-1/2">
+                <h2 className="text-3xl md:text-4xl font-headline font-bold">Make It Unforgettable.</h2>
+                <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+                    SayWith is your one-stop creative platform for personalizing media, designing for impact, and sharing effortlessly. Whether it’s a heartfelt message, a bold business announcement, or a stylish visual for social media — we help you make it unforgettable.
+                </p>
+            </div>
+          </div>
+        </Section>
+        
+        {/* How It Works Section */}
+        <Section id="how-it-works" className="py-20 bg-secondary">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold">Four Easy Steps</h2>
+            <div className="relative mt-16 grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border hidden md:block"></div>
+              {howItWorksSteps.map((step) => (
+                <div key={step.step} className="relative flex flex-col items-center text-center">
+                   <div className="relative z-10 h-12 w-12 flex items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-xl mb-4 border-4 border-secondary">
+                     {step.step}
+                   </div>
+                   <h3 className="text-xl font-bold">{step.title}</h3>
+                   <p className="mt-2 text-muted-foreground">{step.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        {/* Testimonials Section */}
+        <Section id="testimonials" className="py-20 bg-background">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold text-center">Loved by Creators</h2>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="bg-secondary p-8 rounded-lg shadow-md">
+                  <p className="text-lg italic text-foreground">"{testimonial.quote}"</p>
+                  <div className="mt-4 flex items-center">
+                    <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                      {testimonial.name.charAt(0)}
+                    </div>
+                    <div className="ml-4">
+                      <p className="font-bold">{testimonial.name}</p>
+                      <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+        
+        {/* Contact Section */}
+        <Section id="contact" className="py-20 bg-gradient-to-b from-primary/5 to-white">
+          <div className="container mx-auto px-6 text-center max-w-3xl">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold">Let's Work Together</h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Got a message worth sharing? We’ll make it shine. Get in touch today.
+            </p>
+            <div className="mt-8">
+              <Button size="lg" className="w-full sm:w-auto">Contact Us</Button>
+            </div>
+          </div>
+        </Section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-secondary py-8">
+        <div className="container mx-auto px-6 text-center">
+          <div className="flex justify-center items-center gap-6">
+              {Object.entries(socialLinks).map(([key, url]) => {
                   const Icon = socialIcons[key];
                   return (
-                    <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors duration-300">
+                    <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                       <Icon className="h-6 w-6" />
                       <span className="sr-only">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
                     </a>
                   );
                 })}
-              </div>
-              <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} SayWith. All rights reserved.</p>
-            </div>
-          </footer>
+          </div>
+          <p className="mt-6 text-sm text-muted-foreground">&copy; {new Date().getFullYear()} SayWith. All rights reserved.</p>
         </div>
-      </div>
-    </>
+      </footer>
+    </div>
   );
 }
