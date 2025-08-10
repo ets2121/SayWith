@@ -137,9 +137,9 @@ const Section = ({ children, className, ...props }: React.HTMLAttributes<HTMLEle
 
 
 export default function SayWithLandingPage() {
-  const carouselPlugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
-  );
+  const qrcodePlugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
+  const templatePlugin = React.useRef(Autoplay({ delay: 2200, stopOnInteraction: true }));
+  const testimonialPlugin = React.useRef(Autoplay({ delay: 2500, stopOnInteraction: true }));
 
   const [qrcodes, setQrcodes] = useState<QrCode[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -248,9 +248,9 @@ export default function SayWithLandingPage() {
                 align: "start",
                 loop: true,
               }}
-              plugins={[carouselPlugin.current]}
-              onMouseEnter={() => carouselPlugin.current.stop()}
-              onMouseLeave={() => carouselPlugin.current.reset()}
+              plugins={[qrcodePlugin.current]}
+              onMouseEnter={() => qrcodePlugin.current.stop()}
+              onMouseLeave={() => qrcodePlugin.current.reset()}
               className="w-full max-w-4xl mx-auto mt-12"
             >
               <CarouselContent>
@@ -285,9 +285,9 @@ export default function SayWithLandingPage() {
                 align: "start",
                 loop: true,
               }}
-              plugins={[carouselPlugin.current]}
-              onMouseEnter={() => carouselPlugin.current.stop()}
-              onMouseLeave={() => carouselPlugin.current.reset()}
+              plugins={[templatePlugin.current]}
+              onMouseEnter={() => templatePlugin.current.stop()}
+              onMouseLeave={() => templatePlugin.current.reset()}
               className="w-full max-w-6xl mx-auto mt-12"
             >
               <CarouselContent>
@@ -361,9 +361,9 @@ export default function SayWithLandingPage() {
                 align: "start",
                 loop: true,
               }}
-              plugins={[carouselPlugin.current]}
-              onMouseEnter={() => carouselPlugin.current.stop()}
-              onMouseLeave={() => carouselPlugin.current.reset()}
+              plugins={[testimonialPlugin.current]}
+              onMouseEnter={() => testimonialPlugin.current.stop()}
+              onMouseLeave={() => testimonialPlugin.current.reset()}
               className="w-full max-w-4xl mx-auto mt-12"
             >
               <CarouselContent>
