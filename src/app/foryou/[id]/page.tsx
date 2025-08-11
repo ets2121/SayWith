@@ -83,28 +83,25 @@ const LoadingSpinner = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground overflow-hidden">
              <style jsx>{`
-                .animate-spin-reverse {
-                    animation-direction: reverse;
+                @keyframes spin-fast {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
                 }
-                .text-fade-enter {
-                    opacity: 0;
-                    transition: opacity 500ms ease-in;
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(-360deg); }
                 }
-                .text-fade-enter-active {
-                    opacity: 1;
+                .animate-spin-fast {
+                    animation: spin-fast 1.5s linear infinite;
                 }
-                .text-fade-exit {
-                    opacity: 1;
-                    transition: opacity 500ms ease-out;
-                }
-                .text-fade-exit-active {
-                    opacity: 0;
+                .animate-spin-slow {
+                    animation: spin-slow 3s linear infinite;
                 }
             `}</style>
-            <div className="relative w-24 h-24">
-                <div className="absolute inset-0 border-4 border-primary rounded-full animate-spin"></div>
-                <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin animate-spin-reverse"></div>
-                <div className="absolute inset-4 border-4 border-primary/20 rounded-full animate-pulse"></div>
+            <div className="w-32 h-32 relative flex items-center justify-center">
+                <div className="absolute inset-0 border-2 border-primary rounded-full animate-spin-fast"></div>
+                <div className="absolute inset-4 border-dashed border-2 border-primary/50 rounded-full animate-spin-slow"></div>
+                <div className="absolute inset-8 border-2 border-primary/20 rounded-full animate-pulse"></div>
             </div>
             <div className="mt-6 text-lg text-center h-6">
                 <span className={`transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
