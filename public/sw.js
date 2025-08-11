@@ -1,62 +1,105 @@
-// Function to get the base name of a URL (e.g., 'file' from 'file_123.mp3')
-const getBaseName = (url) => {
-  const fileName = url.substring(url.lastIndexOf('/') + 1);
-  const baseName = fileName.split('_')[0];
-  return baseName;
-};
 
-// Main fetch event handler
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Serve from cache if found, otherwise fetch from network
-      return response || fetch(event.request);
+const CACHE_VERSION = 'v1';
+const CACHEABLE_EXTENSIONS = /\.(mp3|mp4|wav|ogg|jpg|jpeg|png|gif|webp)$/;
+
+let currentUserId = null;
+
+function getCacheName(userId) {
+  return `media-cache-${CACHE_VERSION}-${userId}`;
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    self.clients.claim().then(() => {
+      // Clean up old versioned caches
+      return caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((cacheName) => {
+              // This filter keeps caches that are not media caches OR are for the current version
+              const isMediaCache = cacheName.startsWith('media-cache-');
+              const isOutdated = isMediaCache && !cacheName.startsWith(`media-cache-${CACHE_VERSION}`);
+              return isOutdated;
+            })
+            .map((cacheName) => caches.delete(cacheName))
+        );
+      });
     })
   );
 });
 
-// Message event handler to manage caches
 self.addEventListener('message', (event) => {
-  const { action, userId, assets } = event.data;
-
-  if (action === 'CACHE_USER_ASSETS') {
-    event.waitUntil(handleUserCaching(userId, assets));
+  if (event.data && event.data.action === 'SET_USER') {
+    const newUserId = event.data.userId;
+    if (currentUserId && currentUserId !== newUserId) {
+      console.log(`[SW] User changed from ${currentUserId} to ${newUserId}. Clearing old cache.`);
+      const oldCacheName = getCacheName(currentUserId);
+      caches.delete(oldCacheName).then(() => {
+        console.log(`[SW] Deleted cache: ${oldCacheName}`);
+      });
+    }
+    currentUserId = newUserId;
+    console.log(`[SW] Current user set to: ${currentUserId}`);
   }
 });
 
-// Handles caching for a specific user
-const handleUserCaching = async (userId, assets) => {
-  const cacheName = `user-cache-${userId}`;
 
-  try {
-    // Clean up caches for all other users
-    const keys = await caches.keys();
-    const otherUserCaches = keys.filter(key => key.startsWith('user-cache-') && key !== cacheName);
-    await Promise.all(otherUserCaches.map(key => caches.delete(key)));
-    
-    const cache = await caches.open(cacheName);
-    const existingRequests = await cache.keys();
-    const existingUrls = existingRequests.map(req => req.url);
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
 
-    // Identify stale assets to remove
-    const staleUrls = existingUrls.filter(url => {
-        const base = getBaseName(url);
-        return assets.some(assetUrl => getBaseName(assetUrl) === base && assetUrl !== url);
-    });
-
-    // Identify assets that are no longer in the list
-    const assetsToRemove = existingUrls.filter(url => !assets.includes(url) && !staleUrls.includes(url));
-    
-    // Remove stale and unused assets
-    await Promise.all([...staleUrls, ...assetsToRemove].map(url => cache.delete(url)));
-
-    // Add new assets to cache
-    const assetsToCache = assets.filter(url => !existingUrls.includes(url));
-    if (assetsToCache.length > 0) {
-      await cache.addAll(assetsToCache);
-    }
-    
-  } catch (error) {
-    console.error('Service Worker caching failed:', error);
+  // Only handle GET requests for specified file types, and only if a user is set
+  if (event.request.method !== 'GET' || !currentUserId || !CACHEABLE_EXTENSIONS.test(url.pathname)) {
+    return;
   }
-};
+  
+  event.respondWith(
+    caches.open(getCacheName(currentUserId)).then(async (cache) => {
+      const cachedResponse = await cache.match(event.request);
+
+      if (cachedResponse) {
+        console.log(`[SW] Cache HIT for: ${event.request.url}`);
+        return cachedResponse;
+      }
+
+      console.log(`[SW] Cache MISS for: ${event.request.url}. Fetching from network.`);
+      
+      try {
+        const networkResponse = await fetch(event.request);
+
+        if (networkResponse.ok) {
+          // Response can only be used once, so we need to clone it
+          const responseToCache = networkResponse.clone();
+          
+          // Clean up old versions of the same file before caching the new one
+          const baseFileName = url.pathname.split('/').pop().split('_')[0];
+          const keys = await cache.keys();
+          const oldFilePromises = keys
+            .filter(req => req.url.includes(baseFileName) && req.url !== event.request.url)
+            .map(req => {
+               console.log(`[SW] Deleting old file: ${req.url}`);
+               return cache.delete(req);
+            });
+          
+          await Promise.all(oldFilePromises);
+
+          // Cache the new response
+          console.log(`[SW] Caching new resource: ${event.request.url}`);
+          await cache.put(event.request, responseToCache);
+        }
+
+        return networkResponse;
+      } catch (error) {
+        console.error(`[SW] Fetch failed for: ${event.request.url}`, error);
+        // Optional: return a fallback offline response
+        // return new Response("Network error occurred", {
+        //   status: 408,
+        //   headers: { "Content-Type": "text/plain" },
+        // });
+      }
+    })
+  );
+});

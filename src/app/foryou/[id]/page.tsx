@@ -148,12 +148,10 @@ export default function ForYouPage() {
           if (snapshot.exists()) {
             const fetchedData = snapshot.val() as SaywithData;
             setData(fetchedData);
-            if (navigator.serviceWorker.controller) {
-                const assetsToCache = [fetchedData.mediaUrl, fetchedData.audioUrl].filter(Boolean);
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
-                    action: 'CACHE_USER_ASSETS',
+                    action: 'SET_USER',
                     userId: id,
-                    assets: assetsToCache
                 });
             }
           } else {
