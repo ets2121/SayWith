@@ -19,17 +19,25 @@ export default function LandingPageLoader() {
                 const left = Math.random() * 100;
                 const duration = Math.random() * 5 + 5;
                 const delay = Math.random() * 5;
+                const randomX = Math.random() * 40 - 20;
+                const randomY = Math.random() * 40 - 20;
+                const randomScale = Math.random() * 0.5 + 0.8;
+
                 return (
                     <div
                         key={i}
-                        className="absolute rounded-full bg-primary/30"
+                        className="absolute rounded-full bg-primary/30 particle-drift"
                         style={{
                             width: `${size}px`,
                             height: `${size}px`,
                             top: `${top}%`,
                             left: `${left}%`,
-                            animation: `drift ${duration}s ease-in-out ${delay}s infinite alternate`,
-                        }}
+                            animationDuration: `${duration}s`,
+                            animationDelay: `${delay}s`,
+                            '--drift-x': `${randomX}px`,
+                            '--drift-y': `${randomY}px`,
+                            '--drift-scale': `${randomScale}`
+                        } as React.CSSProperties}
                     />
                 );
             });
@@ -47,9 +55,15 @@ export default function LandingPageLoader() {
                         opacity: 0.1;
                     }
                     100% {
-                        transform: translate(${Math.random() * 40 - 20}px, ${Math.random() * 40 - 20}px) scale(${Math.random() * 0.5 + 0.8});
+                        transform: translate(var(--drift-x), var(--drift-y)) scale(var(--drift-scale));
                         opacity: 0.8;
                     }
+                }
+                .particle-drift {
+                    animation-name: drift;
+                    animation-timing-function: ease-in-out;
+                    animation-iteration-count: infinite;
+                    animation-direction: alternate;
                 }
                 @keyframes breath {
                     0%, 100% { transform: scale(1); box-shadow: 0 0 10px 0px hsla(var(--primary), 0); }
