@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { Heart } from 'lucide-react';
+import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template15Props {
   data: {
@@ -14,153 +14,28 @@ interface Template15Props {
   };
 }
 
-interface SrtLine {
-  startTime: number;
-  endTime: number;
-  text: string;
-}
-
-const parseSrt = (srtText: string): SrtLine[] => {
-    if (!srtText) return [];
-    const lines = srtText.trim().split(/\r?\n/);
-    const entries: SrtLine[] = [];
-    let i = 0;
-    while (i < lines.length) {
-        if (lines[i] && lines[i].match(/^\d+$/)) {
-            i++;
-            if (!lines[i]) continue;
-            const timeMatch = lines[i].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/);
-            if (timeMatch) {
-                const [, h1, m1, s1, ms1, h2, m2, s2, ms2] = timeMatch.map(Number);
-                const startTime = h1 * 3600 + m1 * 60 + s1 + ms1 / 1000;
-                const endTime = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000;
-                i++;
-                let text = '';
-                while (i < lines.length && lines[i] && lines[i].trim() !== '') {
-                    text += (text ? '\n' : '') + lines[i];
-                    i++;
-                }
-                entries.push({ startTime, endTime, text });
-            }
-        }
-        i++;
-    }
-    return entries;
-};
-
 export default function Template15({ data }: Template15Props) {
-  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [userInteracted, setUserInteracted] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  const useVideoAsAudioSource = isVideo && mute === false;
-
-  const playMedia = useCallback(() => {
-    const audio = audioRef.current;
-    const video = videoRef.current;
-    let playPromise: Promise<void> | undefined;
-
-    if (useVideoAsAudioSource && video) {
-        playPromise = video.play();
-    } else {
-        if (video) video.play();
-        if (audio) playPromise = audio.play();
-    }
-    
-    if(playPromise){
-      playPromise.then(() => {
-        setIsPlaying(true);
-      }).catch(error => {
-        console.error("Error playing media:", error);
-        setIsPlaying(false);
-      });
-    }
-  }, [useVideoAsAudioSource]);
-
-  const pauseMedia = useCallback(() => {
-    videoRef.current?.pause();
-    if (!useVideoAsAudioSource) audioRef.current?.pause();
-    setIsPlaying(false);
-  }, [useVideoAsAudioSource]);
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    playMedia();
-  }, [userInteracted, playMedia]);
-
-  const handlePlayPause = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!userInteracted) {
-      handleInitialInteraction();
-    } else if (isPlaying) {
-      pauseMedia();
-    } else {
-      playMedia();
-    }
-  }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
-
-  useEffect(() => {
-    if (srtContent) {
-      setSubtitles(parseSrt(srtContent));
-    }
-  }, [srtContent]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if(video) {
-        video.loop = true;
-        video.playsInline = true;
-        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
-    }
-    
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (!audioSource) return;
-
-    const timeUpdateHandler = () => {
-      const currentTime = audioSource.currentTime;
-      const duration = audioSource.duration;
-      if (duration > 0) {
-        setProgress((currentTime / duration) * 100);
-      }
-      const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-      setCurrentSubtitle(activeLine ? activeLine.text : '');
-    };
-
-    const handleAudioEnd = () => {
-      setIsPlaying(false);
-      if (audioSource) { audioSource.currentTime = 0; }
-      if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
-      playMedia();
-    }
-
-    audioSource.addEventListener('timeupdate', timeUpdateHandler);
-    audioSource.addEventListener('ended', handleAudioEnd);
-
-    return () => {
-      if (audioSource) {
-        audioSource.removeEventListener('timeupdate', timeUpdateHandler);
-        audioSource.removeEventListener('ended', handleAudioEnd);
-      }
-    };
-  }, [subtitles, playMedia, mute, useVideoAsAudioSource]);
+  const { name, mediaUrl } = data;
+  const {
+    isPlaying,
+    currentSubtitle,
+    progress,
+    videoRef,
+    audioRef,
+    isVideo,
+    useVideoAsAudioSource,
+    handleInitialInteraction,
+    handlePlayPause,
+  } = useSaywithPlayer(data);
 
   return (
     <div 
       className="w-full h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-red-200 via-rose-200 to-amber-100 font-sans overflow-hidden"
       onClick={handleInitialInteraction}
     >
-      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
       
       <div className="w-full max-w-md flex flex-col items-center justify-center text-center">
-        {/* Heart-shaped media container */}
         <div 
             className="relative w-full aspect-square max-w-[350px] flex items-center justify-center"
             style={{ clipPath: 'url(#heart-clip)' }}
@@ -197,7 +72,6 @@ export default function Template15({ data }: Template15Props) {
 
       </div>
       
-      {/* SVG clip-path definition */}
       <svg width="0" height="0">
         <defs>
           <clipPath id="heart-clip" clipPathUnits="objectBoundingBox">

@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import Image from 'next/image';
 import { Slider } from '@/components/ui/slider';
+import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template12Props {
   data: {
@@ -16,40 +16,6 @@ interface Template12Props {
   };
 }
 
-interface SrtLine {
-  startTime: number;
-  endTime: number;
-  text: string;
-}
-
-const parseSrt = (srtText: string): SrtLine[] => {
-    if (!srtText) return [];
-    const lines = srtText.trim().split(/\r?\n/);
-    const entries: SrtLine[] = [];
-    let i = 0;
-    while (i < lines.length) {
-        if (lines[i] && lines[i].match(/^\d+$/)) {
-            i++;
-            if (!lines[i]) continue;
-            const timeMatch = lines[i].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/);
-            if (timeMatch) {
-                const [, h1, m1, s1, ms1, h2, m2, s2, ms2] = timeMatch.map(Number);
-                const startTime = h1 * 3600 + m1 * 60 + s1 + ms1 / 1000;
-                const endTime = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000;
-                i++;
-                let text = '';
-                while (i < lines.length && lines[i] && lines[i].trim() !== '') {
-                    text += (text ? '\n' : '') + lines[i];
-                    i++;
-                }
-                entries.push({ startTime, endTime, text });
-            }
-        }
-        i++;
-    }
-    return entries;
-};
-
 const formatTime = (seconds: number): string => {
     if (isNaN(seconds) || seconds < 0) return "0:00";
     const minutes = Math.floor(seconds / 60);
@@ -58,135 +24,29 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template12({ data }: Template12Props) {
-  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [userInteracted, setUserInteracted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  const useVideoAsAudioSource = isVideo && mute === false;
-
-  const playMedia = useCallback(() => {
-    const audio = audioRef.current;
-    const video = videoRef.current;
-    let playPromise: Promise<void> | undefined;
-
-    if (useVideoAsAudioSource && video) {
-        playPromise = video.play();
-    } else {
-        if (video) video.play();
-        if (audio) playPromise = audio.play();
-    }
-
-    if(playPromise){
-        playPromise.then(() => setIsPlaying(true)).catch(e => console.error("Play failed", e));
-    }
-  }, [useVideoAsAudioSource]);
-
-  const pauseMedia = useCallback(() => {
-    videoRef.current?.pause();
-    if (!useVideoAsAudioSource) audioRef.current?.pause();
-    setIsPlaying(false);
-  }, [useVideoAsAudioSource]);
-  
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    playMedia();
-  }, [userInteracted, playMedia]);
-
-  const handlePlayPause = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!userInteracted) {
-        handleInitialInteraction();
-    } else if (isPlaying) {
-      pauseMedia();
-    } else {
-      playMedia();
-    }
-  }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
-
-  const seek = (delta: number) => {
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (audioSource) {
-      const newTime = audioSource.currentTime + delta;
-      audioSource.currentTime = Math.max(0, Math.min(newTime, audioSource.duration || 0));
-    }
-  }
-
-  const handleSeek = (value: number[]) => {
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (audioSource && audioSource.duration) {
-      const newTime = (value[0] / 100) * audioSource.duration;
-      audioSource.currentTime = newTime;
-      setProgress(value[0]);
-    }
-  }
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if(video) {
-        video.loop = true;
-        video.playsInline = true;
-        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
-    }
-  }, [mute, useVideoAsAudioSource]);
-
-  useEffect(() => {
-    if (srtContent) {
-      setSubtitles(parseSrt(srtContent));
-    }
-  }, [srtContent]);
-
-  useEffect(() => {
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (!audioSource) return;
-
-    const onLoadedMetadata = () => setDuration(audioSource.duration);
-    const onTimeUpdate = () => {
-        const currentTime = audioSource.currentTime;
-        const duration = audioSource.duration;
-        if (duration > 0) {
-            setProgress((currentTime / duration) * 100);
-            setCurrentTime(currentTime);
-        }
-        const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-        setCurrentSubtitle(activeLine ? activeLine.text : '');
-    };
-
-    const onEnded = () => {
-        setIsPlaying(false);
-        if (audioSource) { audioSource.currentTime = 0; }
-        if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
-        playMedia();
-    }
-    
-    audioSource.addEventListener('timeupdate', onTimeUpdate);
-    audioSource.addEventListener('loadedmetadata', onLoadedMetadata);
-    audioSource.addEventListener('ended', onEnded);
-
-    return () => {
-        if (audioSource) {
-          audioSource.removeEventListener('timeupdate', onTimeUpdate);
-          audioSource.removeEventListener('loadedmetadata', onLoadedMetadata);
-          audioSource.removeEventListener('ended', onEnded);
-        }
-    };
-  }, [subtitles, playMedia, useVideoAsAudioSource]);
+  const { name, mediaUrl } = data;
+  const {
+    isPlaying,
+    currentSubtitle,
+    progress,
+    currentTime,
+    duration,
+    videoRef,
+    audioRef,
+    isVideo,
+    useVideoAsAudioSource,
+    handleInitialInteraction,
+    handlePlayPause,
+    seek,
+    handleSeek,
+  } = useSaywithPlayer(data);
 
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans bg-gradient-to-br from-yellow-200 via-pink-300 to-blue-400 overflow-hidden"
       onClick={handleInitialInteraction}
     >
-        {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline />}
+        {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
         
         <div className="relative w-full max-w-xs flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-2xl">
           <div className="w-full aspect-square rounded-lg overflow-hidden shadow-lg">

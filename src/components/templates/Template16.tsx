@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, Heart } from 'lucide-react';
 import Image from 'next/image';
+import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template16Props {
   data: {
@@ -15,137 +15,18 @@ interface Template16Props {
   };
 }
 
-interface SrtLine {
-  startTime: number;
-  endTime: number;
-  text: string;
-}
-
-const parseSrt = (srtText: string): SrtLine[] => {
-    if (!srtText) return [];
-    const lines = srtText.trim().split(/\r?\n/);
-    const entries: SrtLine[] = [];
-    let i = 0;
-    while (i < lines.length) {
-        if (lines[i] && lines[i].match(/^\d+$/)) {
-            i++;
-            if (!lines[i]) continue;
-            const timeMatch = lines[i].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/);
-            if (timeMatch) {
-                const [, h1, m1, s1, ms1, h2, m2, s2, ms2] = timeMatch.map(Number);
-                const startTime = h1 * 3600 + m1 * 60 + s1 + ms1 / 1000;
-                const endTime = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000;
-                i++;
-                let text = '';
-                while (i < lines.length && lines[i] && lines[i].trim() !== '') {
-                    text += (text ? '\n' : '') + lines[i];
-                    i++;
-                }
-                entries.push({ startTime, endTime, text });
-            }
-        }
-        i++;
-    }
-    return entries;
-};
-
 export default function Template16({ data }: Template16Props) {
-  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [userInteracted, setUserInteracted] = useState(false);
-  
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  const useVideoAsAudioSource = isVideo && mute === false;
-
-  const playMedia = useCallback(() => {
-    const audio = audioRef.current;
-    const video = videoRef.current;
-    let playPromise: Promise<void> | undefined;
-
-    if (useVideoAsAudioSource && video) {
-        playPromise = video.play();
-    } else {
-        if (video) video.play();
-        if (audio) playPromise = audio.play();
-    }
-    
-    if(playPromise){
-        playPromise.then(() => {
-        setIsPlaying(true);
-        }).catch(error => {
-        console.error("Error playing media:", error);
-        setIsPlaying(false);
-        });
-    }
-  }, [useVideoAsAudioSource]);
-
-  const pauseMedia = useCallback(() => {
-    videoRef.current?.pause();
-    if (!useVideoAsAudioSource) audioRef.current?.pause();
-    setIsPlaying(false);
-  }, [useVideoAsAudioSource]);
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    playMedia();
-  }, [userInteracted, playMedia]);
-
-  const handlePlayPause = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!userInteracted) {
-      handleInitialInteraction();
-    } else if (isPlaying) {
-      pauseMedia();
-    } else {
-      playMedia();
-    }
-  }, [isPlaying, playMedia, pauseMedia, userInteracted, handleInitialInteraction]);
-
-  useEffect(() => {
-    if (srtContent) {
-      setSubtitles(parseSrt(srtContent));
-    }
-  }, [srtContent]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if(video) {
-        video.loop = true;
-        video.playsInline = true;
-        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
-    }
-    
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (!audioSource) return;
-
-    const timeUpdateHandler = () => {
-      const currentTime = audioSource.currentTime;
-      const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-      setCurrentSubtitle(activeLine ? activeLine.text : '');
-    };
-
-    const handleAudioEnd = () => {
-      setIsPlaying(false);
-      if (audioSource) { audioSource.currentTime = 0; }
-      if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
-      playMedia();
-    }
-
-    audioSource.addEventListener('timeupdate', timeUpdateHandler);
-    audioSource.addEventListener('ended', handleAudioEnd);
-
-    return () => {
-      if (audioSource) {
-        audioSource.removeEventListener('timeupdate', timeUpdateHandler);
-        audioSource.removeEventListener('ended', handleAudioEnd);
-      }
-    };
-  }, [subtitles, playMedia, mute, useVideoAsAudioSource]);
+  const { name, mediaUrl } = data;
+  const {
+    isPlaying,
+    currentSubtitle,
+    videoRef,
+    audioRef,
+    isVideo,
+    useVideoAsAudioSource,
+    handleInitialInteraction,
+    handlePlayPause,
+  } = useSaywithPlayer(data);
 
   return (
     <div 
@@ -153,11 +34,10 @@ export default function Template16({ data }: Template16Props) {
       style={{ fontFamily: "'Great Vibes', cursive" }}
       onClick={handleInitialInteraction}
     >
-      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop playsInline />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
       
       <div className="w-full max-w-2xl bg-white/70 backdrop-blur-sm shadow-2xl rounded-lg flex flex-col md:flex-row items-center p-6">
         
-        {/* Media Container */}
         <div className="w-full md:w-1/2 p-2 border-4 border-white rounded-md shadow-lg">
             <div className="relative w-full aspect-square">
                 {mediaUrl && (
@@ -180,7 +60,6 @@ export default function Template16({ data }: Template16Props) {
             </div>
         </div>
         
-        {/* Text Area */}
         <div className="w-full md:w-1/2 mt-6 md:mt-0 md:pl-8 text-center md:text-left">
            <h1 className="text-5xl text-rose-800/80">{name}</h1>
            <div className="h-24 mt-4 text-3xl text-rose-600/70 leading-snug flex items-center justify-center md:justify-start">

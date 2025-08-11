@@ -1,9 +1,10 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Feather } from 'lucide-react';
+import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { useState } from 'react';
 
 interface Template27Props {
   data: {
@@ -15,119 +16,22 @@ interface Template27Props {
   };
 }
 
-interface SrtLine {
-  startTime: number;
-  endTime: number;
-  text: string;
-}
-
-const parseSrt = (srtText: string): SrtLine[] => {
-    if (!srtText) return [];
-    const lines = srtText.trim().split(/\r?\n/);
-    const entries: SrtLine[] = [];
-    let i = 0;
-    while (i < lines.length) {
-        if (lines[i] && lines[i].match(/^\d+$/)) {
-            i++;
-            if (!lines[i]) continue;
-            const timeMatch = lines[i].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/);
-            if (timeMatch) {
-                const [, h1, m1, s1, ms1, h2, m2, s2, ms2] = timeMatch.map(Number);
-                const startTime = h1 * 3600 + m1 * 60 + s1 + ms1 / 1000;
-                const endTime = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000;
-                i++;
-                let text = '';
-                while (i < lines.length && lines[i] && lines[i].trim() !== '') {
-                    text += (text ? '\n' : '') + lines[i];
-                    i++;
-                }
-                entries.push({ startTime, endTime, text });
-            }
-        }
-        i++;
-    }
-    return entries;
-};
-
 export default function Template27({ data }: Template27Props) {
-  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [userInteracted, setUserInteracted] = useState(false);
+  const { name, mediaUrl } = data;
   const [isRevealed, setIsRevealed] = useState(false);
+  const {
+    currentSubtitle,
+    videoRef,
+    audioRef,
+    isVideo,
+    useVideoAsAudioSource,
+    handleInitialInteraction,
+  } = useSaywithPlayer(data);
 
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  const useVideoAsAudioSource = isVideo && mute === false;
-
-  const playMedia = useCallback(() => {
-    const audio = audioRef.current;
-    const video = videoRef.current;
-    let playPromise: Promise<void> | undefined;
-
-    if (useVideoAsAudioSource && video) {
-        playPromise = video.play();
-    } else {
-        if (video) video.play();
-        if (audio) playPromise = audio.play();
-    }
-    
-    if(playPromise){
-        playPromise.then(() => {
-        setIsPlaying(true);
-        setIsRevealed(true);
-        }).catch(e => console.error(e));
-    }
-  }, [useVideoAsAudioSource]);
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    playMedia();
-  }, [userInteracted, playMedia]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if(video) {
-        video.loop = true;
-        video.playsInline = true;
-        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
-    }
-  }, [mute, useVideoAsAudioSource]);
-
-  useEffect(() => {
-    if (srtContent) setSubtitles(parseSrt(srtContent));
-  }, [srtContent]);
-
-  useEffect(() => {
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (!audioSource) return;
-
-    const onTimeUpdate = () => {
-      const currentTime = audioSource.currentTime;
-      const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-      setCurrentSubtitle(activeLine ? activeLine.text : '');
-    };
-
-    const onEnded = () => {
-      setIsPlaying(false);
-      setIsRevealed(false);
-      if (audioSource) audioSource.currentTime = 0;
-      if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
-    }
-    
-    audioSource.addEventListener('timeupdate', onTimeUpdate);
-    audioSource.addEventListener('ended', onEnded);
-
-    return () => {
-      if (audioSource) {
-        audioSource.removeEventListener('timeupdate', onTimeUpdate);
-        audioSource.removeEventListener('ended', onEnded);
-      }
-    };
-  }, [subtitles, playMedia, useVideoAsAudioSource]);
+  const onInitialInteraction = (e: React.MouseEvent) => {
+    setIsRevealed(true);
+    handleInitialInteraction(e);
+  };
 
   return (
     <div 
@@ -136,7 +40,7 @@ export default function Template27({ data }: Template27Props) {
         fontFamily: "'Dancing Script', cursive",
         backgroundImage: 'url(https://www.transparenttextures.com/patterns/old-paper.png)'
       }}
-      onClick={!userInteracted ? handleInitialInteraction : undefined}
+      onClick={!isRevealed ? onInitialInteraction : undefined}
     >
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
@@ -150,7 +54,7 @@ export default function Template27({ data }: Template27Props) {
           )}
         </>
       )}
-      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} />}
       
       <div className="relative w-full max-w-2xl h-full flex flex-col items-center justify-center space-y-8 z-10 text-center">
 
@@ -169,7 +73,7 @@ export default function Template27({ data }: Template27Props) {
           <div className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in">
               <p className="mb-4 text-2xl" style={{fontFamily: "'Crimson Text', serif"}}>A letter for you from {name}</p>
               <Button
-                onClick={handleInitialInteraction}
+                onClick={onInitialInteraction}
                 variant="outline"
                 className="bg-transparent border-gray-400/50 text-gray-600 backdrop-blur-sm rounded-lg h-14 px-8 shadow-sm hover:bg-black/5 hover:border-gray-400 transition-all duration-300 ease-in-out transform hover:scale-105"
               >

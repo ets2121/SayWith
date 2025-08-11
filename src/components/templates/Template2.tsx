@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template2Props {
   data: {
@@ -15,172 +15,19 @@ interface Template2Props {
   };
 }
 
-interface SrtLine {
-  startTime: number;
-  endTime: number;
-  text: string;
-}
-
-const parseSrt = (srtText: string): SrtLine[] => {
-    if (!srtText) return [];
-    const lines = srtText.trim().split(/\r?\n/);
-    const entries: SrtLine[] = [];
-    let i = 0;
-    while (i < lines.length) {
-        if (lines[i] && lines[i].match(/^\d+$/)) {
-            i++;
-            if (!lines[i]) continue;
-            const timeMatch = lines[i].match(/(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/);
-            if (timeMatch) {
-                const [, h1, m1, s1, ms1, h2, m2, s2, ms2] = timeMatch.map(Number);
-                const startTime = h1 * 3600 + m1 * 60 + s1 + ms1 / 1000;
-                const endTime = h2 * 3600 + m2 * 60 + s2 + ms2 / 1000;
-                i++;
-                let text = '';
-                while (i < lines.length && lines[i] && lines[i].trim() !== '') {
-                    text += (text ? '\n' : '') + lines[i];
-                    i++;
-                }
-                entries.push({ startTime, endTime, text });
-            }
-        }
-        i++;
-    }
-    return entries;
-};
-
 export default function Template2({ data }: Template2Props) {
-  const { mediaUrl, audioUrl, srtContent, name, mute } = data;
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
-  const [currentSubtitle, setCurrentSubtitle] = useState('');
-  const [userInteracted, setUserInteracted] = useState(false);
-  
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
-  const useVideoAsAudioSource = isVideo && mute === false;
-
-  useEffect(() => {
-    if (srtContent) {
-      try {
-        const parsedSubtitles = parseSrt(srtContent);
-        setSubtitles(parsedSubtitles);
-      } catch (error) {
-        console.error("Failed to parse SRT data", error);
-      }
-    } else {
-        const nameParts = name.split(' ');
-        const defaultText = nameParts.join('\n');
-        setCurrentSubtitle(defaultText);
-    }
-  }, [srtContent, name]);
-
-  const playMedia = useCallback(() => {
-    const video = videoRef.current;
-    const audio = audioRef.current;
-    let playPromise: Promise<void> | undefined;
-
-    if (useVideoAsAudioSource && video) {
-      playPromise = video.play();
-    } else {
-      if(video) video.play();
-      if(audio) playPromise = audio.play();
-    }
-
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        setIsPlaying(true);
-      }).catch(error => {
-        console.error("Error playing media:", error);
-        setIsPlaying(false);
-      });
-    } else if (isVideo) {
-      setIsPlaying(true);
-    }
-  }, [useVideoAsAudioSource, isVideo]);
-
-  const pauseMedia = useCallback(() => {
-    videoRef.current?.pause();
-    if(!useVideoAsAudioSource) audioRef.current?.pause();
-    setIsPlaying(false);
-  }, [useVideoAsAudioSource]);
-  
-  const handlePlayPause = useCallback(() => {
-    if (isPlaying) {
-      pauseMedia();
-    } else {
-      playMedia();
-    }
-  }, [isPlaying, playMedia, pauseMedia]);
-
-  const handleInitialInteraction = useCallback(() => {
-    if (userInteracted) return;
-    setUserInteracted(true);
-    playMedia();
-  }, [userInteracted, playMedia]);
-
-  useEffect(() => {
-    const onVisChange = () => {
-      if (document.hidden) {
-        pauseMedia();
-      } else if (isPlaying && userInteracted) {
-        playMedia();
-      }
-    }
-    document.addEventListener("visibilitychange", onVisChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", onVisChange)
-    }
-  }, [pauseMedia, playMedia, isPlaying, userInteracted]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if(video) {
-        video.loop = true;
-        video.playsInline = true;
-        video.muted = useVideoAsAudioSource ? false : (mute ?? true);
-    }
-  }, [mute, userInteracted, useVideoAsAudioSource]);
-
-
-  useEffect(() => {
-    const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (!audioSource || !srtContent) return;
-
-    const timeUpdateHandler = () => {
-        const currentTime = audioSource.currentTime;
-        const activeLine = subtitles.find(line => currentTime >= line.startTime && currentTime < line.endTime);
-        
-        const newSubtitle = activeLine ? activeLine.text : '';
-
-        setCurrentSubtitle(current => current === newSubtitle ? current : newSubtitle);
-    };
-
-    const handleAudioEnd = () => {
-        if(srtContent) setCurrentSubtitle('');
-        setIsPlaying(false);
-        if (audioSource) {
-          audioSource.currentTime = 0;
-        }
-        if (videoRef.current && !useVideoAsAudioSource) {
-          videoRef.current.currentTime = 0;
-        }
-        playMedia();
-    }
-
-    audioSource.addEventListener('timeupdate', timeUpdateHandler);
-    audioSource.addEventListener('ended', handleAudioEnd);
-
-    return () => {
-        if (audioSource) {
-          audioSource.removeEventListener('timeupdate', timeUpdateHandler);
-          audioSource.removeEventListener('ended', handleAudioEnd);
-        }
-    };
-  }, [subtitles, playMedia, srtContent, useVideoAsAudioSource]);
+  const { name, mediaUrl } = data;
+  const {
+    isPlaying,
+    currentSubtitle,
+    userInteracted,
+    videoRef,
+    audioRef,
+    isVideo,
+    useVideoAsAudioSource,
+    handleInitialInteraction,
+    handlePlayPause,
+  } = useSaywithPlayer(data);
 
   const MediaComponent = isVideo ? 'video' : 'img';
   const mediaProps = {
@@ -199,7 +46,7 @@ export default function Template2({ data }: Template2Props) {
         />
       )}
       <div className="absolute inset-0 bg-black/50" />
-      {audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={audioUrl} loop />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center p-4">
         
@@ -228,10 +75,7 @@ export default function Template2({ data }: Template2Props) {
 
         <div className="absolute bottom-6 right-6 pointer-events-auto">
             <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePlayPause();
-                }}
+                onClick={handlePlayPause}
                 variant="outline"
                 size="icon"
                 className="bg-black/20 text-white border-white/80 backdrop-blur-sm rounded-full h-12 w-12 hover:bg-white/20 transition-all duration-300 ease-in-out transform hover:scale-105"
