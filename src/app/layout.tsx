@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://www.saywith.com/",
+    url: "https://saywith.vercel.app/",
     title: "SayWith — Say it with style. Make it unforgettable.",
     description: "Create stunning media templates, share via QR codes, and make your message pop. Perfect for Gen Z and beyond.",
     images: ["/icons/icon-512x512.png"],
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: "SayWith — Say it with style. Make it unforgettable.",
     description: "Transform your words, media, and ideas into stunning, shareable templates.",
     images: ["/icons/icon-512x512.png"],
-    url: "https://www.saywith.com/",
+    url: "https://saywith.vercel.app/",
   },
   other: {
     "tiktok:creator": "@saywith",
@@ -62,14 +62,14 @@ export default function RootLayout({
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "SayWith",
-      "url": "https://www.saywith.com/",
+      "url": "https://saywith.vercel.app/",
       "description": "Transform your words, media, and ideas into stunning, shareable templates. Create, customize, and share your vision with SayWith.",
       "publisher": {
         "@type": "Organization",
         "name": "SayWith",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://www.saywith.com/icons/icon-512x512.png",
+          "url": "https://saywith.vercel.app/icons/icon-512x512.png",
           "width": 512,
           "height": 512
         }
