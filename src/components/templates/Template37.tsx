@@ -24,12 +24,14 @@ export default function Template37({ data }: Template37Props) {
     audioRef,
     isVideo,
     useVideoAsAudioSource,
+    handleInitialInteraction,
     handlePlayPause,
   } = useSaywithPlayer(data);
 
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
+      onClick={handleInitialInteraction}
     >
       {mediaUrl && (
         <>

@@ -31,6 +31,7 @@ export default function Template33({ data }: Template33Props) {
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
+      onClick={handleInitialInteraction}
     >
       {mediaUrl && (
         <>

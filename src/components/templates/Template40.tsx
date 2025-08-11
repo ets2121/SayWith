@@ -30,6 +30,7 @@ export default function Template40({ data }: Template40Props) {
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-8 bg-black text-white overflow-hidden"
+      onClick={handleInitialInteraction}
     >
       {mediaUrl && (
         <>

@@ -67,9 +67,6 @@ export default function Template14({ data }: Template14Props) {
             </div>
         </div>
       </div>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
-      `}</style>
     </div>
   );
 }

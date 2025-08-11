@@ -73,9 +73,9 @@ export default function Template11({ data }: Template11Props) {
         <div className="w-full mt-8 p-4 bg-[#e3dcd2] rounded-lg shadow-[inset_0_2px_8px_rgba(0,0,0,0.4)]">
           <div className="text-center">
               <h3 className="text-xl font-bold text-[#4a3a2a]">{name}</h3>
-              <p className="text-sm text-gray-600 font-mono h-12 flex items-center justify-center">
+              <div className="text-sm text-gray-600 font-mono h-12 flex items-center justify-center">
                 {currentSubtitle.split('\n').map((line, index) => <span key={index} className="block">{line}</span>)}
-              </p>
+              </div>
           </div>
 
           <div className="w-full mt-4">

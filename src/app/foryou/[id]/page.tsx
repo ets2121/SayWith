@@ -59,8 +59,12 @@ interface SaywithData {
 
 const LoadingSpinner = () => (
     <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-lg">Loading your content...</p>
+        <div className="relative w-20 h-20">
+            <div className="absolute inset-0 border-4 border-primary rounded-full animate-spin"></div>
+            <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin [animation-direction:reverse]"></div>
+            <div className="absolute inset-4 border-4 border-primary/20 rounded-full animate-pulse"></div>
+        </div>
+        <p className="mt-6 text-lg animate-pulse">Loading your content...</p>
     </div>
 );
 

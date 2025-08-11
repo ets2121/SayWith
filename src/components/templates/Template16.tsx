@@ -74,9 +74,6 @@ export default function Template16({ data }: Template16Props) {
             </div>
         </div>
       </div>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
-      `}</style>
     </div>
   );
 }
