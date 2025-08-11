@@ -58,11 +58,11 @@ interface SaywithData {
 }
 
 const loadingTexts = [
-    "Loading your content...",
-    "Crafting your moment...",
-    "Making it unforgettable...",
-    "Almost there...",
-    "Just a second more..."
+    "Wait lang boss...",
+    "Making it awesome...",
+    "Konti na lang, pramis!",
+    "Almost there, beshie...",
+    "Sandali lang, processing na..."
 ];
 
 const LoadingSpinner = () => {
@@ -116,10 +116,13 @@ const LoadingSpinner = () => {
                 <div className="absolute inset-6 border-t-2 border-b-2 border-primary/70 rounded-full animate-spin-inner h-[80px] w-[80px]"></div>
                 <div className="absolute h-4 w-4 bg-primary rounded-full animate-pulse-core"></div>
             </div>
-            <div className="mt-6 text-lg text-center h-6">
-                <span className={`transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
-                    {loadingTexts[textIndex]}
-                </span>
+            <div className="mt-6 text-center">
+                 <p className="text-2xl font-bold text-primary">SayWith</p>
+                <div className="text-lg h-6 mt-2">
+                    <span className={`transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+                        {loadingTexts[textIndex]}
+                    </span>
+                </div>
             </div>
         </div>
     );
