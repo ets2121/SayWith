@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Head from 'next/head';
 import { ref, get } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import Template1 from '@/components/templates/Template1';
@@ -56,16 +57,26 @@ interface SaywithData {
   mute?: boolean;
 }
 
+const LoadingSpinner = () => (
+    <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-lg">Loading your content...</p>
+    </div>
+);
+
+
 export default function ForYouPage() {
   const params = useParams();
   const id = params.id as string;
   const [data, setData] = useState<SaywithData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(true);
+  const [isMediaLoaded, setIsMediaLoaded] = useState(false);
 
   useEffect(() => {
     if (id) {
       const fetchData = async () => {
+        setIsFetching(true);
         try {
           const saywithRef = ref(db, `Saywith/${id}`);
           const snapshot = await get(saywithRef);
@@ -88,21 +99,52 @@ export default function ForYouPage() {
           console.error(err);
           setError('An error occurred while fetching data.');
         } finally {
-          setLoading(false);
+          setIsFetching(false);
         }
       };
       fetchData();
     }
   }, [id]);
+  
+  useEffect(() => {
+    if (data?.mediaUrl) {
+      const isVideo = data.mediaUrl.includes('.mp4') || data.mediaUrl.includes('.mov') || data.mediaUrl.includes('video');
+      if (isVideo) {
+        const video = document.createElement('video');
+        video.src = data.mediaUrl;
+        video.onloadeddata = () => setIsMediaLoaded(true);
+        video.onerror = () => {
+            setError('Failed to load media.');
+            setIsMediaLoaded(true); // Stop loading on error
+        };
+      } else {
+        const img = new Image();
+        img.src = data.mediaUrl;
+        img.onload = () => setIsMediaLoaded(true);
+        img.onerror = () => {
+            setError('Failed to load media.');
+            setIsMediaLoaded(true); // Stop loading on error
+        };
+      }
+    } else if (!isFetching) {
+        setIsMediaLoaded(true);
+    }
+  }, [data, isFetching]);
 
-  if (loading) {
+  const showLoading = isFetching || !isMediaLoaded;
+
+  if (showLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <p className="text-foreground">Loading...</p>
-      </div>
+        <>
+            <Head>
+                {data?.mediaUrl && <link rel="preload" href={data.mediaUrl} as={data.mediaUrl.includes('.mp4') ? 'video' : 'image'} />}
+                {data?.audioUrl && <link rel="preload" href={data.audioUrl} as="audio" />}
+            </Head>
+            <LoadingSpinner />
+        </>
     );
   }
-
+  
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
