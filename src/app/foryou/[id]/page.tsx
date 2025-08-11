@@ -67,23 +67,49 @@ const loadingTexts = [
 
 const LoadingSpinner = () => {
     const [textIndex, setTextIndex] = useState(0);
+    const [fade, setFade] = useState(true);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setTextIndex((prevIndex) => (prevIndex + 1) % loadingTexts.length);
-        }, 2000);
-        return () => clearInterval(interval);
+        const textInterval = setInterval(() => {
+            setFade(false);
+            setTimeout(() => {
+                setTextIndex((prevIndex) => (prevIndex + 1) % loadingTexts.length);
+                setFade(true);
+            }, 500);
+        }, 2500);
+        return () => clearInterval(textInterval);
     }, []);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground overflow-hidden">
+             <style jsx>{`
+                .animate-spin-reverse {
+                    animation-direction: reverse;
+                }
+                .text-fade-enter {
+                    opacity: 0;
+                    transition: opacity 500ms ease-in;
+                }
+                .text-fade-enter-active {
+                    opacity: 1;
+                }
+                .text-fade-exit {
+                    opacity: 1;
+                    transition: opacity 500ms ease-out;
+                }
+                .text-fade-exit-active {
+                    opacity: 0;
+                }
+            `}</style>
             <div className="relative w-24 h-24">
                 <div className="absolute inset-0 border-4 border-primary rounded-full animate-spin"></div>
-                <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin [animation-direction:reverse]"></div>
+                <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin animate-spin-reverse"></div>
                 <div className="absolute inset-4 border-4 border-primary/20 rounded-full animate-pulse"></div>
             </div>
             <div className="mt-6 text-lg text-center h-6">
-                <span className="animate-fade-in">{loadingTexts[textIndex]}</span>
+                <span className={`transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
+                    {loadingTexts[textIndex]}
+                </span>
             </div>
         </div>
     );
@@ -291,5 +317,3 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
-
-    
