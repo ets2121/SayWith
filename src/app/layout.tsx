@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import { useEffect } from 'react';
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.saywith.com"),
@@ -27,6 +27,7 @@ export const metadata: Metadata = {
     title: "SayWith — Say it with style. Make it unforgettable.",
     description: "Transform your words, media, and ideas into stunning, shareable templates.",
     images: ["/icons/icon-512x512.png"],
+    url: "https://www.saywith.com/",
   },
   other: {
     "tiktok:creator": "@saywith",
@@ -51,17 +52,6 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
 };
-
-function ServiceWorkerRegistration() {
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('Service Worker registered with scope:', registration.scope))
-        .catch(error => console.error('Service Worker registration failed:', error));
-    }
-  }, []);
-  return null;
-}
 
 export default function RootLayout({
   children,
