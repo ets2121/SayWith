@@ -83,25 +83,38 @@ const LoadingSpinner = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground overflow-hidden">
              <style jsx>{`
-                @keyframes spin-fast {
+                @keyframes spin-outer {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
-                @keyframes spin-slow {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(-360deg); }
+                @keyframes spin-inner {
+                    from { transform: rotate(360deg); }
+                    to { transform: rotate(0deg); }
                 }
-                .animate-spin-fast {
-                    animation: spin-fast 1.5s linear infinite;
+                 @keyframes pulse-core {
+                    0%, 100% { 
+                        transform: scale(0.9);
+                        box-shadow: 0 0 0 0 hsla(var(--primary), 0.7);
+                    }
+                    50% { 
+                        transform: scale(1);
+                        box-shadow: 0 0 10px 15px hsla(var(--primary), 0);
+                    }
                 }
-                .animate-spin-slow {
-                    animation: spin-slow 3s linear infinite;
+                .animate-spin-outer {
+                    animation: spin-outer 4s linear infinite;
+                }
+                .animate-spin-inner {
+                    animation: spin-inner 3s linear infinite;
+                }
+                .animate-pulse-core {
+                    animation: pulse-core 2s ease-in-out infinite;
                 }
             `}</style>
             <div className="w-32 h-32 relative flex items-center justify-center">
-                <div className="absolute inset-0 border-2 border-primary rounded-full animate-spin-fast"></div>
-                <div className="absolute inset-4 border-dashed border-2 border-primary/50 rounded-full animate-spin-slow"></div>
-                <div className="absolute inset-8 border-2 border-primary/20 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-spin-outer"></div>
+                <div className="absolute inset-6 border-t-2 border-b-2 border-primary/70 rounded-full animate-spin-inner h-[80px] w-[80px]"></div>
+                <div className="absolute h-4 w-4 bg-primary rounded-full animate-pulse-core"></div>
             </div>
             <div className="mt-6 text-lg text-center h-6">
                 <span className={`transition-opacity duration-500 ${fade ? 'opacity-100' : 'opacity-0'}`}>
