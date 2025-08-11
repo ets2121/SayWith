@@ -2,7 +2,6 @@
 "use client";
 
 import { Pause, Play } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template7Props {
@@ -46,7 +45,7 @@ export default function Template7({ data }: Template7Props) {
                     {isVideo ? (
                         <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
                     ) : (
-                        <Image src={mediaUrl} alt="background" width={350} height={350} className="w-full h-full object-contain" />
+                        <img src={mediaUrl} alt="background" className="w-full h-full object-contain" />
                     )}
                   </>
                 )}

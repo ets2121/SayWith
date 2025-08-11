@@ -2,7 +2,6 @@
 "use client";
 
 import { ThumbsDown, ThumbsUp, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
-import Image from 'next/image';
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -69,7 +68,7 @@ export default function Template20({ data }: Template20Props) {
           {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
+            <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
           )}
         </>
       )}
@@ -83,7 +82,7 @@ export default function Template20({ data }: Template20Props) {
                 {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover" />
+                    <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                 )}
               </>
             )}

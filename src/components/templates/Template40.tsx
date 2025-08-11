@@ -1,7 +1,6 @@
 
 "use client";
 
-import Image from 'next/image';
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -37,7 +36,7 @@ export default function Template40({ data }: Template40Props) {
           {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover" />
           )}
         </>
       )}
@@ -63,7 +62,7 @@ export default function Template40({ data }: Template40Props) {
                        {isVideo ? (
                           <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                       ) : (
-                          <Image src={mediaUrl} alt="Album Art" width={40} height={40} className="w-full h-full object-cover" />
+                          <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                       )}
                      </>
                    )}

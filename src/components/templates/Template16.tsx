@@ -2,7 +2,6 @@
 "use client";
 
 import { Play, Pause, Heart } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template16Props {
@@ -45,7 +44,7 @@ export default function Template16({ data }: Template16Props) {
                     {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded" loop playsInline />
                     ) : (
-                    <Image src={mediaUrl} alt="Romantic Memory" layout="fill" className="w-full h-full object-cover rounded" />
+                    <img src={mediaUrl} alt="Romantic Memory" className="w-full h-full object-cover rounded" />
                     )}
                   </>
                 )}

@@ -1,7 +1,6 @@
 
 "use client";
 
-import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -43,7 +42,7 @@ export default function Template31({ data }: Template31Props) {
           {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover" />
           )}
         </>
       )}
@@ -63,7 +62,7 @@ export default function Template31({ data }: Template31Props) {
             </div>
             <div className="flex items-center gap-2 mt-2">
                 <div className="w-8 h-8 rounded-full overflow-hidden">
-                    {mediaUrl && <Image src={mediaUrl} alt="avatar" width={32} height={32} className="w-full h-full object-cover"/>}
+                    {mediaUrl && <img src={mediaUrl} alt="avatar" className="w-full h-full object-cover"/>}
                 </div>
                 <p className="text-sm font-bold">{name}</p>
                 <p className="text-sm text-white/70">Saywith</p>

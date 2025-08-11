@@ -194,8 +194,8 @@ export default function SayWithLandingPage() {
                     src="https://placehold.co/1920x1080.png"
                     data-ai-hint="abstract gradient ocean blue"
                     alt="Ocean Blue Gradient with subtle waves"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{objectFit:"cover"}}
                     className="opacity-80"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>

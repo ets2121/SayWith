@@ -2,7 +2,6 @@
 "use client";
 
 import { Play, Pause, SkipBack, SkipForward, Power } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template25Props {
@@ -97,7 +96,7 @@ export default function Template25({ data }: Template25Props) {
               {isVideo ? (
                 <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
               ) : (
-                <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+                <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
               )}
             </>
           )}

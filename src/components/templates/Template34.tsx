@@ -1,7 +1,6 @@
 
 "use client";
 
-import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -41,7 +40,7 @@ export default function Template34({ data }: Template34Props) {
            {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
           )}
          </>
        )}
@@ -55,7 +54,7 @@ export default function Template34({ data }: Template34Props) {
                     {isVideo ? (
                         <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
-                        <Image src={mediaUrl} alt="Polaroid" layout="fill" className="w-full h-full object-cover" />
+                        <img src={mediaUrl} alt="Polaroid" className="w-full h-full object-cover" />
                     )}
                   </>
                 )}

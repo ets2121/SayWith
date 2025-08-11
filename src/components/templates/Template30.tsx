@@ -3,7 +3,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Mic, Laugh } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template30Props {
@@ -58,7 +57,7 @@ export default function Template30({ data }: Template30Props) {
                {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="media" width={400} height={225} className="w-full h-full object-cover" />
+                    <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                 )}
              </>
            )}

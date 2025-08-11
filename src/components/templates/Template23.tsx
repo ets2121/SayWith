@@ -2,7 +2,6 @@
 "use client";
 
 import { Play, Pause, Rewind, FastForward } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template23Props {
@@ -62,7 +61,7 @@ export default function Template23({ data }: Template23Props) {
                 {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md" loop playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={384} height={384} className="w-full h-full object-cover rounded-md" />
+                    <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover rounded-md" />
                 )}
               </>
             )}
@@ -70,7 +69,7 @@ export default function Template23({ data }: Template23Props) {
 
         <div className="w-full text-center">
             <h3 className="text-2xl font-bold tracking-wider" style={glowStyle}>{name}</h3>
-            <p className="text-sm text-cyan-400 font-light mt-1 uppercase" style={{...glowStyle, textShadow: glowStyle.textShadow.replace(/255/g, '200')}}>Saywith</p>
+            <p className="text-sm text-cyan-400 font-light mt-1 uppercase" style={{...glowStyle, textShadow: glowStyle.textShadow.replace(/255/g, '200'))}}>Saywith</p>
         </div>
         
         <div className="w-full text-center text-cyan-300 font-normal h-12 flex items-center justify-center">

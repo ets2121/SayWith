@@ -2,7 +2,6 @@
 "use client";
 
 import { Play, Pause, SkipBack, SkipForward, Share2, MessageSquare } from 'lucide-react';
-import Image from 'next/image';
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -55,7 +54,7 @@ export default function Template22({ data }: Template22Props) {
                 {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="Album Art" width={340} height={340} className="w-full h-full object-cover" />
+                    <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                 )}
               </>
             )}

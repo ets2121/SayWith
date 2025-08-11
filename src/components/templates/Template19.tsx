@@ -2,7 +2,6 @@
 "use client";
 
 import { ThumbsDown, ThumbsUp, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
-import Image from 'next/image';
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -51,7 +50,7 @@ export default function Template19({ data }: Template19Props) {
           {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="Background" layout="fill" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover" />
           )}
         </>
       )}

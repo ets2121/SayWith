@@ -1,7 +1,6 @@
 
 "use client";
 
-import Image from 'next/image';
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -25,6 +24,7 @@ export default function Template36({ data }: Template36Props) {
     audioRef,
     isVideo,
     useVideoAsAudioSource,
+    handleInitialInteraction,
     handlePlayPause,
   } = useSaywithPlayer(data);
 
@@ -37,7 +37,7 @@ export default function Template36({ data }: Template36Props) {
           {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
           )}
         </>
       )}
@@ -46,13 +46,13 @@ export default function Template36({ data }: Template36Props) {
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-4 animate-fade-in-up">
         <div className="w-full bg-white/80 backdrop-blur-md rounded-lg p-3 flex items-center gap-3 shadow-md">
-            <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 shadow-sm">
+            <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
                  {mediaUrl && (
                    <>
                      {isVideo ? (
                         <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
-                        <Image src={mediaUrl} alt="Album Art" width={64} height={64} className="w-full h-full object-cover" />
+                        <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}
                    </>
                  )}

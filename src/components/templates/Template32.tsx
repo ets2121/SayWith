@@ -1,7 +1,6 @@
 
 "use client";
 
-import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
@@ -37,7 +36,7 @@ export default function Template32({ data }: Template32Props) {
            {isVideo ? (
             <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110" loop playsInline />
           ) : (
-            <Image src={mediaUrl} alt="background" layout="fill" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110" />
+            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110" />
           )}
          </>
        )}
@@ -50,7 +49,7 @@ export default function Template32({ data }: Template32Props) {
                 {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl" loop playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="background" layout="fill" className="w-full h-full object-cover rounded-2xl shadow-2xl" />
+                    <img src={mediaUrl} alt="background" className="w-full h-full object-cover rounded-2xl shadow-2xl" />
                 )}
               </>
             )}
@@ -66,7 +65,7 @@ export default function Template32({ data }: Template32Props) {
           <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-full overflow-hidden">
-                    {mediaUrl && <Image src={mediaUrl} alt="avatar" width={24} height={24} className="w-full h-full object-cover"/>}
+                    {mediaUrl && <img src={mediaUrl} alt="avatar" className="w-full h-full object-cover"/>}
                 </div>
                 <p className="text-xs font-bold">{name}</p>
             </div>

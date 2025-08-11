@@ -3,7 +3,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template29Props {
@@ -45,7 +44,7 @@ export default function Template29({ data }: Template29Props) {
                {isVideo ? (
                     <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl" loop playsInline />
                 ) : (
-                    <Image src={mediaUrl} alt="background" width={600} height={400} className="w-full h-full object-cover rounded-lg shadow-2xl" />
+                    <img src={mediaUrl} alt="background" className="w-full h-full object-cover rounded-lg shadow-2xl" />
                 )}
              </>
            )}

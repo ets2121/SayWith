@@ -2,7 +2,6 @@
 "use client";
 
 import { Play, Pause } from 'lucide-react';
-import Image from 'next/image';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
 interface Template13Props {
@@ -43,7 +42,7 @@ export default function Template13({ data }: Template13Props) {
               {isVideo ? (
                 <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
               ) : (
-                <Image src={mediaUrl} alt="Album Art" layout="fill" className="w-full h-full object-cover" />
+                <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
               )}
             </>
           )}
