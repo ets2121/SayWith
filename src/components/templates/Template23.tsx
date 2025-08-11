@@ -14,8 +14,6 @@ interface Template23Props {
   };
 }
 
-const futuristicFont = "'Orbitron', sans-serif";
-
 export default function Template23({ data }: Template23Props) {
   const { name, mediaUrl } = data;
   const {
@@ -37,13 +35,10 @@ export default function Template23({ data }: Template23Props) {
 
   return (
     <div 
-      className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-cyan-300 overflow-hidden"
-      style={{ fontFamily: futuristicFont, background: 'radial-gradient(circle, #001f3f 0%, #000 70%)' }}
+      className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-cyan-300 overflow-hidden font-['Orbitron',_sans-serif]"
+      style={{ background: 'radial-gradient(circle, #001f3f 0%, #000 70%)' }}
       onClick={handleInitialInteraction}
     >
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-      `}</style>
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagmonds.png')] opacity-10" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
       
@@ -69,7 +64,7 @@ export default function Template23({ data }: Template23Props) {
 
         <div className="w-full text-center">
             <h3 className="text-2xl font-bold tracking-wider" style={glowStyle}>{name}</h3>
-            <p className="text-sm text-cyan-400 font-light mt-1 uppercase" style={{...glowStyle, textShadow: glowStyle.textShadow.replace(/255/g, '200'))}}>Saywith</p>
+            <p className="text-sm text-cyan-400 font-light mt-1 uppercase" style={{...glowStyle, textShadow: glowStyle.textShadow.replace(/255/g, '200')}}>Saywith</p>
         </div>
         
         <div className="w-full text-center text-cyan-300 font-normal h-12 flex items-center justify-center">

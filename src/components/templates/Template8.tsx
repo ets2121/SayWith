@@ -73,7 +73,7 @@ export default function Template8({ data }: Template8Props) {
                     </div>
                     <button onClick={handlePlayPause} className="w-10 h-10 rounded-full bg-black flex justify-center items-center text-white" aria-label="Play/Pause">
                         {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
-                    </div>
+                    </button>
                     <div className="h-10 flex items-center">
                         <button onClick={(e) => { e.stopPropagation(); seek(5); }} className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[20px] border-l-black" aria-label="Fast Forward"></button>
                     </div>

@@ -88,7 +88,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=PT+Sans:wght@400;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=PT+Sans:wght@400;700&family=Caveat:wght@400;700&family=Great+Vibes&family=Orbitron:wght@400;700&family=Exo+2:wght@300;400;700&family=Share+Tech+Mono&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Bebas+Neue&family=Anton&family=Special+Elite&display=swap"
           rel="stylesheet"
         />
         <script
