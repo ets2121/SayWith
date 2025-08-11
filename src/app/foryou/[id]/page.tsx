@@ -46,8 +46,6 @@ import Template38 from '@/components/templates/Template38';
 import Template39 from '@/components/templates/Template39';
 import Template40 from '@/components/templates/Template40';
 
-
-// Define the type for your data structure
 interface SaywithData {
   template: string;
   enabled: boolean;
@@ -75,6 +73,14 @@ export default function ForYouPage() {
           if (snapshot.exists()) {
             const fetchedData = snapshot.val() as SaywithData;
             setData(fetchedData);
+            if (navigator.serviceWorker.controller) {
+                const assetsToCache = [fetchedData.mediaUrl, fetchedData.audioUrl].filter(Boolean);
+                navigator.serviceWorker.controller.postMessage({
+                    action: 'CACHE_USER_ASSETS',
+                    userId: id,
+                    assets: assetsToCache
+                });
+            }
           } else {
             setError('The link you followed may be broken, or the page may have been removed.');
           }

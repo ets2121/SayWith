@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
+import { useEffect } from 'react';
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.saywith.com"),
@@ -49,8 +50,18 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
-  // The script tag needs to be handled separately in the component for now as per Next.js docs for ld+json
 };
+
+function ServiceWorkerRegistration() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => console.log('Service Worker registered with scope:', registration.scope))
+        .catch(error => console.error('Service Worker registration failed:', error));
+    }
+  }, []);
+  return null;
+}
 
 export default function RootLayout({
   children,
@@ -95,8 +106,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className="font-body antialiased">
+        <ServiceWorkerRegistration />
         {children}
         <Toaster />
       </body>
