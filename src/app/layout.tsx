@@ -5,11 +5,11 @@ import "./globals.css";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.saywith.com"),
+  metadataBase: new URL("https://saywith.vercel.app"),
   title: "SayWith — Say it with style. Make it unforgettable.",
   description: "Transform your words, media, and ideas into stunning, shareable templates. Create, customize, and share your vision with SayWith.",
   keywords: ["SayWith", "templates", "QR code", "social media design", "Gen Z marketing", "creative media", "Instagram story templates", "Facebook story templates", "digital design", "QR code sharing", "logo design", "motivational templates", "video templates"],
-  authors: [{ name: "SayWith Team" }],
+  authors: [{ name: "Mark john Valdez" }],
   robots: {
     index: true,
     follow: true,
