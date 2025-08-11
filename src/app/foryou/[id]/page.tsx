@@ -57,16 +57,37 @@ interface SaywithData {
   mute?: boolean;
 }
 
-const LoadingSpinner = () => (
-    <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground">
-        <div className="relative w-20 h-20">
-            <div className="absolute inset-0 border-4 border-primary rounded-full animate-spin"></div>
-            <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin [animation-direction:reverse]"></div>
-            <div className="absolute inset-4 border-4 border-primary/20 rounded-full animate-pulse"></div>
+const loadingTexts = [
+    "Loading your content...",
+    "Crafting your moment...",
+    "Making it unforgettable...",
+    "Almost there...",
+    "Just a second more..."
+];
+
+const LoadingSpinner = () => {
+    const [textIndex, setTextIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTextIndex((prevIndex) => (prevIndex + 1) % loadingTexts.length);
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground overflow-hidden">
+            <div className="relative w-24 h-24">
+                <div className="absolute inset-0 border-4 border-primary rounded-full animate-spin"></div>
+                <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin [animation-direction:reverse]"></div>
+                <div className="absolute inset-4 border-4 border-primary/20 rounded-full animate-pulse"></div>
+            </div>
+            <div className="mt-6 text-lg text-center h-6">
+                <span className="animate-fade-in">{loadingTexts[textIndex]}</span>
+            </div>
         </div>
-        <p className="mt-6 text-lg animate-pulse">Loading your content...</p>
-    </div>
-);
+    );
+};
 
 
 export default function ForYouPage() {
@@ -270,3 +291,5 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
+
+    

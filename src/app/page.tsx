@@ -22,6 +22,7 @@ import {
   CarouselItem 
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import LandingPageLoader from "@/components/LandingPageLoader";
 
 const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>> } = {
   facebook: Facebook,
@@ -141,32 +142,44 @@ export default function SayWithLandingPage() {
   const templatePlugin = React.useRef(Autoplay({ delay: 2200, stopOnInteraction: true }));
   const testimonialPlugin = React.useRef(Autoplay({ delay: 2500, stopOnInteraction: true }));
 
+  const [isLoading, setIsLoading] = useState(true);
   const [qrcodes, setQrcodes] = useState<QrCode[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
-    fetch('/qrcodes.json')
-      .then((res) => res.json())
-      .then((data) => setQrcodes(data))
-      .catch((err) => console.error("Failed to load qrcodes.json", err));
+    const fetchData = async () => {
+        try {
+            const [qrcodesRes, templatesRes, linksRes, testimonialsRes] = await Promise.all([
+                fetch('/qrcodes.json'),
+                fetch('/templates.json'),
+                fetch('/links.json'),
+                fetch('/testimonials.json')
+            ]);
+            
+            const qrcodesData = await qrcodesRes.json();
+            const templatesData = await templatesRes.json();
+            const linksData = await linksRes.json();
+            const testimonialsData = await testimonialsRes.json();
 
-    fetch('/templates.json')
-      .then((res) => res.json())
-      .then((data) => setTemplates(data))
-      .catch((err) => console.error("Failed to load templates.json", err));
-      
-    fetch('/links.json')
-      .then((res) => res.json())
-      .then((data) => setSocialLinks(data.socials))
-      .catch((err) => console.error("Failed to load links.json", err));
+            setQrcodes(qrcodesData);
+            setTemplates(templatesData);
+            setSocialLinks(linksData.socials);
+            setTestimonials(testimonialsData);
 
-    fetch('/testimonials.json')
-      .then((res) => res.json())
-      .then((data) => setTestimonials(data))
-      .catch((err) => console.error("Failed to load testimonials.json", err));
+        } catch (err) {
+            console.error("Failed to load initial data", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    fetchData();
   }, []);
+
+  if (isLoading) {
+    return <LandingPageLoader />;
+  }
 
   return (
     <div className="bg-background text-foreground antialiased">
@@ -425,3 +438,5 @@ export default function SayWithLandingPage() {
     </div>
   );
 }
+
+    
