@@ -84,7 +84,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -96,7 +96,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-         <meta name="theme-color" content="#ffffff" />
+         <meta name="theme-color" content="#000000" />
       </head>
       <body className="font-body antialiased">
         <ServiceWorkerRegistration />
