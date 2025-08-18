@@ -4,8 +4,8 @@
   "description": "Transform your words, media, and ideas into stunning, shareable templates. Create, customize, and share your vision with SayWith.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#121212",
+  "theme_color": "#FFA500",
   "orientation": "portrait-primary",
   "icons": [
     {
