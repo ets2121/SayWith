@@ -4,6 +4,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
 import Template1 from '@/components/templates/Template1';
 import Template2 from '@/components/templates/Template2';
 import Template3 from '@/components/templates/Template3';
@@ -126,6 +129,17 @@ const LoadingSpinner = () => {
     );
 };
 
+const ErrorDisplay = ({ message }: { message: string }) => (
+    <div className="flex flex-col items-center justify-center h-screen bg-background text-center px-4">
+        <p className="text-red-500 text-lg">{message}</p>
+        <Link href="/" passHref>
+            <Button className="mt-6">
+                <Home className="mr-2 h-4 w-4" /> Go to Homepage
+            </Button>
+        </Link>
+    </div>
+);
+
 
 export default function ForYouPage() {
   const params = useParams();
@@ -210,11 +224,7 @@ export default function ForYouPage() {
   }
   
   if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <p className="text-red-500 text-center px-4">{error}</p>
-      </div>
-    );
+    return <ErrorDisplay message={error} />;
   }
   
   if (!data) {
@@ -223,19 +233,20 @@ export default function ForYouPage() {
 
   if (!data.enabled) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <p className="text-yellow-500">This link is currently not active.</p>
-      </div>
+        <div className="flex flex-col items-center justify-center h-screen bg-background text-center px-4">
+            <p className="text-yellow-500 text-lg">This link is currently not active.</p>
+             <Link href="/" passHref>
+                <Button className="mt-6">
+                    <Home className="mr-2 h-4 w-4" /> Go to Homepage
+                </Button>
+            </Link>
+        </div>
     );
   }
 
   const renderTemplate = () => {
     if (!data.mediaUrl || !data.audioUrl) {
-      return (
-        <div className="flex items-center justify-center h-screen bg-background">
-          <p className="text-red-500">Media or audio URL is missing.</p>
-        </div>
-      );
+      return <ErrorDisplay message="Media or audio URL is missing." />;
     }
       
     switch (data.template) {
@@ -320,11 +331,7 @@ export default function ForYouPage() {
       case 'template40':
         return <Template40 data={data} />;
       default:
-        return (
-          <div className="flex items-center justify-center h-screen bg-background">
-            <p className="text-red-500">Invalid template specified.</p>
-          </div>
-        );
+        return <ErrorDisplay message="Invalid template specified." />;
     }
   };
 
