@@ -9,7 +9,7 @@ export async function GET(
 ) {
   const id = params.id;
 
-  if (typeof id !== 'string' || !/^[a-zA-Z0-9]{1,9}$/.test(id)) {
+  if (typeof id !== 'string' || id.length === 0 || id.length > 9) {
     return NextResponse.json({ error: 'Invalid ID format.' }, { status: 400 });
   }
 
