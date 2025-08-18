@@ -4,8 +4,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
-import { ref, get } from 'firebase/database';
-import { db } from '@/lib/firebase';
 import Template1 from '@/components/templates/Template1';
 import Template2 from '@/components/templates/Template2';
 import Template3 from '@/components/templates/Template3';
@@ -142,24 +140,22 @@ export default function ForYouPage() {
       const fetchData = async () => {
         setIsFetching(true);
         try {
-          const saywithRef = ref(db, `Saywith/${id}`);
-          const snapshot = await get(saywithRef);
-
-          if (snapshot.exists()) {
-            const fetchedData = snapshot.val() as SaywithData;
-            setData(fetchedData);
-            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({
-                    action: 'SET_USER',
-                    userId: id,
-                });
-            }
-          } else {
-            setError('The link you followed may be broken, or the page may have been removed.');
+          const response = await fetch(`/api/saywith/${id}`);
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'An error occurred');
           }
-        } catch (err) {
+          const fetchedData = await response.json();
+          setData(fetchedData);
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              action: 'SET_USER',
+              userId: id,
+            });
+          }
+        } catch (err: any) {
           console.error(err);
-          setError('An error occurred while fetching data.');
+          setError(err.message || 'An error occurred while fetching data.');
         } finally {
           setIsFetching(false);
         }
