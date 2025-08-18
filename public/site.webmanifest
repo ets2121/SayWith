@@ -1,12 +1,7 @@
 {
-  "name": "SayWith",
+  "name": "SayWith — Say it with style. Make it unforgettable.",
   "short_name": "SayWith",
   "description": "Transform your words, media, and ideas into stunning, shareable templates. Create, customize, and share your vision with SayWith.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#FFA500",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -48,5 +43,9 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000"
 }
