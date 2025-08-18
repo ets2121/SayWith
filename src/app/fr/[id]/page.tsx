@@ -139,14 +139,20 @@ export default function ForYouPage() {
     if (id) {
       const fetchData = async () => {
         setIsFetching(true);
+        setError(null);
         try {
           const response = await fetch(`/api/saywith/${id}`);
+          
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'An error occurred');
+            setError(errorData.error || 'An error occurred');
+            setIsFetching(false);
+            return;
           }
+
           const fetchedData = await response.json();
           setData(fetchedData);
+          
           if (navigator.serviceWorker && navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
               action: 'SET_USER',
@@ -324,5 +330,3 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
-
-    
