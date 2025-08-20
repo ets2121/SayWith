@@ -3,7 +3,9 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development'
+  disable: process.env.NODE_ENV === 'development',
+  sw: 'custom-sw.js', // Point to our custom service worker
+  runtimeCaching: [], // Disable default runtime caching
 });
 
 import type {NextConfig} from 'next';
@@ -36,6 +38,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '34f04158fb92b225b9197c118fb91b80.r2.cloudflarestorage.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };

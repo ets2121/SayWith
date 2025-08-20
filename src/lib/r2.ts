@@ -18,7 +18,7 @@ export async function getSignedUrl(filePath: string): Promise<string> {
         Bucket: process.env.R2_BUCKET_NAME,
         Key: filePath,
         Expires: 60 * 60 * 24 * 7, // 7 days
-        ResponseCacheControl: 'public, max-age=604800, immutable',
+        ResponseCacheControl: 'public, max-age=0, must-revalidate',
     };
 
     try {
