@@ -21,7 +21,7 @@ export const LoadingSpinner = () => {
       }`}
     >
       <img
-        src="/icons/ld-w.gif"
+        src="/icons/ld-b.gif"
         alt="Loading..."
         className="max-w-[80%] max-h-[80%] object-contain"
       />
