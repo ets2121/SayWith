@@ -145,7 +145,27 @@ export const useSaywithPlayer = (data: SaywithData) => {
             }
         }
         document.addEventListener("visibilitychange", onVisChange);
-        return () => document.removeEventListener("visibilitychange", onVisChange);
+
+        const handleOnline = () => {
+            if (isPlaying) {
+                playMedia();
+            }
+        };
+
+        const handleOffline = () => {
+            if (isPlaying) {
+                playMedia(); 
+            }
+        };
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            document.removeEventListener("visibilitychange", onVisChange);
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        }
     }, [pauseMedia, playMedia, isPlaying, userInteracted]);
 
     useEffect(() => {
