@@ -3,7 +3,7 @@ const CACHE_VERSION = 'v1';
 const CACHEABLE_EXTENSIONS = /\.(mp3|mp4|wav|ogg|jpg|jpeg|png|gif|webp)$/;
 
 let currentUserId = null;
-
+ 
 function getCacheName(userId) {
   return `media-cache-${CACHE_VERSION}-${userId}`;
 }
