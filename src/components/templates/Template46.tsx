@@ -1,6 +1,6 @@
 
 "use client";
-import React, { useState, useRef, useMemo, Suspense } from 'react';
+import React, { useState, useRef, useMemo, Suspense, useEffect } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PointMaterial, Points, Text } from '@react-three/drei';
@@ -20,12 +20,13 @@ interface Template46Props {
 const FloatingText = ({ children, ...props }: any) => {
     const groupRef = useRef<any>();
     useFrame(({ clock }) => {
+        if (document.hidden) return;
         if (groupRef.current) {
             groupRef.current.position.y += Math.sin(clock.getElapsedTime() + props.seed) * 0.002;
         }
     });
     return (
-        <group {...props} ref={groupRef}>
+        <motion.group {...props} ref={groupRef}>
             <Text
                 fontSize={0.3}
                 color="white"
@@ -35,7 +36,7 @@ const FloatingText = ({ children, ...props }: any) => {
                 {children}
                 <meshStandardMaterial color="white" emissive="pink" emissiveIntensity={0.5} />
             </Text>
-        </group>
+        </motion.group>
     );
 };
 
@@ -63,10 +64,11 @@ const Particles = ({ count = 200 }) => {
     }, [count, viewport.width, viewport.height]);
 
     useFrame((state, delta) => {
+        if (document.hidden) return;
         if (pointsRef.current) {
             pointsRef.current.position.y -= delta * 0.3;
-             if (pointsRef.current.position.y < -viewport.height / 2) {
-                pointsRef.current.position.y = viewport.height / 2;
+             if (pointsRef.current.position.y < -viewport.height) {
+                pointsRef.current.position.y = viewport.height;
             }
         }
     });
@@ -95,21 +97,24 @@ const Scene = ({ data }: { data: Template46Props['data'] }) => {
 
     const smoothMouseX = useSpring(mouseX, { stiffness: 70, damping: 20, mass: 0.5 });
     const smoothMouseY = useSpring(mouseY, { stiffness: 70, damping: 20, mass: 0.5 });
-
-    const handleMouseMove = (event:any) => {
-        const { clientWidth, clientHeight } = gl.domElement;
-        const x = (event.clientX / clientWidth) * 2 - 1;
-        const y = -(event.clientY / clientHeight) * 2 + 1;
-        mouseX.set(x * 0.1);
-        mouseY.set(y * 0.1);
-    };
-
-    React.useEffect(() => {
-        gl.domElement.addEventListener('mousemove', handleMouseMove);
-        return () => gl.domElement.removeEventListener('mousemove', handleMouseMove);
-    }, [gl.domElement]);
+    
+    useEffect(() => {
+        const handleMouseMove = (event:any) => {
+            const { clientWidth, clientHeight } = gl.domElement;
+            const x = (event.clientX / clientWidth) * 2 - 1;
+            const y = -(event.clientY / clientHeight) * 2 + 1;
+            mouseX.set(x * 0.1);
+            mouseY.set(y * 0.1);
+        };
+        
+        if (typeof window !== "undefined") {
+            gl.domElement.addEventListener('mousemove', handleMouseMove);
+            return () => gl.domElement.removeEventListener('mousemove', handleMouseMove);
+        }
+    }, [gl.domElement, mouseX, mouseY]);
     
     useFrame(() => {
+        if (document.hidden) return;
         camera.position.x += (smoothMouseX.get() - camera.position.x) * 0.1;
         camera.position.y += (smoothMouseY.get() - camera.position.y) * 0.1;
         camera.lookAt(0, 0, 0);
@@ -136,6 +141,12 @@ export default function Template46({ data }: Template46Props) {
     handleInitialInteraction,
   } = useSaywithPlayer(data);
 
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const subtitleVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -147,11 +158,13 @@ export default function Template46({ data }: Template46Props) {
       className="relative h-screen w-screen overflow-hidden font-sans bg-pink-100 text-gray-800"
       onClick={handleInitialInteraction}
     >
-      <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <Scene data={data}/>
-      </Canvas>
+      {isClient && (
+         <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+            <Scene data={data}/>
+         </Canvas>
+      )}
 
-      {data.audioUrl && <audio ref={audioRef} src={data.audioUrl} loop />}
+      {data.audioUrl && <audio ref={audioRef} src={data.audiourl} loop />}
       
       {/* Overylay UI */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center pointer-events-none">

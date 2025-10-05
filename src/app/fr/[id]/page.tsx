@@ -70,6 +70,7 @@ const Template46 = dynamic(() => import('@/components/templates/Template46'), {
   ssr: false,
 });
 
+
 export default function ForYouPage() {
   const params = useParams();
   const id = params.id as string;
@@ -155,11 +156,11 @@ export default function ForYouPage() {
   if (error) {
     return <ErrorDisplay message={error} />;
   }
-  
+
   if (!data) {
     return <LoadingSpinner />;
   }
-
+  
   if (!data.enabled) {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-background text-center px-4">
