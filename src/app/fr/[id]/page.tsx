@@ -67,7 +67,6 @@ interface SaywithData {
 
 const Template46 = dynamic(() => import('@/components/templates/Template46'), {
   loading: () => <LoadingSpinner />,
-  ssr: false,
 });
 
 
