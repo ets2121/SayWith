@@ -46,18 +46,6 @@ const Particles = ({ count = 500 }) => {
     const [positions, colors] = useMemo(() => {
       const positions = new Float32Array(count * 3);
       const colors = new Float32Array(count * 3);
-      const heartShape = new THREE.Shape();
-      heartShape.moveTo(0.25, 0.25);
-      heartShape.bezierCurveTo(0.25, 0.25, 0.2, 0, 0, 0);
-      heartShape.bezierCurveTo(-0.3, 0, -0.3, 0.35, -0.3, 0.35);
-      heartShape.bezierCurveTo(-0.3, 0.55, -0.1, 0.77, 0.25, 0.95);
-      heartShape.bezierCurveTo(0.6, 0.77, 0.8, 0.55, 0.8, 0.35);
-      heartShape.bezierCurveTo(0.8, 0.35, 0.8, 0, 0.5, 0);
-      heartShape.bezierCurveTo(0.35, 0, 0.25, 0.25, 0.25, 0.25);
-  
-      const geom = new THREE.ShapeGeometry(heartShape);
-      geom.scale(0.05, 0.05, 0.05);
-      const heartPositions = geom.attributes.position.array;
   
       for (let i = 0; i < count; i++) {
         const i3 = i * 3;
@@ -103,10 +91,8 @@ const Particles = ({ count = 500 }) => {
       });
   
     return (
-      <Points ref={pointsRef} positions={positions as any} colors={colors as any} frustumCulled={false}>
-        <PointMaterial vertexColors size={15} sizeAttenuation={false} depthWrite={false} transparent alphaTest={0.5}>
-            <canvas id="heart-canvas" width="64" height="64" style={{display: 'none'}}></canvas>
-        </PointMaterial>
+      <Points ref={pointsRef} positions={positions} frustumCulled={false}>
+        <PointMaterial vertexColors size={15} sizeAttenuation={false} depthWrite={false} transparent alphaTest={0.5} />
       </Points>
     );
   };
