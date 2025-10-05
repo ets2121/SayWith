@@ -6,6 +6,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadConfettiPreset } from "tsparticles-preset-confetti";
 import type { Container } from "@tsparticles/engine";
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 
 if (typeof window === "undefined") {
@@ -82,7 +83,7 @@ export default function Template46({ data }: Template46Props) {
   };
   
   if (!init) {
-      return null;
+      return <LoadingSpinner />;
   }
   
   return (
