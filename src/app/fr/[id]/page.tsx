@@ -233,7 +233,7 @@ export default function ForYouPage() {
       case 'template45':
         return <Template45 data={data} />;
       case 'template46':
-        return <Template46 data={data} />;
+        return <Template46 />;
       default:
         return <ErrorDisplay message={`Invalid template specified. Value: ${data.template ? `'${data.template}'` : 'no value provided'}`} />;
     }
