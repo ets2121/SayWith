@@ -34,33 +34,37 @@ export default function Template46({ data }: Template46Props) {
   };
 
   const options = useMemo(
-    () => ({
-      preset: "confetti",
-      particles: {
-        number: {
-          value: 100,
+    () => {
+      if (!init) return null;
+      
+      return {
+        preset: "confetti",
+        particles: {
+          number: {
+            value: 100,
+          },
+          shape: {
+            type: "heart",
+          },
+          size: {
+            value: { min: 5, max: 10 },
+          },
+          move: {
+            speed: 2,
+            direction: "bottom" as const,
+            straight: true,
+          },
+          color: {
+              value: ["#ff007f", "#ff4da6", "#ff7fbf", "#ffb3d9", "#ffe6f2"]
+          }
         },
-        shape: {
-          type: "heart",
-        },
-        size: {
-          value: { min: 5, max: 10 },
-        },
-        move: {
-          speed: 2,
-          direction: "bottom",
-          straight: true,
-        },
-        color: {
-            value: ["#ff007f", "#ff4da6", "#ff7fbf", "#ffb3d9", "#ffe6f2"]
+        fullScreen: {
+          enable: true,
+          zIndex: -1,
         }
-      },
-      fullScreen: {
-        enable: true,
-        zIndex: -1,
-      }
-    }),
-    [],
+      };
+    },
+    [init],
   );
 
   const mouseX = useMotionValue(0);
@@ -90,11 +94,11 @@ export default function Template46({ data }: Template46Props) {
           mouseY.set(0);
       }}
     >
-      <Particles
+      {options && <Particles
         id="tsparticles"
         particlesLoaded={particlesLoaded}
         options={options as any}
-      />
+      />}
       <motion.div 
         className="text-center"
         style={{ x: smoothMouseX, y: smoothMouseY, textShadow: '0 0 20px #ff007f, 0 0 30px #ff007f, 0 0 40px #ff007f' }}
