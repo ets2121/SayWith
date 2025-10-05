@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadConfettiPreset } from "tsparticles-preset-confetti";
+import { loadConfettiPreset } from "@tsparticles/preset-confetti";
 import type { Container } from "@tsparticles/engine";
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
@@ -56,7 +56,7 @@ export default function Confetti() {
   );
 
   if (!init || !options) {
-    return null;
+    return <LoadingSpinner />;
   }
 
   return (
