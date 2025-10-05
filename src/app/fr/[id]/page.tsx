@@ -47,6 +47,7 @@ import Template37 from '@/components/templates/Template37';
 import Template38 from '@/components/templates/Template38';
 import Template39 from '@/components/templates/Template39';
 import Template40 from '@/components/templates/Template40';
+import Template41 from '@/components/templates/Template41';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 
@@ -249,6 +250,8 @@ export default function ForYouPage() {
         return <Template39 data={data} />;
       case 'template40':
         return <Template40 data={data} />;
+      case 'template41':
+        return <Template41 data={data} />;
       default:
         return <ErrorDisplay message="Invalid template specified." />;
     }
