@@ -79,7 +79,6 @@ export default function ForYouPage() {
   const [data, setData] = useState<SaywithData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(true);
-  const [isMediaLoaded, setIsMediaLoaded] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -115,35 +114,8 @@ export default function ForYouPage() {
       fetchData();
     }
   }, [id]);
-  
-  useEffect(() => {
-    if (data?.mediaUrl) {
-      const isVideo = data.mediaUrl.includes('.mp4') || data.mediaUrl.includes('.mov') || data.mediaUrl.includes('video');
-      if (isVideo) {
-        const video = document.createElement('video');
-        video.src = data.mediaUrl;
-        video.onloadeddata = () => setIsMediaLoaded(true);
-        video.onerror = () => {
-            setError('Failed to load media.');
-            setIsMediaLoaded(true); // Stop loading on error
-        };
-      } else {
-        const img = new Image();
-        img.src = data.mediaUrl;
-        img.onload = () => setIsMediaLoaded(true);
-        img.onerror = () => {
-            setError('Failed to load media.');
-            setIsMediaLoaded(true); // Stop loading on error
-        };
-      }
-    } else if (!isFetching) {
-        setIsMediaLoaded(true);
-    }
-  }, [data, isFetching]);
 
-  const showLoading = isFetching || !isMediaLoaded;
-
-  if (showLoading) {
+  if (isFetching) {
     return (
         <>
             <Head>
@@ -177,13 +149,6 @@ export default function ForYouPage() {
   }
 
   const renderTemplate = () => {
-    if (!data.mediaUrl || !data.audioUrl) {
-      // This is a special case for template 46 which doesn't need media
-      if (data.template !== 'template46') {
-        return <ErrorDisplay message="Media or audio URL is missing." />;
-      }
-    }
-      
     switch (data.template) {
       case 'template1':
         return <Template1 data={data} />;
