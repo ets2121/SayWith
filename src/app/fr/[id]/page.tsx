@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
@@ -51,10 +51,6 @@ import Template40 from '@/components/templates/Template40';
 import Template41 from '@/components/templates/Template41';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-
-const Template42 = dynamic(() => import('@/components/templates/Template42'), {
-  loading: () => <LoadingSpinner />,
-});
 
 interface SaywithData {
   template: string;
@@ -258,6 +254,9 @@ export default function ForYouPage() {
       case 'template41':
         return <Template41 data={data} />;
       case 'template42':
+        const Template42 = useMemo(() => dynamic(() => import('@/components/templates/Template42'), {
+          loading: () => <LoadingSpinner />,
+        }), []);
         return <Template42 data={data} />;
       default:
         return <ErrorDisplay message="Invalid template specified." />;
@@ -266,3 +265,5 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
+
+    
