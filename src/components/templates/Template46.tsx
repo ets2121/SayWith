@@ -3,7 +3,7 @@
 import React, { useState, useRef, useMemo, Suspense } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { PointMaterial, Points } from '@react-three/drei';
+import { PointMaterial, Points, Text } from '@react-three/drei';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 
@@ -18,37 +18,34 @@ interface Template46Props {
 }
 
 const FloatingText = ({ children, ...props }: any) => {
-    const textRef = useRef<any>();
-    const [font] = useState(() => new THREE.FontLoader().parse(require('three/examples/fonts/helvetiker_bold.typeface.json')));
+    const groupRef = useRef<any>();
     useFrame(({ clock }) => {
-        if (textRef.current) {
-            textRef.current.position.y += Math.sin(clock.getElapsedTime() + props.seed) * 0.002;
+        if (groupRef.current) {
+            groupRef.current.position.y += Math.sin(clock.getElapsedTime() + props.seed) * 0.002;
         }
     });
     return (
-        <mesh {...props} ref={textRef}>
-            <textGeometry args={[children, { font, size: 0.3, height: 0.05 }]} />
-            <meshStandardMaterial color="white" emissive="pink" emissiveIntensity={0.5} />
-        </mesh>
+        <group {...props} ref={groupRef}>
+            <Text
+                fontSize={0.3}
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+            >
+                {children}
+                <meshStandardMaterial color="white" emissive="pink" emissiveIntensity={0.5} />
+            </Text>
+        </group>
     );
 };
 
 const Particles = ({ count = 200 }) => {
     const pointsRef = useRef<any>();
     const { size, viewport } = useThree();
-    const aspect = size.width / viewport.width;
 
     const [positions, colors] = useMemo(() => {
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
-        const heartShape = new THREE.Shape();
-        heartShape.moveTo(0.25, 0.25);
-        heartShape.bezierCurveTo(0.25, 0.25, 0.2, 0, 0, 0);
-        heartShape.bezierCurveTo(-0.3, 0, -0.3, 0.35, -0.3, 0.35);
-        heartShape.bezierCurveTo(-0.3, 0.55, -0.1, 0.77, 0.25, 0.95);
-        heartShape.bezierCurveTo(0.6, 0.77, 0.8, 0.55, 0.8, 0.35);
-        heartShape.bezierCurveTo(0.8, 0.35, 0.8, 0, 0.5, 0);
-        heartShape.bezierCurveTo(0.35, 0, 0.25, 0.25, 0.25, 0.25);
         
         const palette = [new THREE.Color('#ffb8d1'), new THREE.Color('#ff8fab'), new THREE.Color('#ffcce5')];
 
@@ -79,14 +76,9 @@ const Particles = ({ count = 200 }) => {
             <PointMaterial
                 transparent
                 vertexColors
-                size={15}
+                size={0.1}
                 sizeAttenuation={true}
                 depthWrite={false}
-                map={new THREE.CanvasTexture(
-                    new THREE.Path(heartShape.getPoints(50))
-                        .createPath()
-                        .toDataURL() as any
-                )}
                 blending={THREE.AdditiveBlending}
             />
         </Points>
@@ -112,16 +104,16 @@ const Scene = ({ data }: { data: Template46Props['data'] }) => {
         mouseY.set(y * 0.1);
     };
 
+    React.useEffect(() => {
+        gl.domElement.addEventListener('mousemove', handleMouseMove);
+        return () => gl.domElement.removeEventListener('mousemove', handleMouseMove);
+    }, [gl.domElement]);
+    
     useFrame(() => {
         camera.position.x += (smoothMouseX.get() - camera.position.x) * 0.1;
         camera.position.y += (smoothMouseY.get() - camera.position.y) * 0.1;
         camera.lookAt(0, 0, 0);
     });
-
-    React.useEffect(() => {
-        gl.domElement.addEventListener('mousemove', handleMouseMove);
-        return () => gl.domElement.removeEventListener('mousemove', handleMouseMove);
-    }, [gl.domElement]);
     
     return (
         <Suspense fallback={null}>
@@ -137,13 +129,10 @@ const Scene = ({ data }: { data: Template46Props['data'] }) => {
 };
 
 
-export default function Template46Special({ data }: Template46Props) {
+export default function Template46({ data }: Template46Props) {
   const {
     currentSubtitle,
-    videoRef,
     audioRef,
-    isVideo,
-    useVideoAsAudioSource,
     handleInitialInteraction,
   } = useSaywithPlayer(data);
 
@@ -162,7 +151,7 @@ export default function Template46Special({ data }: Template46Props) {
         <Scene data={data}/>
       </Canvas>
 
-      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
+      {data.audioUrl && <audio ref={audioRef} src={data.audioUrl} loop />}
       
       {/* Overylay UI */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center pointer-events-none">
@@ -190,4 +179,3 @@ export default function Template46Special({ data }: Template46Props) {
     </div>
   );
 }
-
