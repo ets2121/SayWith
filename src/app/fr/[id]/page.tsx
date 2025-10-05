@@ -116,15 +116,7 @@ export default function ForYouPage() {
   }, [id]);
 
   if (isFetching) {
-    return (
-        <>
-            <Head>
-                {data?.mediaUrl && <link rel="preload" href={data.mediaUrl} as={data.mediaUrl.includes('.mp4') ? 'video' : 'image'} />}
-                {data?.audioUrl && <link rel="preload" href={data.audioUrl} as="audio" />}
-            </Head>
-            <LoadingSpinner />
-        </>
-    );
+    return <LoadingSpinner />;
   }
   
   if (error) {
@@ -247,5 +239,13 @@ export default function ForYouPage() {
     }
   };
 
-  return <>{renderTemplate()}</>;
+  return (
+    <>
+        <Head>
+            {data?.mediaUrl && <link rel="preload" href={data.mediaUrl} as={data.mediaUrl.includes('.mp4') ? 'video' : 'image'} />}
+            {data?.audioUrl && <link rel="preload" href={data.audioUrl} as="audio" />}
+        </Head>
+        {renderTemplate()}
+    </>
+    );
 }
