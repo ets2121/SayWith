@@ -3,6 +3,7 @@
 
 import { Play, Pause, Music } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Template41Props {
   data: {
@@ -27,6 +28,12 @@ export default function Template41({ data }: Template41Props) {
     handlePlayPause,
     progress,
   } = useSaywithPlayer(data);
+
+  const subtitleVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
 
   return (
     <div
@@ -84,11 +91,22 @@ export default function Template41({ data }: Template41Props) {
             <h1 className="text-2xl font-bold tracking-tight">{name}</h1>
             <p className="text-sm text-gray-400 mt-1">Saywith</p>
             <div className="min-h-[56px] mt-4 flex items-center justify-center">
-                {currentSubtitle.split('\n').map((line, index) => (
-                    <p key={`${currentSubtitle}-${index}`} className="text-lg text-gray-200 animate-fade-in">
-                        {line}
-                    </p>
-                ))}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSubtitle}
+                  variants={subtitleVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                >
+                  {currentSubtitle.split('\n').map((line, index) => (
+                      <p key={index} className="text-lg text-gray-200">
+                          {line}
+                      </p>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
             </div>
         </div>
 
