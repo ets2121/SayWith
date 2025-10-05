@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -48,9 +49,12 @@ import Template38 from '@/components/templates/Template38';
 import Template39 from '@/components/templates/Template39';
 import Template40 from '@/components/templates/Template40';
 import Template41 from '@/components/templates/Template41';
-import Template42 from '@/components/templates/Template42';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
+
+const Template42 = dynamic(() => import('@/components/templates/Template42'), {
+  loading: () => <LoadingSpinner />,
+});
 
 interface SaywithData {
   template: string;
