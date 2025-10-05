@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -54,13 +55,9 @@ import Template42 from '@/components/templates/Template42';
 import Template43 from '@/components/templates/Template43';
 import Template44 from '@/components/templates/Template44';
 import Template45 from '@/components/templates/Template45';
+import Template46 from '@/components/templates/Template46';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-
-const Template46 = dynamic(() => import('@/components/templates/Template46'), {
-  loading: () => <LoadingSpinner />,
-  ssr: false,
-});
 
 interface SaywithData {
   template: string;
@@ -283,3 +280,5 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
+
+    
