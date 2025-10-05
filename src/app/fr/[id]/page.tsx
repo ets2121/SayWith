@@ -235,7 +235,7 @@ export default function ForYouPage() {
       case 'template46':
         return <Template46 data={data} />;
       default:
-        return <ErrorDisplay message={`Invalid template specified: '${data.template}'`} />;
+        return <ErrorDisplay message={`Invalid template specified. Value: ${data.template ? `'${data.template}'` : 'no value provided'}`} />;
     }
   };
 
