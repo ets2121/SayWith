@@ -7,6 +7,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadConfettiPreset } from "tsparticles-preset-confetti";
 import type { Container } from "@tsparticles/engine";
 
+
 if (typeof window === "undefined") {
     return null;
 }

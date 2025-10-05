@@ -65,11 +65,6 @@ interface SaywithData {
   mute?: boolean;
 }
 
-const Template46 = dynamic(() => import('@/components/templates/Template46'), {
-  loading: () => <LoadingSpinner />,
-});
-
-
 export default function ForYouPage() {
   const params = useParams();
   const id = params.id as string;
@@ -77,6 +72,13 @@ export default function ForYouPage() {
   const [error, setError] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(true);
   const [isMediaLoaded, setIsMediaLoaded] = useState(false);
+
+  const Template46 = useMemo(() => 
+    dynamic(() => import('@/components/templates/Template46'), {
+      loading: () => <LoadingSpinner />,
+      ssr: false,
+    }), 
+  []);
 
   useEffect(() => {
     if (id) {
@@ -175,7 +177,10 @@ export default function ForYouPage() {
 
   const renderTemplate = () => {
     if (!data.mediaUrl || !data.audioUrl) {
-      return <ErrorDisplay message="Media or audio URL is missing." />;
+      // This is a special case for template 46 which doesn't need media
+      if (data.template !== 'template46') {
+        return <ErrorDisplay message="Media or audio URL is missing." />;
+      }
     }
       
     switch (data.template) {
