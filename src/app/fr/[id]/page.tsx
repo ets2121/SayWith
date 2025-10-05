@@ -55,9 +55,13 @@ import Template42 from '@/components/templates/Template42';
 import Template43 from '@/components/templates/Template43';
 import Template44 from '@/components/templates/Template44';
 import Template45 from '@/components/templates/Template45';
-import Template46 from '@/components/templates/Template46';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
+
+const Template46 = dynamic(() => import('@/components/templates/Template46'), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
 
 interface SaywithData {
   template: string;
@@ -280,5 +284,3 @@ export default function ForYouPage() {
 
   return <>{renderTemplate()}</>;
 }
-
-    
