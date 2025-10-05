@@ -8,11 +8,6 @@ import { loadConfettiPreset } from "tsparticles-preset-confetti";
 import type { Container } from "@tsparticles/engine";
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
-
-if (typeof window === "undefined") {
-    return null;
-}
-
 interface Template46Props {
   data: {
     mediaUrl: string;
