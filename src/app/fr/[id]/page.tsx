@@ -65,6 +65,11 @@ interface SaywithData {
   mute?: boolean;
 }
 
+const Template46 = dynamic(() => import('@/components/templates/Template46'), {
+  loading: () => <LoadingSpinner />,
+  ssr: false,
+});
+
 export default function ForYouPage() {
   const params = useParams();
   const id = params.id as string;
@@ -152,7 +157,7 @@ export default function ForYouPage() {
   }
   
   if (!data) {
-    return null; 
+    return <LoadingSpinner />;
   }
 
   if (!data.enabled) {
@@ -264,6 +269,8 @@ export default function ForYouPage() {
         return <Template44 data={data} />;
       case 'template45':
         return <Template45 data={data} />;
+      case 'template46':
+        return <Template46 data={data} />;
       default:
         return <ErrorDisplay message="Invalid template specified." />;
     }
