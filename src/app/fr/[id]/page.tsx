@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -235,7 +235,7 @@ export default function ForYouPage() {
       case 'template46':
         return <Template46 data={data} />;
       default:
-        return <ErrorDisplay message="Invalid template specified." />;
+        return <ErrorDisplay message={`Invalid template specified: '${data.template}'`} />;
     }
   };
 
