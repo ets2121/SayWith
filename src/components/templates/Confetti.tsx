@@ -54,7 +54,7 @@ export default function Confetti() {
   );
 
   if (!init || !options) {
-    return <LoadingSpinner />;
+    return null;
   }
 
   return (

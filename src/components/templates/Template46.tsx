@@ -30,15 +30,16 @@ export default function Template46({ data }: Template46Props) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const smoothMouseX = useSpring(mouseX, { stiffness: 70, damping: 20, mass: 0.5 });
-  const smoothMouseY = useSpring(mouseY, { stiffness: 70, damping: 20, mass: 0.5 });
+  const springConfig = { stiffness: 70, damping: 20, mass: 0.5 };
+  const smoothMouseX = useSpring(mouseX, springConfig);
+  const smoothMouseY = useSpring(mouseY, springConfig);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientWidth, clientHeight } = event.currentTarget;
     const x = (event.clientX / clientWidth) - 0.5;
     const y = (event.clientY / clientHeight) - 0.5;
-    mouseX.set(x * 30);
-    mouseY.set(y * 30);
+    mouseX.set(x);
+    mouseY.set(y);
   };
   
   const subtitleVariants = {
@@ -62,11 +63,14 @@ export default function Template46({ data }: Template46Props) {
       
       <motion.div 
         className="relative text-center w-full max-w-md"
-        style={{ x: smoothMouseX, y: smoothMouseY }}
       >
-        <div 
+        <motion.div 
             className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl mb-8 border-2 border-pink-500/30"
-            style={{ textShadow: '0 0 20px #ff007f, 0 0 30px #ff007f, 0 0 40px #ff007f' }}
+            style={{ 
+                x: useSpring(smoothMouseX.get() * 30, springConfig), 
+                y: useSpring(smoothMouseY.get() * 30, springConfig),
+                textShadow: '0 0 20px #ff007f, 0 0 30px #ff007f, 0 0 40px #ff007f' 
+            }}
         >
              {data.mediaUrl && (
                 <>
@@ -92,9 +96,15 @@ export default function Template46({ data }: Template46Props) {
                     <Play size={60} className="text-white/80" />
                 </div>
             )}
-        </div>
+        </motion.div>
 
-        <div className="min-h-[84px]">
+        <motion.div 
+            className="min-h-[84px]"
+            style={{ 
+                x: useSpring(smoothMouseX.get() * -20, springConfig), 
+                y: useSpring(smoothMouseY.get() * -20, springConfig)
+            }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSubtitle}
@@ -113,7 +123,7 @@ export default function Template46({ data }: Template46Props) {
               ))}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </motion.div>
 
       </motion.div>
 
