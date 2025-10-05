@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -62,8 +63,18 @@ export default function Template46({ data }: Template46Props) {
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
       
       <motion.div 
-        className="relative text-center w-full max-w-md"
+        className="relative text-center w-full max-w-md flex flex-col items-center justify-center"
       >
+        <motion.h1 
+            className="text-3xl font-bold mb-4 animate-pulse-glow"
+            style={{ 
+                x: useSpring(smoothMouseX.get() * -10, springConfig), 
+                y: useSpring(smoothMouseY.get() * -10, springConfig),
+            }}
+        >
+            {data.name}
+        </motion.h1>
+
         <motion.div 
             className="w-full aspect-video rounded-2xl overflow-hidden shadow-2xl mb-8 border-2 border-pink-500/30"
             style={{ 
