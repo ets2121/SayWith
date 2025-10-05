@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PointMaterial, Points, Text } from '@react-three/drei';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRef, useState, useMemo, Suspense } from 'react';
+import React, { useRef, useState, useMemo, Suspense } from 'react';
 
 interface Template42Props {
   data: {
@@ -111,10 +111,27 @@ const Particles = ({ count = 500 }) => {
     );
   };
 
+const Scene = () => {
+    const floatingMessages = useMemo(() => [
+        "I love you", "I miss you", "Forever yours",
+        "You're my everything", "Always & Forever", "My one and only"
+    ], []);
+
+    return (
+        <Canvas camera={{ position: [0, 0, 5] }}>
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <Particles count={150} />
+          {floatingMessages.map((msg, i) => (
+             <FloatingText key={i} position-z={-2} position-x={(Math.random() - 0.5) * 10}>{msg}</FloatingText>
+          ))}
+        </Canvas>
+    );
+}
+
 export default function Template42({ data }: Template42Props) {
   const { name, mediaUrl } = data;
   const {
-    isPlaying,
     currentSubtitle,
     videoRef,
     audioRef,
@@ -130,25 +147,13 @@ export default function Template42({ data }: Template42Props) {
     exit: { opacity: 0, y: -20 },
   };
 
-  const floatingMessages = useMemo(() => [
-    "I love you", "I miss you", "Forever yours",
-    "You're my everything", "Always & Forever", "My one and only"
-  ], []);
-
   return (
     <div
       className="relative h-screen w-screen overflow-hidden font-sans bg-pink-900 text-white"
       onClick={handleInitialInteraction}
     >
       <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><p>Loading 3D Scene...</p></div>}>
-        <Canvas camera={{ position: [0, 0, 5] }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Particles count={150} />
-          {floatingMessages.map((msg, i) => (
-             <FloatingText key={i} position-z={-2} position-x={(Math.random() - 0.5) * 10}>{msg}</FloatingText>
-          ))}
-        </Canvas>
+        <Scene />
       </Suspense>
 
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
