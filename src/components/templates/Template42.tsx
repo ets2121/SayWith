@@ -1,11 +1,7 @@
 "use client";
 
-import * as THREE from 'three';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { PointMaterial, Points, Text } from '@react-three/drei';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { useRef, useState, useMemo, Suspense } from 'react';
 
 interface Template42Props {
   data: {
@@ -15,104 +11,6 @@ interface Template42Props {
     name: string;
     mute?: boolean;
   };
-}
-
-const FloatingText = ({ children, ...props }: any) => {
-  const textRef = useRef<any>();
-  const [y] = useState(() => Math.random() * 20 - 10);
-  const [speed] = useState(() => Math.random() * 0.1 + 0.05);
-
-  useFrame(({ viewport }) => {
-    if (textRef.current) {
-      textRef.current.position.y -= speed * 0.1;
-      if (textRef.current.position.y < -viewport.height / 2 - 2) {
-        textRef.current.position.y = viewport.height / 2 + 2;
-      }
-    }
-  });
-
-  return (
-    <Text ref={textRef} position-y={y} fontSize={0.5} color="white" anchorX="center" anchorY="middle" {...props}>
-      {children}
-    </Text>
-  );
-};
-
-
-const Particles = ({ count = 500 }) => {
-    const pointsRef = useRef<any>();
-    const { viewport } = useThree();
-  
-    const [positions, colors] = useMemo(() => {
-      const positions = new Float32Array(count * 3);
-      const colors = new Float32Array(count * 3);
-  
-      for (let i = 0; i < count; i++) {
-        const i3 = i * 3;
-        positions[i3] = (Math.random() - 0.5) * viewport.width * 1.5;
-        positions[i3 + 1] = (Math.random() - 0.5) * viewport.height * 2.5;
-        positions[i3 + 2] = (Math.random() - 0.5) * 5;
-  
-        const isGlowing = Math.random() > 0.7;
-        const color = new THREE.Color(isGlowing ? '#ff80ab' : '#ffc0cb');
-        colors[i3] = color.r;
-        colors[i3 + 1] = color.g;
-        colors[i3 + 2] = color.b;
-      }
-      return [positions, colors];
-    }, [count, viewport.width, viewport.height]);
-  
-    const velocities = useMemo(() => new Float32Array(count).map(() => (Math.random() - 0.5) * 0.01 + 0.01), [count]);
-  
-    useFrame((state) => {
-        if (!pointsRef.current) return;
-    
-        const { viewport } = state;
-        const positions = pointsRef.current.geometry.attributes.position.array;
-    
-        for (let i = 0; i < count; i++) {
-          const i3 = i * 3;
-          positions[i3+1] -= velocities[i] * 5; // Fall speed
-          
-          // Add some horizontal drift
-          positions[i3] += Math.sin(state.clock.elapsedTime + i) * 0.001;
-    
-          if (positions[i3+1] < -viewport.height / 2 - 1) {
-            positions[i3+1] = viewport.height / 2 + 1;
-            positions[i3] = (Math.random() - 0.5) * viewport.width * 1.5;
-          }
-        }
-        pointsRef.current.geometry.attributes.position.needsUpdate = true;
-    
-        // Parallax
-        const { pointer } = state;
-        pointsRef.current.rotation.y = THREE.MathUtils.lerp(pointsRef.current.rotation.y, pointer.x * Math.PI / 10, 0.1);
-        pointsRef.current.rotation.x = THREE.MathUtils.lerp(pointsRef.current.rotation.x, pointer.y * Math.PI / 10, 0.1);
-      });
-  
-    return (
-      <Points ref={pointsRef} positions={positions} frustumCulled={false}>
-        <PointMaterial vertexColors size={15} sizeAttenuation={false} depthWrite={false} transparent alphaTest={0.5} />
-      </Points>
-    );
-  };
-
-const Scene = () => {
-    const floatingMessages = useMemo(() => [
-        "I love you", "I miss you", "Forever yours",
-        "You're my everything", "Always & Forever", "My one and only"
-    ], []);
-
-    return (
-        <Canvas camera={{ position: [0, 0, 5] }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Particles count={150} />
-          {floatingMessages.map((msg, i) => (
-             <FloatingText key={i} position-z={-2} position-x={(Math.random() - 0.5) * 10}>{msg}</FloatingText>
-          ))}
-        </Canvas>
-    );
 }
 
 export default function Template42({ data }: Template42Props) {
@@ -138,10 +36,26 @@ export default function Template42({ data }: Template42Props) {
       className="relative h-screen w-screen overflow-hidden font-sans bg-pink-900 text-white"
       onClick={handleInitialInteraction}
     >
-      <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><p>Loading 3D Scene...</p></div>}>
-        <Scene />
-      </Suspense>
-
+      {mediaUrl && (
+        <>
+          {isVideo ? (
+            <video
+              ref={videoRef}
+              src={mediaUrl}
+              playsInline
+              loop
+              className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
+            />
+          ) : (
+            <img
+              src={mediaUrl}
+              alt="background"
+              className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
+            />
+          )}
+        </>
+      )}
+      <div className="absolute inset-0 bg-black/30" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center">

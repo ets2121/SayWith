@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
@@ -49,6 +48,7 @@ import Template38 from '@/components/templates/Template38';
 import Template39 from '@/components/templates/Template39';
 import Template40 from '@/components/templates/Template40';
 import Template41 from '@/components/templates/Template41';
+import Template42 from '@/components/templates/Template42';
 import Template43 from '@/components/templates/Template43';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorDisplay } from '@/components/common/ErrorDisplay';
@@ -255,10 +255,6 @@ export default function ForYouPage() {
       case 'template41':
         return <Template41 data={data} />;
       case 'template42':
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const Template42 = useMemo(() => dynamic(() => import('@/components/templates/Template42'), {
-          loading: () => <LoadingSpinner />,
-        }), []);
         return <Template42 data={data} />;
       case 'template43':
         return <Template43 data={data} />;
