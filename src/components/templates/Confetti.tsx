@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -48,7 +47,6 @@ export default function Confetti() {
         },
         fullScreen: {
           enable: true,
-          zIndex: -1,
         }
       };
     },
