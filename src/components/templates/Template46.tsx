@@ -79,7 +79,7 @@ const heartShapeOptions = {
       type: 'char' as const,
       options: {
         char: {
-          value: ['❤', '💖', '💕'],
+          value: ['❤', '💖', '💕', 'I love you', 'I miss you'],
           font: 'Verdana',
           style: '',
           weight: '400',
