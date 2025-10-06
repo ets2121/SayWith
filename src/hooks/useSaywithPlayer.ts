@@ -59,9 +59,14 @@ export const useSaywithPlayer = (data: SaywithData) => {
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
+    const playerStateRef = useRef({ isPlaying: false });
 
     const isVideo = mediaUrl?.includes('.mp4') || mediaUrl?.includes('.mov') || mediaUrl?.includes('video');
     const useVideoAsAudioSource = isVideo && mute === false;
+
+    useEffect(() => {
+        playerStateRef.current.isPlaying = isPlaying;
+    }, [isPlaying]);
 
     useEffect(() => {
         if (srtContent) {
@@ -79,45 +84,20 @@ export const useSaywithPlayer = (data: SaywithData) => {
     }, [srtContent, name]);
 
     const playMedia = useCallback(() => {
-        const video = videoRef.current;
-        const audio = audioRef.current;
-        let playPromise: Promise<void> | undefined;
-
-        if (useVideoAsAudioSource && video) {
-            playPromise = video.play();
-        } else {
-            if (video) video.play().catch(e => console.error("Video play failed silent", e));
-            if (audio) playPromise = audio.play();
-        }
-
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                setIsPlaying(true);
-            }).catch(error => {
-                console.error("Error playing media:", error);
-                setIsPlaying(false);
-            });
-        } else if (isVideo) {
-             setIsPlaying(true);
-        }
-    }, [useVideoAsAudioSource, isVideo]);
+        setIsPlaying(true);
+    }, []);
 
     const pauseMedia = useCallback(() => {
-        videoRef.current?.pause();
-        if (!useVideoAsAudioSource) audioRef.current?.pause();
         setIsPlaying(false);
-    }, [useVideoAsAudioSource]);
+    }, []);
 
     const handleInitialInteraction = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation();
-        if (userInteracted) {
-            if(isPlaying) pauseMedia();
-            else playMedia();
-        } else {
+        if (!userInteracted) {
             setUserInteracted(true);
-            playMedia();
         }
-    }, [userInteracted, isPlaying, playMedia, pauseMedia]);
+        setIsPlaying(prev => !prev);
+    }, [userInteracted]);
 
     const seek = useCallback((delta: number) => {
         const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
@@ -135,47 +115,71 @@ export const useSaywithPlayer = (data: SaywithData) => {
           setProgress(value[0]);
         }
     }, [useVideoAsAudioSource]);
+    
+    useEffect(() => {
+        const video = videoRef.current;
+        const audio = audioRef.current;
+        const audioSource = useVideoAsAudioSource ? video : audio;
+
+        if (!userInteracted) return;
+
+        let isCancelled = false;
+
+        const syncPlay = async () => {
+            try {
+                if (video) await video.play();
+                if (audio) await audio.play();
+                if (!isCancelled && !playerStateRef.current.isPlaying) {
+                    setIsPlaying(true);
+                }
+            } catch (error) {
+                if (!isCancelled && (error as DOMException).name !== 'AbortError') {
+                    console.error("Error playing media:", error);
+                    setIsPlaying(false);
+                }
+            }
+        };
+
+        if (isPlaying) {
+            syncPlay();
+        } else {
+            video?.pause();
+            audio?.pause();
+        }
+
+        return () => {
+            isCancelled = true;
+        }
+
+    }, [isPlaying, userInteracted, useVideoAsAudioSource]);
+
 
     useEffect(() => {
         const onVisChange = () => {
-            if (document.hidden) {
+            if (document.hidden && playerStateRef.current.isPlaying) {
                 pauseMedia();
-            } else if (isPlaying && userInteracted) {
-                playMedia();
             }
         }
         document.addEventListener("visibilitychange", onVisChange);
 
-        const handleOnline = () => {
-            if (isPlaying) {
-                playMedia();
-            }
-        };
-
-        const handleOffline = () => {
-            if (isPlaying) {
-                playMedia(); 
-            }
-        };
-
-        window.addEventListener('online', handleOnline);
-        window.addEventListener('offline', handleOffline);
-
         return () => {
             document.removeEventListener("visibilitychange", onVisChange);
-            window.removeEventListener('online', handleOnline);
-            window.removeEventListener('offline', handleOffline);
         }
-    }, [pauseMedia, playMedia, isPlaying, userInteracted]);
+    }, [pauseMedia]);
 
     useEffect(() => {
         const video = videoRef.current;
         if (video) {
             video.loop = true;
             video.playsInline = true;
-            video.muted = useVideoAsAudioSource ? false : (mute ?? true);
+            video.muted = !useVideoAsAudioSource;
         }
-    }, [mute, useVideoAsAudioSource]);
+         const audio = audioRef.current;
+        if (audio) {
+            audio.loop = true;
+            audio.playsInline = true;
+        }
+    }, [useVideoAsAudioSource]);
 
     useEffect(() => {
         const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
@@ -197,24 +201,31 @@ export const useSaywithPlayer = (data: SaywithData) => {
         };
 
         const handleAudioEnd = () => {
-            setIsPlaying(false); // Reset playing state
-            if (audioSource) audioSource.currentTime = 0; // Reset time
+            if (audioSource) audioSource.currentTime = 0;
             if (videoRef.current && !useVideoAsAudioSource) videoRef.current.currentTime = 0;
-            playMedia(); // Loop
+            if(playerStateRef.current.isPlaying) {
+                playMedia();
+            } else {
+                pauseMedia();
+            }
+        };
+        
+        const handleLoadedMetadata = () => {
+             setDuration(audioSource.duration);
         };
 
         audioSource.addEventListener('timeupdate', timeUpdateHandler);
         audioSource.addEventListener('ended', handleAudioEnd);
-        audioSource.addEventListener('loadedmetadata', () => setDuration(audioSource.duration));
+        audioSource.addEventListener('loadedmetadata', handleLoadedMetadata);
 
         return () => {
             if (audioSource) {
                 audioSource.removeEventListener('timeupdate', timeUpdateHandler);
                 audioSource.removeEventListener('ended', handleAudioEnd);
-                audioSource.removeEventListener('loadedmetadata', () => setDuration(audioSource.duration));
+                audioSource.removeEventListener('loadedmetadata', handleLoadedMetadata);
             }
         };
-    }, [subtitles, srtContent, playMedia, useVideoAsAudioSource, duration]);
+    }, [subtitles, srtContent, useVideoAsAudioSource, duration, playMedia, pauseMedia]);
     
     return {
         isPlaying,
