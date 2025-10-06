@@ -68,11 +68,6 @@ const Template47 = dynamic(() => import('@/components/templates/Template47'), {
   loading: () => <LoadingSpinner />,
 });
 
-const Template48 = dynamic(() => import('@/components/templates/Template48'), {
-  ssr: false,
-  loading: () => <LoadingSpinner />,
-});
-
 
 interface SaywithData {
   template: string;
@@ -247,8 +242,6 @@ export default function ForYouPage() {
         return <Template46 data={data} />;
       case 'template47':
         return <Template47 data={data} />;
-      case 'template48':
-        return <Template48 data={data} />;
       default:
         return <ErrorDisplay message={`Invalid template specified. Value: ${data.template ? `'${data.template}'` : 'no value provided'}`} />;
     }
