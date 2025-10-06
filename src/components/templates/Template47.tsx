@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -106,13 +107,13 @@ export default function Template47({ data }: Template47Props) {
     audioRef,
     isVideo,
     useVideoAsAudioSource,
-    handleInitialInteraction,
+    handlePlayPause,
   } = useSaywithPlayer(data);
 
   const [init, setInit] = useState(false);
 
   useEffect(() => {
-    initParticlesEngine(async (engine) => {
+    initParticlesEngine(async (engine: Engine) => {
       await loadFull(engine);
     }).then(() => {
       setInit(true);
@@ -162,7 +163,6 @@ export default function Template47({ data }: Template47Props) {
       className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onClick={handleInitialInteraction}
     >
       <Particles
         id="tsparticles"
@@ -177,8 +177,12 @@ export default function Template47({ data }: Template47Props) {
         <div className="text-center">
             
             <motion.div 
-                className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto"
+                className="pointer-events-auto w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer"
                 style={{ x: mediaX, y: mediaY }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePlayPause();
+                }}
             >
                 {mediaUrl && (
                     <>
