@@ -1,10 +1,14 @@
 
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React, { useState, useEffect, memo, useCallback } from 'react';
+import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
-import { Play, Pause } from 'lucide-react';
+import { Play } from 'lucide-react';
+import Particles, { type Container, type Engine } from "@tsparticles/react";
+import { loadFull } from "tsparticles"; 
+import { initParticlesEngine } from '@tsparticles/react';
+
 
 interface Template48Props {
   data: {
@@ -16,84 +20,170 @@ interface Template48Props {
   };
 }
 
-const AudioVisualizer = ({ audioRef, isVideo, useVideoAsAudioSource, videoRef, isPlaying }: { 
-    audioRef: React.RefObject<HTMLAudioElement>;
-    videoRef: React.RefObject<HTMLVideoElement>;
-    isVideo: boolean;
-    useVideoAsAudioSource: boolean;
-    isPlaying: boolean;
- }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+const Star = () => {
+    const size = Math.random() * 2 + 1;
+    const duration = Math.random() * 2 + 1.5;
+    const delay = Math.random() * 2;
+
+    return (
+        <motion.div
+            className="absolute rounded-full bg-white"
+            style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: size,
+                height: size,
+                boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
+            }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{
+                duration,
+                repeat: Infinity,
+                repeatType: 'loop',
+                ease: 'easeInOut',
+                delay,
+            }}
+        />
+    );
+};
+
+const TwinklingStars = memo(() => {
+    const [stars] = useState(() => Array.from({ length: 150 }, (_, i) => <Star key={i} />));
+    return (
+        <div className="absolute inset-0 z-0">
+            {stars}
+        </div>
+    );
+});
+TwinklingStars.displayName = 'TwinklingStars';
+
+const MemoizedParticles = memo(({ name }: { name: string }) => {
+  const [init, setInit] = useState(false);
 
   useEffect(() => {
-    if (!isPlaying) return;
-    
-    const audioEl = useVideoAsAudioSource ? videoRef.current : audioRef.current;
-    if (!audioEl) return;
+    initParticlesEngine(async (engine: Engine) => {
+      await loadFull(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
 
-    if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        analyserRef.current = audioContextRef.current.createAnalyser();
-        analyserRef.current.fftSize = 256;
+  const particlesLoaded = useCallback(
+    async (container: Container | undefined) => {},
+    []
+  );
 
-        try {
-            if (!sourceRef.current || sourceRef.current.mediaElement !== audioEl) {
-                // Ensure the media element has the crossOrigin attribute set
-                audioEl.crossOrigin = "anonymous";
-                sourceRef.current = audioContextRef.current.createMediaElementSource(audioEl);
-                sourceRef.current.connect(analyserRef.current);
-                sourceRef.current.connect(audioContextRef.current.destination);
-            }
-        } catch (e) {
-            console.error("Error connecting audio source:", e);
-            return;
+  const heartShapeOptions = {
+    fullScreen: {
+      enable: true,
+      zIndex: 20
+    },
+    particles: {
+      number: {
+        value: 50,
+        density: {
+          enable: true,
+          area: 800,
+        },
+      },
+      color: {
+        value: ['#ff595e', '#ffca3a', '#ff9f1c', '#f77f00', '#d62828'],
+      },
+      shape: {
+        type: 'char' as const,
+        options: {
+          char: {
+            value: ['❤', '💖', '💕', `I love you ${name}`, 'I miss you', 'Always', 'Forever', name],
+            font: 'Dancing Script',
+            style: '',
+            weight: '700',
+            fill: true,
+          },
         }
-    }
-
-    const analyser = analyserRef.current;
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    const canvas = canvasRef.current;
-    const canvasCtx = canvas?.getContext('2d');
-    let animationFrameId: number;
-
-    const draw = () => {
-      animationFrameId = requestAnimationFrame(draw);
-      analyser.getByteFrequencyData(dataArray);
-
-      if (canvas && canvasCtx) {
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        const barWidth = (canvas.width / bufferLength) * 2.5;
-        let x = 0;
-        
-        for (let i = 0; i < bufferLength; i++) {
-          const barHeight = dataArray[i];
-
-          const r = barHeight + 25 * (i/bufferLength);
-          const g = 250 * (i/bufferLength);
-          const b = 50;
-
-          canvasCtx.fillStyle = `rgb(${r},${g},${b})`;
-          canvasCtx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight);
-
-          x += barWidth + 1;
-        }
+      },
+      opacity: {
+        value: { min: 0.7, max: 1 },
+        animation: {
+          enable: true,
+          speed: 1,
+          minimumValue: 0.5,
+          sync: false,
+        },
+      },
+      size: {
+        value: { min: 10, max: 18 },
+        animation: {
+          enable: true,
+          speed: 3,
+          minimumValue: 10,
+          sync: false,
+        },
+      },
+      move: {
+        enable: true,
+        speed: 1.5,
+        direction: 'bottom' as const,
+        random: false,
+        straight: false,
+        outModes: 'out' as const,
+        bounce: false,
+      },
+       links: {
+        enable: false,
+      },
+      collisions: {
+        enable: false,
+      },
+       draw: (context: CanvasRenderingContext2D, particle: any) => {
+        context.save();
+        context.font = `${particle.shape.options.char.weight} ${particle.size.value}px "${particle.shape.options.char.font}"`;
+        context.fillStyle = particle.color.value as string;
+        context.shadowColor = particle.color.value as string;
+        context.shadowBlur = 10;
+        context.fillText(particle.shape.options.char.value, 0, 0);
+        context.restore();
       }
-    };
-    
-    draw();
+    },
+    interactivity: {
+      detectsOn: 'canvas' as const,
+      events: {
+        onHover: {
+          enable: true,
+          mode: 'repulse',
+        },
+        onClick: {
+          enable: true,
+          mode: 'push',
+        },
+        resize: true,
+      },
+      modes: {
+        repulse: {
+          distance: 100,
+          duration: 0.4,
+        },
+        push: {
+          quantity: 4,
+        },
+      },
+    },
+    detectRetina: true,
+  };
 
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [isPlaying, audioRef, videoRef, isVideo, useVideoAsAudioSource]);
+  if (!init) {
+    return null;
+  }
 
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30 filter blur-sm" />;
-};
+  return (
+      <Particles
+        id="tsparticles-hearts"
+        particlesLoaded={particlesLoaded}
+        options={heartShapeOptions as any}
+        className="absolute inset-0"
+      />
+  );
+});
+MemoizedParticles.displayName = 'MemoizedParticles';
 
 
 export default function Template48({ data }: Template48Props) {
@@ -110,17 +200,18 @@ export default function Template48({ data }: Template48Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const springConfig = { stiffness: 100, damping: 20, mass: 0.5 };
+  const springConfig = { stiffness: 100, damping: 20 };
   const smoothX = useSpring(x, springConfig);
   const smoothY = useSpring(y, springConfig);
 
-  const mediaX = useTransform(smoothX, (val) => val * 0.05 * 10);
-  const mediaY = useTransform(smoothY, (val) => val * 0.05 * 10);
-  const textX = useTransform(smoothX, (val) => val * 0.05 * -5);
-  const textY = useTransform(smoothY, (val) => val * 0.05 * -5);
+  const textX = useTransform(smoothX, (val) => val * 0.2 * -15);
+  const textY = useTransform(smoothY, (val) => val * 0.2 * -15);
+  const mediaX = useTransform(smoothX, (val) => val * 0.2 * 15);
+  const mediaY = useTransform(smoothY, (val) => val * 0.2 * 15);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY, currentTarget } = event;
@@ -133,32 +224,33 @@ export default function Template48({ data }: Template48Props) {
     y.set(yPct * 100);
   };
 
-  const subtitleVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
   };
-
+  
   return (
     <div
-      className="relative h-screen w-full overflow-hidden bg-gray-900 text-white font-sans"
+      className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       onClick={!userInteracted ? handleInitialInteraction : undefined}
     >
-        <AudioVisualizer 
-            audioRef={audioRef}
-            videoRef={videoRef}
-            isVideo={isVideo}
-            useVideoAsAudioSource={useVideoAsAudioSource}
-            isPlaying={isPlaying}
-        />
-        <div className="absolute inset-0 bg-black/50 z-0" />
+      <TwinklingStars />
+      <MemoizedParticles name={name} />
       
-        {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop crossOrigin="anonymous"/>}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
-        <div className="relative z-10 flex flex-col items-center justify-center h-full p-4">
+      <div className="z-10 flex items-center justify-center h-full">
+        <div className="text-center">
+            
             <motion.div 
-                className="w-48 h-48 md:w-64 md:h-64 rounded-xl overflow-hidden shadow-2xl bg-black/20 border-2 border-white/10"
+                className="pointer-events-auto w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
                 style={{ x: mediaX, y: mediaY }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePlayPause();
+                }}
             >
                 {mediaUrl && (
                     <>
@@ -169,7 +261,6 @@ export default function Template48({ data }: Template48Props) {
                         playsInline
                         loop
                         className="w-full h-full object-cover"
-                        crossOrigin="anonymous"
                         />
                     ) : (
                         <img
@@ -180,39 +271,36 @@ export default function Template48({ data }: Template48Props) {
                     )}
                     </>
                 )}
+                <AnimatePresence>
+                    {!isPlaying && (
+                         <motion.div 
+                            className="absolute inset-0 flex items-center justify-center bg-black/30"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                         >
+                            <Play size={64} className="text-white/80" fill="white" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </motion.div>
 
             <motion.div
-              className="mt-8 text-center"
-              style={{ x: textX, y: textY }}
+              className="mt-8 pointer-events-none"
+              style={{ x: textX, y: textY, textShadow: '0 0 20px hsl(var(--primary))' }}
             >
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white/90 drop-shadow-lg">
+              <h1 className="font-headline text-3xl tracking-tight text-foreground/90 drop-shadow-lg md:text-4xl">
                 {name}
               </h1>
 
-              <motion.div 
-                className="min-h-[56px] mt-3"
-                key={currentSubtitle}
-                variants={subtitleVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                 <p className="text-lg text-white/70 drop-shadow-md">
-                     {currentSubtitle}
-                 </p>
-              </motion.div>
+              <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
+                  <p className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl whitespace-pre-wrap">
+                      {currentSubtitle}
+                  </p>
+              </div>
             </motion.div>
-
-            <div className="absolute bottom-10">
-                <button
-                    onClick={(e) => { e.stopPropagation(); handlePlayPause()}}
-                    className="w-14 h-14 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-                    aria-label="Play/Pause"
-                >
-                    {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
-                </button>
-            </div>
         </div>
+      </div>
     </div>
   );
 }
