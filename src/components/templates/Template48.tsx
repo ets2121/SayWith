@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
@@ -239,7 +238,7 @@ export default function Template48({ data }: Template48Props) {
       <TwinklingStars />
       <MemoizedParticles name={name} />
       
-      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop crossOrigin="anonymous" />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="z-10 flex items-center justify-center h-full">
         <div className="text-center">
@@ -261,14 +260,12 @@ export default function Template48({ data }: Template48Props) {
                         playsInline
                         loop
                         className="w-full h-full object-cover"
-                        crossOrigin="anonymous"
                         />
                     ) : (
                         <img
                         src={mediaUrl}
                         alt={name}
                         className="w-full h-full object-cover"
-                        crossOrigin="anonymous"
                         />
                     )}
                     </>
