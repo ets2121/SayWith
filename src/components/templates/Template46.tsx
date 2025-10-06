@@ -111,7 +111,7 @@ const MemoizedParticles = memo(({ name }: { name: string }) => {
         },
       },
       size: {
-        value: { min: 10, max: 20 },
+        value: { min: 10, max: 18 },
         animation: {
           enable: true,
           speed: 3,
