@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -74,6 +73,11 @@ const Template48 = dynamic(() => import('@/components/templates/Template48'), {
 });
 
 const Template49 = dynamic(() => import('@/components/templates/Template49'), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
+const Template50 = dynamic(() => import('@/components/templates/Template50'), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
@@ -256,6 +260,8 @@ export default function ForYouPage() {
         return <Template48 data={data} />;
       case 'template49':
         return <Template49 data={data} />;
+      case 'template50':
+        return <Template50 data={data} />;
       default:
         return <ErrorDisplay message={`Invalid template specified. Value: ${data.template ? `'${data.template}'` : 'no value provided'}`} />;
     }
