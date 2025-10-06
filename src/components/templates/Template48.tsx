@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { Play } from 'lucide-react';
 import Particles, { type Container, type Engine } from "@tsparticles/react";
@@ -48,7 +48,7 @@ const Star = () => {
 };
 
 const TwinklingStars = memo(() => {
-    const [stars] = useState(() => Array.from({ length: 150 }, (_, i) => <Star key={i} />));
+    const [stars] = useState(() => Array.from({ length: 100 }, (_, i) => <Star key={i} />));
     return (
         <div className="absolute inset-0 z-0">
             {stars}
@@ -57,7 +57,7 @@ const TwinklingStars = memo(() => {
 });
 TwinklingStars.displayName = 'TwinklingStars';
 
-const MemoizedParticles = memo(({ name }: { name: string }) => {
+const DigitalRainParticles = memo(() => {
   const [init, setInit] = useState(false);
 
   useEffect(() => {
@@ -73,60 +73,37 @@ const MemoizedParticles = memo(({ name }: { name: string }) => {
     []
   );
 
-  const heartShapeOptions = {
+  const particleOptions = {
     fullScreen: {
       enable: true,
       zIndex: 20
     },
     particles: {
       number: {
-        value: 50,
+        value: 80,
         density: {
           enable: true,
           area: 800,
         },
       },
       color: {
-        value: ['#ff595e', '#ffca3a', '#ff9f1c', '#f77f00', '#d62828'],
+        value: ['#00ffff', '#ff00ff', '#ffffff'],
       },
       shape: {
-        type: 'char' as const,
-        options: {
-          char: {
-            value: ['❤', '💖', '💕', `I love you ${name}`, 'I miss you', 'Always', 'Forever', name],
-            font: 'Dancing Script',
-            style: '',
-            weight: '700',
-            fill: true,
-          },
-        }
+        type: 'circle' as const,
       },
       opacity: {
-        value: { min: 0.7, max: 1 },
-        animation: {
-          enable: true,
-          speed: 1,
-          minimumValue: 0.5,
-          sync: false,
-        },
+        value: { min: 0.3, max: 0.8 },
       },
       size: {
-        value: { min: 10, max: 18 },
-        animation: {
-          enable: true,
-          speed: 3,
-          minimumValue: 10,
-          sync: false,
-        },
+        value: { min: 1, max: 3 },
       },
       move: {
         enable: true,
-        speed: 1.5,
+        speed: 1,
         direction: 'bottom' as const,
-        random: false,
-        straight: false,
+        straight: true,
         outModes: 'out' as const,
-        bounce: false,
       },
        links: {
         enable: false,
@@ -134,36 +111,18 @@ const MemoizedParticles = memo(({ name }: { name: string }) => {
       collisions: {
         enable: false,
       },
-       draw: (context: CanvasRenderingContext2D, particle: any) => {
-        context.save();
-        context.font = `${particle.shape.options.char.weight} ${particle.size.value}px "${particle.shape.options.char.font}"`;
-        context.fillStyle = particle.color.value as string;
-        context.shadowColor = particle.color.value as string;
-        context.shadowBlur = 10;
-        context.fillText(particle.shape.options.char.value, 0, 0);
-        context.restore();
-      }
     },
     interactivity: {
-      detectsOn: 'canvas' as const,
       events: {
         onHover: {
           enable: true,
           mode: 'repulse',
         },
-        onClick: {
-          enable: true,
-          mode: 'push',
-        },
-        resize: true,
       },
       modes: {
         repulse: {
-          distance: 100,
+          distance: 50,
           duration: 0.4,
-        },
-        push: {
-          quantity: 4,
         },
       },
     },
@@ -176,14 +135,14 @@ const MemoizedParticles = memo(({ name }: { name: string }) => {
 
   return (
       <Particles
-        id="tsparticles-hearts"
+        id="tsparticles-digital-rain"
         particlesLoaded={particlesLoaded}
-        options={heartShapeOptions as any}
+        options={particleOptions as any}
         className="absolute inset-0"
       />
   );
 });
-MemoizedParticles.displayName = 'MemoizedParticles';
+DigitalRainParticles.displayName = 'DigitalRainParticles';
 
 
 export default function Template48({ data }: Template48Props) {
@@ -200,53 +159,72 @@ export default function Template48({ data }: Template48Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const springConfig = { stiffness: 100, damping: 20 };
-  const smoothX = useSpring(x, springConfig);
-  const smoothY = useSpring(y, springConfig);
-
-  const textX = useTransform(smoothX, (val) => val * 0.2 * -15);
-  const textY = useTransform(smoothY, (val) => val * 0.2 * -15);
-  const mediaX = useTransform(smoothX, (val) => val * 0.2 * 15);
-  const mediaY = useTransform(smoothY, (val) => val * 0.2 * 15);
-
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const { clientX, clientY, currentTarget } = event;
-    const { width, height, left, top } = currentTarget.getBoundingClientRect();
-    const xPos = clientX - left;
-    const yPos = clientY - top;
-    const xPct = xPos / width - 0.5;
-    const yPct = yPos / height - 0.5;
-    x.set(xPct * 100);
-    y.set(yPct * 100);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const GlitchText = ({ text }: { text: string }) => (
+    <div className="glitch-text" data-text={text}>
+      {text}
+    </div>
+  );
   
   return (
     <div
-      className="relative h-screen w-full overflow-hidden bg-background text-foreground"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className="relative h-screen w-full overflow-hidden bg-background text-foreground font-mono"
       onClick={!userInteracted ? handleInitialInteraction : undefined}
+      style={{ fontFamily: "'Share Tech Mono', monospace" }}
     >
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        .glitch-text {
+          position: relative;
+          text-shadow: 0.05em 0 0 rgba(0,255,255,0.7), -0.025em -0.05em 0 rgba(255,0,255,0.7), 0.025em 0.05em 0 rgba(0,255,0,0.7);
+          animation: glitch 700ms infinite;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+          content: attr(data-text);
+          position: absolute;
+          top: 0;
+          left: 0;
+          opacity: 0.8;
+          background: var(--background);
+        }
+
+        .glitch-text::before {
+          animation: glitch 850ms infinite;
+          clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+          transform: translate(-0.05em, -0.025em);
+          color: #0ff;
+        }
+
+        .glitch-text::after {
+          animation: glitch 550ms infinite;
+          clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+          transform: translate(0.05em, 0.025em);
+          color: #f0f;
+        }
+
+        @keyframes glitch {
+          0% { transform: translate(0); }
+          20% { transform: translate(-0.05em, 0.05em); }
+          40% { transform: translate(-0.05em, -0.05em); }
+          60% { transform: translate(0.05em, 0.05em); }
+          80% { transform: translate(0.05em, -0.05em); }
+          100% { transform: translate(0); }
+        }
+      `}</style>
       <TwinklingStars />
-      <MemoizedParticles name={name} />
+      <DigitalRainParticles />
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
-      <div className="z-10 flex items-center justify-center h-full">
+      <div className="z-30 flex items-center justify-center h-full">
         <div className="text-center">
             
             <motion.div 
-                className="pointer-events-auto w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
-                style={{ x: mediaX, y: mediaY }}
+                className="pointer-events-auto w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl bg-black/10 border-2 border-cyan-400/50 backdrop-blur-sm mx-auto cursor-pointer relative"
+                 style={{
+                    boxShadow: '0 0 15px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.2)',
+                 }}
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePlayPause();
@@ -287,15 +265,14 @@ export default function Template48({ data }: Template48Props) {
 
             <motion.div
               className="mt-8 pointer-events-none"
-              style={{ x: textX, y: textY, textShadow: '0 0 20px hsl(var(--primary))' }}
             >
-              <h1 className="font-headline text-3xl tracking-tight text-foreground/90 drop-shadow-lg md:text-4xl">
+              <h1 className="text-3xl tracking-wider text-cyan-300 drop-shadow-lg md:text-4xl" style={{ textShadow: '0 0 8px rgba(0, 255, 255, 0.7)'}}>
                 {name}
               </h1>
 
               <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
-                  <p className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl">
-                      {currentSubtitle}
+                  <p className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl">
+                      <GlitchText text={currentSubtitle} />
                   </p>
               </div>
             </motion.div>
