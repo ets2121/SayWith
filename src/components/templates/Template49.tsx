@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
@@ -41,20 +42,20 @@ const RosePetalParticles = memo(() => {
     },
     particles: {
       number: {
-        value: 20,
+        value: 40,
         density: {
           enable: true,
           area: 800,
         },
       },
       color: {
-        value: ['#ffc0cb', '#ffb6c1', '#f08080', '#e9967a', '#ffffff'],
+        value: ['#ffc0cb', '#ffb6c1', '#f08080', '#e9967a', '#ffffff', '#FFD700', '#C2185B'],
       },
       shape: {
         type: 'char' as const,
         options: {
             char: {
-                value: ['🌸', '💮', '💖', '🤍'],
+                value: ['🌸', '💮', '💖', '🤍', '🌷', '🌹', '💐'],
                 font: 'sans-serif',
                 style: '',
                 weight: '400'
@@ -217,3 +218,4 @@ export default function Template49({ data }: Template49Props) {
     </motion.div>
   );
 }
+
