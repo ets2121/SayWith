@@ -2,11 +2,12 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import Particles, { type Container, type Engine } from "@tsparticles/react";
 import { loadFull } from "tsparticles"; 
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { initParticlesEngine } from '@tsparticles/react';
+import { Play } from 'lucide-react';
 
 interface Template47Props {
   data: {
@@ -136,6 +137,7 @@ MemoizedParticles.displayName = 'MemoizedParticles';
 export default function Template47({ data }: Template47Props) {
   const { name, mediaUrl } = data;
   const {
+    isPlaying,
     currentSubtitle,
     videoRef,
     audioRef,
@@ -179,6 +181,7 @@ export default function Template47({ data }: Template47Props) {
       className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={handleInitialInteraction}
     >
       <MemoizedParticles />
       
@@ -188,11 +191,11 @@ export default function Template47({ data }: Template47Props) {
         <div className="text-center">
             
             <motion.div 
-                className="pointer-events-auto w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer"
+                className="pointer-events-auto w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
                 style={{ x: mediaX, y: mediaY }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleInitialInteraction(e);
+                  handlePlayPause();
                 }}
             >
                 {mediaUrl && (
@@ -214,6 +217,18 @@ export default function Template47({ data }: Template47Props) {
                     )}
                     </>
                 )}
+                <AnimatePresence>
+                    {!isPlaying && (
+                         <motion.div 
+                            className="absolute inset-0 flex items-center justify-center bg-black/30"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                         >
+                            <Play size={64} className="text-white/80" fill="white" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </motion.div>
 
             <motion.div
@@ -237,3 +252,4 @@ export default function Template47({ data }: Template47Props) {
     </div>
   );
 }
+
