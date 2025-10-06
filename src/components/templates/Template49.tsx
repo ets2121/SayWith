@@ -49,7 +49,7 @@ const RosePetalParticles = memo(() => {
         },
       },
       color: {
-        value: ['#ffc0cb', '#ffb6c1', '#f08080', '#e9967a', '#ffffff', '#FFD700', '#C2185B'],
+        value: ['#D81B60', '#F472B6', '#FBBF24', '#8B5CF6', '#EC4899', '#f08080', '#e9967a'],
       },
       shape: {
         type: 'char' as const,
@@ -218,4 +218,3 @@ export default function Template49({ data }: Template49Props) {
     </motion.div>
   );
 }
-
