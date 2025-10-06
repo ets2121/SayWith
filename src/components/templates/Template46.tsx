@@ -62,7 +62,7 @@ TwinklingStars.displayName = 'TwinklingStars';
 const heartShapeOptions = {
   fullScreen: {
     enable: true,
-    zIndex: 0
+    zIndex: 20
   },
   particles: {
     number: {
@@ -167,7 +167,7 @@ const MemoizedParticles = memo(() => {
         id="tsparticles-hearts"
         particlesLoaded={particlesLoaded}
         options={heartShapeOptions as any}
-        className="absolute inset-0 z-0"
+        className="absolute inset-0"
       />
   );
 });
