@@ -231,16 +231,18 @@ export default function Template47({ data }: Template47Props) {
 
   const subtitleVariants = {
     hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.3, ease: 'easeIn' } },
   };
   
   return (
-    <div
+    <motion.div
       className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={!userInteracted ? handleInitialInteraction : undefined}
+      initial="initial"
+      animate="animate"
     >
       <TwinklingStars />
       <MemoizedParticles name={name} />
@@ -257,6 +259,8 @@ export default function Template47({ data }: Template47Props) {
                   e.stopPropagation();
                   handlePlayPause();
                 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1, transition: { delay: 0.2, duration: 0.5, ease: 'easeOut' } }}
             >
                 {mediaUrl && (
                     <>
@@ -294,6 +298,8 @@ export default function Template47({ data }: Template47Props) {
             <motion.div
               className="mt-8 pointer-events-none"
               style={{ x: textX, y: textY, textShadow: '0 0 20px hsl(var(--primary))' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0, transition: { delay: 0.4, duration: 0.5, ease: 'easeOut' } }}
             >
               <h1 className="font-headline text-3xl tracking-tight text-foreground/90 drop-shadow-lg md:text-4xl">
                 {name}
@@ -307,7 +313,6 @@ export default function Template47({ data }: Template47Props) {
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl whitespace-pre-wrap"
                     >
                       {currentSubtitle}
@@ -317,6 +322,6 @@ export default function Template47({ data }: Template47Props) {
             </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
