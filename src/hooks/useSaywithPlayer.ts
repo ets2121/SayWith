@@ -46,6 +46,18 @@ const parseSrt = (srtText: string): SrtLine[] => {
     return entries;
 };
 
+const formatTextForDisplay = (text: string): string => {
+    const words = text.split(' ');
+    let formattedText = '';
+    for (let i = 0; i < words.length; i++) {
+        formattedText += words[i] + ' ';
+        if ((i + 1) % 4 === 0 && i < words.length - 1) {
+            formattedText += '\n';
+        }
+    }
+    return formattedText.trim();
+};
+
 
 export const useSaywithPlayer = (data: SaywithData) => {
     const { mediaUrl, audioUrl, srtContent, name, mute } = data;
@@ -73,7 +85,7 @@ export const useSaywithPlayer = (data: SaywithData) => {
             try {
                 const parsedSubtitles = parseSrt(srtContent);
                 setSubtitles(parsedSubtitles);
-                setCurrentSubtitle(parsedSubtitles[0]?.text || '');
+                setCurrentSubtitle(formatTextForDisplay(parsedSubtitles[0]?.text || ''));
             } catch (error) {
                 console.error("Failed to parse SRT data", error);
                 setCurrentSubtitle("Could not load subtitles.");
@@ -202,7 +214,7 @@ export const useSaywithPlayer = (data: SaywithData) => {
                     const timeIntoSrt = time - activeLine.startTime;
                     
                     if (sentences.length <= 2) {
-                        setCurrentSubtitle(activeLine.text);
+                        setCurrentSubtitle(formatTextForDisplay(activeLine.text));
                     } else {
                         const numChunks = Math.ceil(sentences.length / 2);
                         const chunkDuration = srtDuration / numChunks;
@@ -210,7 +222,7 @@ export const useSaywithPlayer = (data: SaywithData) => {
                         const startIndex = currentChunkIndex * 2;
                         const endIndex = Math.min(startIndex + 2, sentences.length);
                         const textToShow = sentences.slice(startIndex, endIndex).join(' ');
-                        setCurrentSubtitle(textToShow);
+                        setCurrentSubtitle(formatTextForDisplay(textToShow));
                     }
                 } else {
                     setCurrentSubtitle('');
