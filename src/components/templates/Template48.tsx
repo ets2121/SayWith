@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { Play } from 'lucide-react';
 import Particles, { type Container, type Engine } from "@tsparticles/react";
@@ -252,18 +252,14 @@ export default function Template48({ data }: Template48Props) {
                     )}
                     </>
                 )}
-                <AnimatePresence>
-                    {!isPlaying && (
-                         <motion.div 
-                            className="absolute inset-0 flex items-center justify-center bg-black/30"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                         >
-                            <Play size={64} className="text-white/80" fill="white" />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                <motion.div 
+                    className="absolute inset-0 flex items-center justify-center bg-black/30"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isPlaying ? 0 : 1 }}
+                    exit={{ opacity: 0 }}
+                >
+                    <Play size={64} className="text-white/80" fill="white" />
+                </motion.div>
             </motion.div>
 
             <motion.div
