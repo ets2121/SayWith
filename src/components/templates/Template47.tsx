@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import Particles, { type Container, type Engine } from "@tsparticles/react";
+import Particles, { type Container, type Engine, initParticlesEngine } from "@tsparticles/react";
 import { loadFull } from "tsparticles"; 
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 
