@@ -1,11 +1,9 @@
+
 "use client";
 
-import React, { useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
-import Particles, { type Container, type Engine } from "@tsparticles/react";
-import { loadFull } from "tsparticles"; 
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
-import { initParticlesEngine } from '@tsparticles/react';
 import { Play } from 'lucide-react';
 
 interface Template46Props {
@@ -18,119 +16,44 @@ interface Template46Props {
   };
 }
 
-const heartShapeOptions = {
-  fullScreen: {
-    enable: true,
-    zIndex: 0
-  },
-  particles: {
-    number: {
-      value: 50,
-      density: {
-        enable: true,
-        area: 800,
-      },
-    },
-    color: {
-      value: ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'],
-    },
-    shape: {
-      type: 'char' as const,
-      options: {
-        char: {
-          value: ['❤', '💖', '💕'],
-          font: 'Verdana',
-          style: '',
-          weight: '400',
-          fill: true,
-        },
-      }
-    },
-    opacity: {
-      value: { min: 0.5, max: 1 },
-      animation: {
-        enable: true,
-        speed: 1,
-        minimumValue: 0.1,
-        sync: false,
-      },
-    },
-    size: {
-      value: { min: 10, max: 25 },
-      animation: {
-        enable: true,
-        speed: 4,
-        minimumValue: 10,
-        sync: false,
-      },
-    },
-    move: {
-      enable: true,
-      speed: 2,
-      direction: 'bottom' as const,
-      random: false,
-      straight: false,
-      outModes: 'out' as const,
-      bounce: false,
-    },
-  },
-  interactivity: {
-    detectsOn: 'canvas' as const,
-    events: {
-      onHover: {
-        enable: true,
-        mode: 'repulse',
-      },
-      onClick: {
-        enable: true,
-        mode: 'push',
-      },
-      resize: true,
-    },
-    modes: {
-      repulse: {
-        distance: 100,
-        duration: 0.4,
-      },
-      push: {
-        quantity: 4,
-      },
-    },
-  },
-  detectRetina: true,
+const Star = () => {
+    const size = Math.random() * 2 + 1;
+    const duration = Math.random() * 2 + 1.5;
+    const delay = Math.random() * 2;
+    const top = `${Math.random() * 100}%`;
+    const left = `${Math.random() * 100}%`;
+
+    return (
+        <motion.div
+            className="absolute rounded-full bg-white"
+            style={{
+                width: size,
+                height: size,
+                top,
+                left,
+                boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
+            }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{
+                duration,
+                repeat: Infinity,
+                repeatType: 'loop',
+                ease: 'easeInOut',
+                delay,
+            }}
+        />
+    );
 };
 
-
-const MemoizedParticles = memo(() => {
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    initParticlesEngine(async (engine: Engine) => {
-      await loadFull(engine);
-    }).then(() => {
-      setInit(true);
-    });
-  }, []);
-
-  const particlesLoaded = useCallback(
-    async (container: Container | undefined) => {},
-    []
-  );
-
-  if (!init) {
-    return null;
-  }
-
-  return (
-      <Particles
-        id="tsparticles"
-        particlesLoaded={particlesLoaded}
-        options={heartShapeOptions as any}
-        className="absolute inset-0 z-0"
-      />
-  );
+const TwinklingStars = memo(() => {
+    const [stars] = useState(() => Array.from({ length: 150 }, (_, i) => <Star key={i} />));
+    return (
+        <div className="absolute inset-0 z-0">
+            {stars}
+        </div>
+    );
 });
-MemoizedParticles.displayName = 'MemoizedParticles';
+TwinklingStars.displayName = 'TwinklingStars';
 
 
 export default function Template46({ data }: Template46Props) {
@@ -183,7 +106,7 @@ export default function Template46({ data }: Template46Props) {
       onMouseLeave={handleMouseLeave}
       onClick={!userInteracted ? handleInitialInteraction : undefined}
     >
-      <MemoizedParticles />
+      <TwinklingStars />
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
