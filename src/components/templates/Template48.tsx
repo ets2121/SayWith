@@ -245,7 +245,7 @@ export default function Template48({ data }: Template48Props) {
         <div className="text-center">
             
             <motion.div 
-                className="pointer-events-auto w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
+                className="pointer-events-auto w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
                 style={{ x: mediaX, y: mediaY }}
                 onClick={(e) => {
                   e.stopPropagation();
