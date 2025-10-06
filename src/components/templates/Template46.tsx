@@ -33,8 +33,6 @@ const Star = () => {
             style={{
                 width: size,
                 height: size,
-                top,
-                left,
                 boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
             }}
             animate={{ opacity: [0, 1, 0] }}
@@ -59,90 +57,7 @@ const TwinklingStars = memo(() => {
 });
 TwinklingStars.displayName = 'TwinklingStars';
 
-const heartShapeOptions = {
-  fullScreen: {
-    enable: true,
-    zIndex: 20
-  },
-  particles: {
-    number: {
-      value: 50,
-      density: {
-        enable: true,
-        area: 800,
-      },
-    },
-    color: {
-      value: ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'],
-    },
-    shape: {
-      type: 'char' as const,
-      options: {
-        char: {
-          value: ['❤', '💖', '💕', 'I love you', 'I miss you'],
-          font: 'Verdana',
-          style: '',
-          weight: '400',
-          fill: true,
-        },
-      }
-    },
-    opacity: {
-      value: { min: 0.5, max: 1 },
-      animation: {
-        enable: true,
-        speed: 1,
-        minimumValue: 0.1,
-        sync: false,
-      },
-    },
-    size: {
-      value: { min: 10, max: 25 },
-      animation: {
-        enable: true,
-        speed: 4,
-        minimumValue: 10,
-        sync: false,
-      },
-    },
-    move: {
-      enable: true,
-      speed: 2,
-      direction: 'bottom' as const,
-      random: false,
-      straight: false,
-      outModes: 'out' as const,
-      bounce: false,
-    },
-  },
-  interactivity: {
-    detectsOn: 'canvas' as const,
-    events: {
-      onHover: {
-        enable: true,
-        mode: 'repulse',
-      },
-      onClick: {
-        enable: true,
-        mode: 'push',
-      },
-      resize: true,
-    },
-    modes: {
-      repulse: {
-        distance: 100,
-        duration: 0.4,
-      },
-      push: {
-        quantity: 4,
-      },
-    },
-  },
-  detectRetina: true,
-};
-
-
-const MemoizedParticles = memo(() => {
+const MemoizedParticles = memo(({ name }: { name: string }) => {
   const [init, setInit] = useState(false);
 
   useEffect(() => {
@@ -157,6 +72,103 @@ const MemoizedParticles = memo(() => {
     async (container: Container | undefined) => {},
     []
   );
+
+  const heartShapeOptions = {
+    fullScreen: {
+      enable: true,
+      zIndex: 20
+    },
+    particles: {
+      number: {
+        value: 50,
+        density: {
+          enable: true,
+          area: 800,
+        },
+      },
+      color: {
+        value: ['#ff595e', '#ffca3a', '#ff9f1c', '#f77f00', '#d62828'],
+      },
+      shape: {
+        type: 'char' as const,
+        options: {
+          char: {
+            value: ['❤', '💖', '💕', `I love you ${name}`, 'I miss you', 'Always', 'Forever', name],
+            font: 'Dancing Script',
+            style: '',
+            weight: '700',
+            fill: true,
+          },
+        }
+      },
+      opacity: {
+        value: { min: 0.7, max: 1 },
+        animation: {
+          enable: true,
+          speed: 1,
+          minimumValue: 0.5,
+          sync: false,
+        },
+      },
+      size: {
+        value: { min: 10, max: 20 },
+        animation: {
+          enable: true,
+          speed: 3,
+          minimumValue: 10,
+          sync: false,
+        },
+      },
+      move: {
+        enable: true,
+        speed: 1.5,
+        direction: 'bottom' as const,
+        random: false,
+        straight: false,
+        outModes: 'out' as const,
+        bounce: false,
+      },
+       links: {
+        enable: false,
+      },
+      collisions: {
+        enable: false,
+      },
+       draw: (context: CanvasRenderingContext2D, particle: any) => {
+        context.save();
+        context.font = `${particle.shape.options.char.weight} ${particle.size.value}px "${particle.shape.options.char.font}"`;
+        context.fillStyle = particle.color.value as string;
+        context.shadowColor = particle.color.value as string;
+        context.shadowBlur = 10;
+        context.fillText(particle.shape.options.char.value, 0, 0);
+        context.restore();
+      }
+    },
+    interactivity: {
+      detectsOn: 'canvas' as const,
+      events: {
+        onHover: {
+          enable: true,
+          mode: 'repulse',
+        },
+        onClick: {
+          enable: true,
+          mode: 'push',
+        },
+        resize: true,
+      },
+      modes: {
+        repulse: {
+          distance: 100,
+          duration: 0.4,
+        },
+        push: {
+          quantity: 4,
+        },
+      },
+    },
+    detectRetina: true,
+  };
 
   if (!init) {
     return null;
@@ -225,7 +237,7 @@ export default function Template46({ data }: Template46Props) {
       onClick={!userInteracted ? handleInitialInteraction : undefined}
     >
       <TwinklingStars />
-      <MemoizedParticles />
+      <MemoizedParticles name={name} />
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
