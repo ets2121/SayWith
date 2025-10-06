@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
@@ -110,7 +111,7 @@ const MemoizedParticles = memo(({ name }: { name: string }) => {
         },
       },
       size: {
-        value: { min: 10, max: 18 },
+        value: { min: 16, max: 24 },
         animation: {
           enable: true,
           speed: 3,
@@ -227,6 +228,12 @@ export default function Template47({ data }: Template47Props) {
     x.set(0);
     y.set(0);
   };
+
+  const subtitleVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+  };
   
   return (
     <div
@@ -293,9 +300,19 @@ export default function Template47({ data }: Template47Props) {
               </h1>
 
               <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
-                  <p className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl whitespace-pre-wrap">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={currentSubtitle}
+                      variants={subtitleVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl whitespace-pre-wrap"
+                    >
                       {currentSubtitle}
-                  </p>
+                    </motion.p>
+                  </AnimatePresence>
               </div>
             </motion.div>
         </div>
