@@ -293,12 +293,10 @@ export default function Template46({ data }: Template46Props) {
                 {name}
               </h1>
 
-              <div className="min-h-[56px] mt-2">
-                 {currentSubtitle.split('\n').map((line, index) => (
-                      <p key={index} className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl">
-                          {line}
-                      </p>
-                  ))}
+              <div className="min-h-[56px] mt-2 px-4">
+                  <p className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl whitespace-pre-wrap">
+                      {currentSubtitle}
+                  </p>
               </div>
             </motion.div>
         </div>
