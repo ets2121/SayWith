@@ -181,7 +181,6 @@ export default function Template47({ data }: Template47Props) {
       className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onClick={handleInitialInteraction}
     >
       <MemoizedParticles />
       
