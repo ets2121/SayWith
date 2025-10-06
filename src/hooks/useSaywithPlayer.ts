@@ -195,8 +195,26 @@ export const useSaywithPlayer = (data: SaywithData) => {
             }
 
             if (srtContent) {
-                const activeLine = subtitles.find(line => time >= line.startTime && time < line.endTime);
-                setCurrentSubtitle(activeLine ? activeLine.text : '');
+                 const activeLine = subtitles.find(line => time >= line.startTime && time < line.endTime);
+                if (activeLine) {
+                    const sentences = activeLine.text.match(/[^.!?]+[.!?]*/g) || [activeLine.text];
+                    const srtDuration = activeLine.endTime - activeLine.startTime;
+                    const timeIntoSrt = time - activeLine.startTime;
+                    
+                    if (sentences.length <= 2) {
+                        setCurrentSubtitle(activeLine.text);
+                    } else {
+                        const numChunks = Math.ceil(sentences.length / 2);
+                        const chunkDuration = srtDuration / numChunks;
+                        const currentChunkIndex = Math.floor(timeIntoSrt / chunkDuration);
+                        const startIndex = currentChunkIndex * 2;
+                        const endIndex = Math.min(startIndex + 2, sentences.length);
+                        const textToShow = sentences.slice(startIndex, endIndex).join(' ');
+                        setCurrentSubtitle(textToShow);
+                    }
+                } else {
+                    setCurrentSubtitle('');
+                }
             }
         };
 
