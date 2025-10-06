@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
@@ -55,10 +56,10 @@ const StarryBackground = memo(() => {
         type: 'circle' as const,
       },
       opacity: {
-        value: { min: 0.1, max: 0.6 },
+        value: { min: 0.1, max: 0.8 },
         animation: {
             enable: true,
-            speed: 1,
+            speed: 0.5,
             minimumValue: 0.1,
             sync: false
         }
@@ -182,17 +183,47 @@ export default function Template50({ data }: Template50Props) {
       <StarryBackground />
 
       {/* Parallax Planets */}
-      <motion.div
+       <motion.div
         className="absolute top-[10%] left-[15%] w-32 h-32 bg-gradient-to-br from-blue-700 to-purple-900 rounded-full opacity-30 filter blur-sm"
         style={{ x: planet1X, y: planet1Y }}
+        animate={{
+          x: [null, 15, -10, 15],
+          y: [null, -10, 15, -10],
+        }}
+        transition={{
+          duration: 40,
+          repeat: Infinity,
+          repeatType: "mirror",
+          ease: "easeInOut",
+        }}
       />
       <motion.div
         className="absolute bottom-[15%] right-[20%] w-24 h-24 bg-gradient-to-br from-red-800 to-yellow-600 rounded-full opacity-40 filter blur-sm"
         style={{ x: planet2X, y: planet2Y }}
+        animate={{
+          x: [null, -20, 25, -20],
+          y: [null, 15, -10, 15],
+        }}
+        transition={{
+          duration: 50,
+          repeat: Infinity,
+          repeatType: "mirror",
+          ease: "easeInOut",
+        }}
       />
       <motion.div
         className="absolute top-[25%] right-[10%] w-16 h-16 bg-gradient-to-br from-teal-500 to-green-700 rounded-full opacity-20 filter blur-md"
         style={{ x: planet3X, y: planet3Y }}
+        animate={{
+          x: [null, 10, -5, 10],
+          y: [null, -15, 20, -15],
+        }}
+        transition={{
+          duration: 35,
+          repeat: Infinity,
+          repeatType: "mirror",
+          ease: "easeInOut",
+        }}
       />
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
