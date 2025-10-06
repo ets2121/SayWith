@@ -213,6 +213,7 @@ export default function Template48({ data }: Template48Props) {
                             src={mediaUrl}
                             alt={name}
                             className="w-full h-full object-cover"
+                            crossOrigin="anonymous"
                         />
                     )}
                     </>
