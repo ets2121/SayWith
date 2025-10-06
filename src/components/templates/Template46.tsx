@@ -24,13 +24,13 @@ const Star = () => {
     const size = Math.random() * 2 + 1;
     const duration = Math.random() * 2 + 1.5;
     const delay = Math.random() * 2;
-    const top = `${Math.random() * 100}%`;
-    const left = `${Math.random() * 100}%`;
 
     return (
         <motion.div
             className="absolute rounded-full bg-white"
             style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
                 width: size,
                 height: size,
                 boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
