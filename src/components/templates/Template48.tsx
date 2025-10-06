@@ -271,9 +271,9 @@ export default function Template48({ data }: Template48Props) {
               </h1>
 
               <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
-                  <p className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl">
+                  <div className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl">
                       <GlitchText text={currentSubtitle} />
-                  </p>
+                  </div>
               </div>
             </motion.div>
         </div>
