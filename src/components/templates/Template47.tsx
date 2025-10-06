@@ -1,11 +1,12 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import Particles, { type Container, type Engine, initParticlesEngine } from "@tsparticles/react";
+import React, { useState, useEffect, useCallback, memo } from 'react';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import Particles, { type Container, type Engine } from "@tsparticles/react";
 import { loadFull } from "tsparticles"; 
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { initParticlesEngine } from '@tsparticles/react';
 
 interface Template47Props {
   data: {
@@ -17,7 +18,7 @@ interface Template47Props {
   };
 }
 
-const heartShape = {
+const heartShapeOptions = {
   fullScreen: {
     enable: true,
     zIndex: 0
@@ -34,7 +35,7 @@ const heartShape = {
       value: ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'],
     },
     shape: {
-      type: 'char',
+      type: 'char' as const,
       options: {
         char: {
           value: ['❤', '💖', '💕'],
@@ -99,17 +100,8 @@ const heartShape = {
   detectRetina: true,
 };
 
-export default function Template47({ data }: Template47Props) {
-  const { name, mediaUrl } = data;
-  const {
-    currentSubtitle,
-    videoRef,
-    audioRef,
-    isVideo,
-    useVideoAsAudioSource,
-    handlePlayPause,
-  } = useSaywithPlayer(data);
 
+const MemoizedParticles = memo(() => {
   const [init, setInit] = useState(false);
 
   useEffect(() => {
@@ -120,19 +112,51 @@ export default function Template47({ data }: Template47Props) {
     });
   }, []);
 
-
   const particlesLoaded = useCallback(
     async (container: Container | undefined) => {},
     []
   );
 
+  if (!init) {
+    return null;
+  }
+
+  return (
+      <Particles
+        id="tsparticles"
+        particlesLoaded={particlesLoaded}
+        options={heartShapeOptions as any}
+        className="absolute inset-0 z-0"
+      />
+  );
+});
+MemoizedParticles.displayName = 'MemoizedParticles';
+
+
+export default function Template47({ data }: Template47Props) {
+  const { name, mediaUrl } = data;
+  const {
+    currentSubtitle,
+    videoRef,
+    audioRef,
+    isVideo,
+    useVideoAsAudioSource,
+    handleInitialInteraction,
+    handlePlayPause,
+  } = useSaywithPlayer(data);
+
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const textX = useTransform(x, [-100, 100], [-15, 15]);
-  const textY = useTransform(y, [-100, 100], [-15, 15]);
-  const mediaX = useTransform(x, [-100, 100], [15, -15]);
-  const mediaY = useTransform(y, [-100, 100], [15, -15]);
+  const springConfig = { stiffness: 100, damping: 20 };
+  const smoothX = useSpring(x, springConfig);
+  const smoothY = useSpring(y, springConfig);
+
+  const textX = useTransform(smoothX, (val) => val * 0.2 * -15);
+  const textY = useTransform(smoothY, (val) => val * 0.2 * -15);
+  const mediaX = useTransform(smoothX, (val) => val * 0.2 * 15);
+  const mediaY = useTransform(smoothY, (val) => val * 0.2 * 15);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY, currentTarget } = event;
@@ -149,31 +173,18 @@ export default function Template47({ data }: Template47Props) {
     x.set(0);
     y.set(0);
   };
-
-  if (!init) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background text-foreground">
-        <p>Loading a surprise...</p>
-      </div>
-    );
-  }
-
+  
   return (
     <div
       className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <Particles
-        id="tsparticles"
-        particlesLoaded={particlesLoaded}
-        options={heartShape as any}
-        className="absolute inset-0 z-0"
-      />
+      <MemoizedParticles />
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+      <div className="z-10 flex items-center justify-center h-full">
         <div className="text-center">
             
             <motion.div 
@@ -181,7 +192,7 @@ export default function Template47({ data }: Template47Props) {
                 style={{ x: mediaX, y: mediaY }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePlayPause();
+                  handleInitialInteraction(e);
                 }}
             >
                 {mediaUrl && (
@@ -206,9 +217,8 @@ export default function Template47({ data }: Template47Props) {
             </motion.div>
 
             <motion.div
-              className="mt-8"
+              className="mt-8 pointer-events-none"
               style={{ x: textX, y: textY, textShadow: '0 0 20px hsl(var(--primary))' }}
-              transition={{ type: 'spring', stiffness: 100, damping: 15 }}
             >
               <h1 className="font-headline text-3xl tracking-tight text-foreground/90 drop-shadow-lg md:text-4xl">
                 {name}
