@@ -133,10 +133,20 @@ export default function Template50({ data }: Template50Props) {
   const smoothX = useSpring(x, springConfig);
   const smoothY = useSpring(y, springConfig);
 
+  // Parallax for main content
   const textX = useTransform(smoothX, (val) => val * 0.1 * -1);
   const textY = useTransform(smoothY, (val) => val * 0.1 * -1);
   const mediaX = useTransform(smoothX, (val) => val * 0.1 * 1);
   const mediaY = useTransform(smoothY, (val) => val * 0.1 * 1);
+
+  // Parallax for background planets
+  const planet1X = useTransform(smoothX, (val) => val * 0.05);
+  const planet1Y = useTransform(smoothY, (val) => val * 0.05);
+  const planet2X = useTransform(smoothX, (val) => val * 0.08);
+  const planet2Y = useTransform(smoothY, (val) => val * 0.08);
+  const planet3X = useTransform(smoothX, (val) => val * 0.03);
+  const planet3Y = useTransform(smoothY, (val) => val * 0.03);
+
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if(!userInteracted) return;
@@ -170,6 +180,20 @@ export default function Template50({ data }: Template50Props) {
       onClick={!userInteracted ? handleInitialInteraction : undefined}
     >
       <StarryBackground />
+
+      {/* Parallax Planets */}
+      <motion.div
+        className="absolute top-[10%] left-[15%] w-32 h-32 bg-gradient-to-br from-blue-700 to-purple-900 rounded-full opacity-30 filter blur-sm"
+        style={{ x: planet1X, y: planet1Y }}
+      />
+      <motion.div
+        className="absolute bottom-[15%] right-[20%] w-24 h-24 bg-gradient-to-br from-red-800 to-yellow-600 rounded-full opacity-40 filter blur-sm"
+        style={{ x: planet2X, y: planet2Y }}
+      />
+      <motion.div
+        className="absolute top-[25%] right-[10%] w-16 h-16 bg-gradient-to-br from-teal-500 to-green-700 rounded-full opacity-20 filter blur-md"
+        style={{ x: planet3X, y: planet3Y }}
+      />
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
