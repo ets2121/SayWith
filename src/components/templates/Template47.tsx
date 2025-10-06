@@ -142,6 +142,7 @@ export default function Template47({ data }: Template47Props) {
     videoRef,
     audioRef,
     isVideo,
+    userInteracted,
     useVideoAsAudioSource,
     handleInitialInteraction,
     handlePlayPause,
@@ -181,6 +182,7 @@ export default function Template47({ data }: Template47Props) {
       className="relative h-screen w-full overflow-hidden bg-background text-foreground"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={!userInteracted ? handleInitialInteraction : undefined}
     >
       <MemoizedParticles />
       
