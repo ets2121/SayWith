@@ -252,4 +252,3 @@ export default function Template47({ data }: Template47Props) {
     </div>
   );
 }
-
