@@ -229,6 +229,9 @@ export default function Template48({ data }: Template48Props) {
                   e.stopPropagation();
                   handlePlayPause();
                 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
             >
                 {mediaUrl && (
                     <>
@@ -265,6 +268,9 @@ export default function Template48({ data }: Template48Props) {
 
             <motion.div
               className="mt-8 pointer-events-none"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
             >
               <h1 className="text-3xl tracking-wider text-cyan-300 drop-shadow-lg md:text-4xl" style={{ textShadow: '0 0 8px rgba(0, 255, 255, 0.7)'}}>
                 {name}
