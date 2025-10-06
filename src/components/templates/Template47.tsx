@@ -10,7 +10,7 @@ import { loadFull } from "tsparticles";
 import { initParticlesEngine } from '@tsparticles/react';
 
 
-interface Template46Props {
+interface Template47Props {
   data: {
     mediaUrl: string;
     audioUrl: string;
@@ -186,7 +186,7 @@ const MemoizedParticles = memo(({ name }: { name: string }) => {
 MemoizedParticles.displayName = 'MemoizedParticles';
 
 
-export default function Template47({ data }: Template46Props) {
+export default function Template47({ data }: Template47Props) {
   const { name, mediaUrl } = data;
   const {
     isPlaying,
@@ -239,13 +239,13 @@ export default function Template47({ data }: Template46Props) {
       <TwinklingStars />
       <MemoizedParticles name={name} />
       
-      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop crossOrigin="anonymous" />}
 
       <div className="z-10 flex items-center justify-center h-full">
         <div className="text-center">
             
             <motion.div 
-                className="pointer-events-auto w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
+                className="pointer-events-auto w-40 h-40 md:w-52 md:h-52 rounded-3xl overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
                 style={{ x: mediaX, y: mediaY }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -261,12 +261,14 @@ export default function Template47({ data }: Template46Props) {
                         playsInline
                         loop
                         className="w-full h-full object-cover"
+                        crossOrigin="anonymous"
                         />
                     ) : (
                         <img
                         src={mediaUrl}
                         alt={name}
                         className="w-full h-full object-cover"
+                        crossOrigin="anonymous"
                         />
                     )}
                     </>
