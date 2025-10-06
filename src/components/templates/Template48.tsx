@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef } from 'react';
@@ -40,6 +41,8 @@ const AudioVisualizer = ({ audioRef, isVideo, useVideoAsAudioSource, videoRef, i
 
         try {
             if (!sourceRef.current || sourceRef.current.mediaElement !== audioEl) {
+                // Ensure the media element has the crossOrigin attribute set
+                audioEl.crossOrigin = "anonymous";
                 sourceRef.current = audioContextRef.current.createMediaElementSource(audioEl);
                 sourceRef.current.connect(analyserRef.current);
                 sourceRef.current.connect(audioContextRef.current.destination);

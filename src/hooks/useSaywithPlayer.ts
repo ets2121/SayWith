@@ -185,11 +185,13 @@ export const useSaywithPlayer = (data: SaywithData) => {
             video.loop = true;
             video.playsInline = true;
             video.muted = !useVideoAsAudioSource;
+            video.crossOrigin = "anonymous";
         }
          const audio = audioRef.current;
         if (audio) {
             audio.loop = true;
             audio.playsInline = true;
+            audio.crossOrigin = "anonymous";
         }
     }, [useVideoAsAudioSource]);
 
