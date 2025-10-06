@@ -184,7 +184,7 @@ export default function Template48({ data }: Template48Props) {
     >
       <MemoizedParticles />
       
-      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop crossOrigin="anonymous" />}
+      {!useVideoAsAudioSource && <audio ref={audioRef} />}
 
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="text-center">
@@ -198,25 +198,20 @@ export default function Template48({ data }: Template48Props) {
                 }}
             >
                 {mediaUrl && (
-                    <>
+                  <>
                     {isVideo ? (
                         <video
                             ref={videoRef}
-                            src={mediaUrl}
-                            playsInline
-                            loop
                             className="w-full h-full object-cover"
-                            crossOrigin="anonymous"
                         />
                     ) : (
                         <img
                             src={mediaUrl}
                             alt={name}
                             className="w-full h-full object-cover"
-                            crossOrigin="anonymous"
                         />
                     )}
-                    </>
+                  </>
                 )}
                 <AnimatePresence>
                     {!isPlaying && (
