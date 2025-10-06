@@ -293,8 +293,8 @@ export default function Template46({ data }: Template46Props) {
                 {name}
               </h1>
 
-              <div className="min-h-[56px] mt-2 px-4">
-                  <p className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl whitespace-pre-wrap">
+              <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
+                  <p className="font-body text-lg text-foreground/70 drop-shadow-md md:text-xl">
                       {currentSubtitle}
                   </p>
               </div>
