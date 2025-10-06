@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { Play } from 'lucide-react';
 import Particles, { type Container, type Engine } from "@tsparticles/react";
@@ -164,6 +164,12 @@ export default function Template48({ data }: Template48Props) {
       {text}
     </div>
   );
+
+  const subtitleVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+    exit: { opacity: 0, y: -15, transition: { duration: 0.3, ease: 'easeIn' } },
+  };
   
   return (
     <div
@@ -273,9 +279,18 @@ export default function Template48({ data }: Template48Props) {
               </h1>
 
               <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
-                  <div className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl">
-                      <GlitchText text={currentSubtitle} />
-                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentSubtitle}
+                      variants={subtitleVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl"
+                    >
+                        <GlitchText text={currentSubtitle} />
+                    </motion.div>
+                  </AnimatePresence>
               </div>
             </motion.div>
         </div>
