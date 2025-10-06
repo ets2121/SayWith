@@ -238,13 +238,13 @@ export default function Template47({ data }: Template47Props) {
       <TwinklingStars />
       <MemoizedParticles name={name} />
       
-      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop crossOrigin="anonymous" />}
+      {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="z-10 flex items-center justify-center h-full">
         <div className="text-center">
             
             <motion.div 
-                className="pointer-events-auto w-40 h-40 md:w-52 md:h-52 rounded-3xl overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
+                className="pointer-events-auto w-64 h-40 md:w-80 md:h-52 rounded-full overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
                 style={{ x: mediaX, y: mediaY }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -260,14 +260,12 @@ export default function Template47({ data }: Template47Props) {
                         playsInline
                         loop
                         className="w-full h-full object-cover"
-                        crossOrigin="anonymous"
                         />
                     ) : (
                         <img
                         src={mediaUrl}
                         alt={name}
                         className="w-full h-full object-cover"
-                        crossOrigin="anonymous"
                         />
                     )}
                     </>
