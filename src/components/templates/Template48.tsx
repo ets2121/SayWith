@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, memo, useCallback } from 'react';
@@ -244,7 +245,7 @@ export default function Template48({ data }: Template48Props) {
         <div className="text-center">
             
             <motion.div 
-                className="pointer-events-auto w-40 h-40 md:w-52 md:h-52 overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
+                className="pointer-events-auto w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl bg-black/10 border-2 border-white/20 backdrop-blur-sm mx-auto cursor-pointer relative"
                 style={{ x: mediaX, y: mediaY }}
                 onClick={(e) => {
                   e.stopPropagation();
