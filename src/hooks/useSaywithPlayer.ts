@@ -60,7 +60,7 @@ export const useSaywithPlayer = (data: SaywithData) => {
     const [progress, setProgress] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [thumbnail, setThumbnail] = useState<string>('');
+    const [thumbnail, setThumbnail] = useState<string>('https://placehold.co/600x400/000000/000000.png');
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -187,45 +187,7 @@ export const useSaywithPlayer = (data: SaywithData) => {
             audio.crossOrigin = "anonymous";
         }
     }, [useVideoAsAudioSource]);
-
-    useEffect(() => {
-      const video = videoRef.current;
-      if (isVideo && video && !thumbnail) {
-        const generateThumbnail = () => {
-          try {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              const dataUrl = canvas.toDataURL('image/jpeg');
-              setThumbnail(dataUrl);
-            }
-          } catch (e) {
-            console.error('Error generating thumbnail:', e);
-          }
-        };
-
-        const onSeeked = () => {
-          generateThumbnail();
-          video.removeEventListener('seeked', onSeeked);
-        };
-        
-        const onLoadedData = () => {
-            video.currentTime = 0.1; // Seek to a very early frame
-        };
-        
-        video.addEventListener('loadeddata', onLoadedData);
-        video.addEventListener('seeked', onSeeked);
-
-        return () => {
-          video.removeEventListener('loadeddata', onLoadedData);
-          video.removeEventListener('seeked', onSeeked);
-        };
-      }
-    }, [isVideo, mediaUrl, thumbnail]);
-
+    
     useEffect(() => {
         const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
         if (!audioSource) return;
