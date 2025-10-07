@@ -11,7 +11,7 @@ interface Template3Props {
 }
 
 export default function Template3({ data }: Template3Props) {
-  const { name, mediaUrl, thumbnailUrl } = data;
+  const { name, mediaUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -26,7 +26,7 @@ export default function Template3({ data }: Template3Props) {
 
   const MediaComponent = isVideo ? 'video' : 'img';
   const mediaProps = {
-      ...(isVideo ? { ref: videoRef, poster: thumbnailUrl } : {}),
+      ...(isVideo ? { ref: videoRef } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
       loop: isVideo ? true : undefined,
@@ -34,11 +34,6 @@ export default function Template3({ data }: Template3Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
-       <style jsx>{`
-        video[poster] {
-          object-fit: cover;
-        }
-      `}</style>
       {mediaUrl && (
         <MediaComponent
           {...mediaProps}

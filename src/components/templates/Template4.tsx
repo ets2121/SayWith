@@ -10,7 +10,7 @@ interface Template4Props {
 }
 
 export default function Template4({ data }: Template4Props) {
-  const { name, mediaUrl, thumbnailUrl } = data;
+  const { name, mediaUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -29,11 +29,6 @@ export default function Template4({ data }: Template4Props) {
       className="w-full h-screen bg-gradient-to-b from-[#FFF5E1] to-[#FFDAB9] flex flex-col items-center justify-center p-4 font-body overflow-hidden"
       onClick={handleInitialInteraction}
     >
-       <style jsx>{`
-        video[poster] {
-          object-fit: contain;
-        }
-      `}</style>
         {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
         <div className="w-full max-w-sm h-full flex flex-col items-center justify-center">
 
@@ -43,7 +38,7 @@ export default function Template4({ data }: Template4Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="w-full h-full object-contain" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="background" className="w-full h-full object-contain" />
                     )}

@@ -52,7 +52,7 @@ const formatTextForDisplay = (text: string): string => {
 
 
 export const useSaywithPlayer = (data: SaywithData) => {
-    const { mediaUrl, audioUrl, srtContent, name, mute, thumbnailUrl } = data;
+    const { mediaUrl, audioUrl, srtContent, name, mute } = data;
     const [isPlaying, setIsPlaying] = useState(false);
     const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
     const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -268,6 +268,5 @@ export const useSaywithPlayer = (data: SaywithData) => {
         handleSeek,
         playMedia,
         pauseMedia,
-        thumbnailUrl,
     };
 };

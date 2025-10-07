@@ -14,7 +14,6 @@ export default function Template1({ data }: Template1Props) {
   const { 
     name,
     mediaUrl,
-    thumbnailUrl,
   } = data;
   
   const {
@@ -31,17 +30,6 @@ export default function Template1({ data }: Template1Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans" onClick={handleInitialInteraction}>
-      <style jsx>{`
-        video[poster] {
-          object-fit: cover;
-        }
-        video:not([poster]) {
-          object-fit: cover;
-        }
-        video.playing {
-          object-fit: cover;
-        }
-      `}</style>
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10" />
       {mediaUrl && (
         <>
@@ -49,9 +37,9 @@ export default function Template1({ data }: Template1Props) {
             <video
               ref={videoRef}
               src={mediaUrl}
-              poster={thumbnailUrl}
               playsInline
-              className={`absolute inset-0 w-full h-full object-cover ${isPlaying ? 'playing' : ''}`}
+              loop
+              className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (
             <img

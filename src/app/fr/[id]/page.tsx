@@ -88,7 +88,6 @@ export interface SaywithData {
   template: string;
   enabled: boolean;
   mediaUrl: string;
-  thumbnailUrl?: string;
   audioUrl: string;
   srtContent: string;
   name: string;

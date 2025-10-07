@@ -11,7 +11,7 @@ interface Template2Props {
 }
 
 export default function Template2({ data }: Template2Props) {
-  const { name, mediaUrl, thumbnailUrl } = data;
+  const { name, mediaUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -26,7 +26,7 @@ export default function Template2({ data }: Template2Props) {
 
   const BlurredMediaComponent = isVideo ? 'video' : 'img';
   const blurredMediaProps = {
-      ...(isVideo ? { ref: videoRef, poster: thumbnailUrl } : {}),
+      ...(isVideo ? { ref: videoRef } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
       loop: isVideo ? true : undefined,
@@ -34,11 +34,6 @@ export default function Template2({ data }: Template2Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
-       <style jsx>{`
-        video[poster] {
-          object-fit: cover;
-        }
-      `}</style>
       {mediaUrl && (
         <BlurredMediaComponent
           {...blurredMediaProps}
@@ -54,9 +49,9 @@ export default function Template2({ data }: Template2Props) {
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && (
                   isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="w-full h-full object-cover" playsInline loop />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" playsInline loop />
                   ) : (
-                    <img src={mediaUrl} className="w-full h-full object-cover" />
+                    <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                   )
                  )}
                  <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/50 backdrop-blur-sm text-center">
