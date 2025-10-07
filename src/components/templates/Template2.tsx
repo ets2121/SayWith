@@ -22,11 +22,12 @@ export default function Template2({ data }: Template2Props) {
     useVideoAsAudioSource,
     handleInitialInteraction,
     handlePlayPause,
+    thumbnail,
   } = useSaywithPlayer(data);
 
   const BlurredMediaComponent = isVideo ? 'video' : 'img';
   const blurredMediaProps = {
-      ...(isVideo ? { ref: videoRef } : {}),
+      ...(isVideo ? { ref: videoRef, poster: thumbnail } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
       loop: isVideo ? true : undefined,
@@ -49,7 +50,7 @@ export default function Template2({ data }: Template2Props) {
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && (
                   isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" playsInline loop />
+                    <video ref={videoRef} src={mediaUrl} poster={thumbnail} className="w-full h-full object-cover" playsInline loop />
                   ) : (
                     <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                   )
