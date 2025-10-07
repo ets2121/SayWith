@@ -3,19 +3,14 @@
 
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { type SaywithData } from '@/app/fr/[id]/page';
 
 interface Template7Props {
-  data: {
-    mediaUrl: string;
-    audioUrl: string;
-    srtContent: string;
-    name: string;
-    mute?: boolean;
-  };
+  data: SaywithData;
 }
 
 export default function Template7({ data }: Template7Props) {
-  const { name, mediaUrl } = data;
+  const { name, mediaUrl, thumbnailUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -34,6 +29,11 @@ export default function Template7({ data }: Template7Props) {
       className="w-full h-screen bg-gradient-to-b from-violet-300 to-emerald-200 flex flex-col items-center justify-center p-4 font-body overflow-hidden"
       onClick={handleInitialInteraction}
     >
+       <style jsx>{`
+        video[poster] {
+          object-fit: contain;
+        }
+      `}</style>
         {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
         <div className="w-full max-w-sm h-full flex flex-col items-center justify-center">
 
@@ -43,7 +43,7 @@ export default function Template7({ data }: Template7Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="w-full h-full object-contain" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="background" className="w-full h-full object-contain" />
                     )}

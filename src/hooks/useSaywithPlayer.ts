@@ -2,15 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-
-// Define the type for your data structure
-interface SaywithData {
-  mediaUrl: string;
-  audioUrl: string;
-  srtContent: string;
-  name: string;
-  mute?: boolean;
-}
+import { type SaywithData } from '@/app/fr/[id]/page';
 
 interface SrtLine {
   startTime: number;
@@ -60,7 +52,7 @@ const formatTextForDisplay = (text: string): string => {
 
 
 export const useSaywithPlayer = (data: SaywithData) => {
-    const { mediaUrl, audioUrl, srtContent, name, mute } = data;
+    const { mediaUrl, audioUrl, srtContent, name, mute, thumbnailUrl } = data;
     const [isPlaying, setIsPlaying] = useState(false);
     const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
     const [currentSubtitle, setCurrentSubtitle] = useState('');
@@ -276,5 +268,6 @@ export const useSaywithPlayer = (data: SaywithData) => {
         handleSeek,
         playMedia,
         pauseMedia,
+        thumbnailUrl,
     };
 };

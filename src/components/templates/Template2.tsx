@@ -4,19 +4,14 @@
 import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { type SaywithData } from '@/app/fr/[id]/page';
 
 interface Template2Props {
-  data: {
-    mediaUrl: string;
-    audioUrl: string;
-    srtContent: string;
-    name: string;
-    mute?: boolean;
-  };
+  data: SaywithData;
 }
 
 export default function Template2({ data }: Template2Props) {
-  const { name, mediaUrl } = data;
+  const { name, mediaUrl, thumbnailUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -29,9 +24,9 @@ export default function Template2({ data }: Template2Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
-  const MediaComponent = isVideo ? 'video' : 'img';
-  const mediaProps = {
-      ...(isVideo ? { ref: videoRef } : {}),
+  const BlurredMediaComponent = isVideo ? 'video' : 'img';
+  const blurredMediaProps = {
+      ...(isVideo ? { ref: videoRef, poster: thumbnailUrl } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
       loop: isVideo ? true : undefined,
@@ -39,9 +34,14 @@ export default function Template2({ data }: Template2Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
+       <style jsx>{`
+        video[poster] {
+          object-fit: cover;
+        }
+      `}</style>
       {mediaUrl && (
-        <MediaComponent
-          {...mediaProps}
+        <BlurredMediaComponent
+          {...blurredMediaProps}
           className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
         />
       )}
@@ -52,7 +52,13 @@ export default function Template2({ data }: Template2Props) {
         
         <div className="relative w-full max-w-md h-[65vh] max-h-[500px] flex flex-col items-center justify-center text-white">
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
-                 {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
+                 {mediaUrl && (
+                  isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="w-full h-full object-cover" playsInline loop />
+                  ) : (
+                    <img src={mediaUrl} className="w-full h-full object-cover" />
+                  )
+                 )}
                  <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/50 backdrop-blur-sm text-center">
                     <p className="font-serif text-xs tracking-wider text-white">{name}</p>
                 </div>

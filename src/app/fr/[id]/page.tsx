@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -83,10 +84,11 @@ const Template50 = dynamic(() => import('@/components/templates/Template50'), {
 });
 
 
-interface SaywithData {
+export interface SaywithData {
   template: string;
   enabled: boolean;
   mediaUrl: string;
+  thumbnailUrl?: string;
   audioUrl: string;
   srtContent: string;
   name: string;

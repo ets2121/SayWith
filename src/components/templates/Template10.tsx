@@ -4,15 +4,10 @@
 import { Play, Pause, Repeat, Shuffle, SkipBack, SkipForward } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { type SaywithData } from '@/app/fr/[id]/page';
 
 interface Template10Props {
-  data: {
-    mediaUrl: string;
-    audioUrl: string;
-    srtContent: string;
-    name: string;
-    mute?: boolean;
-  };
+  data: SaywithData;
 }
 
 const formatTime = (seconds: number): string => {
@@ -23,7 +18,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template10({ data }: Template10Props) {
-  const { name, mediaUrl } = data;
+  const { name, mediaUrl, thumbnailUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -45,10 +40,15 @@ export default function Template10({ data }: Template10Props) {
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans text-white overflow-hidden"
       onClick={handleInitialInteraction}
     >
+       <style jsx>{`
+        video[poster] {
+          object-fit: cover;
+        }
+      `}</style>
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" />
           )}
@@ -71,7 +71,7 @@ export default function Template10({ data }: Template10Props) {
               {mediaUrl && (
                 <>
                   {isVideo ? (
-                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                      <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="w-full h-full object-cover" loop playsInline />
                   ) : (
                       <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                   )}

@@ -4,15 +4,10 @@
 import { Play, Pause, Repeat, Shuffle, SkipBack, SkipForward } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { type SaywithData } from '@/app/fr/[id]/page';
 
 interface Template9Props {
-  data: {
-    mediaUrl: string;
-    audioUrl: string;
-    srtContent: string;
-    name: string;
-    mute?: boolean;
-  };
+  data: SaywithData;
 }
 
 const formatTime = (seconds: number): string => {
@@ -23,7 +18,7 @@ const formatTime = (seconds: number): string => {
 }
 
 export default function Template9({ data }: Template9Props) {
-  const { name, mediaUrl } = data;
+  const { name, mediaUrl, thumbnailUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -45,6 +40,11 @@ export default function Template9({ data }: Template9Props) {
       className="w-full h-screen bg-black flex flex-col items-center justify-center p-4 font-sans text-white overflow-hidden"
       onClick={handleInitialInteraction}
     >
+        <style jsx>{`
+          video[poster] {
+            object-fit: cover;
+          }
+        `}</style>
         {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
         <div className="w-full max-w-sm h-full flex flex-col items-center justify-between py-12">
 
@@ -61,7 +61,7 @@ export default function Template9({ data }: Template9Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} poster={thumbnailUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}

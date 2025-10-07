@@ -4,19 +4,14 @@
 import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { type SaywithData } from '@/app/fr/[id]/page';
 
 interface Template3Props {
-  data: {
-    mediaUrl: string;
-    audioUrl: string;
-    srtContent: string;
-    name: string;
-    mute?: boolean;
-  };
+  data: SaywithData;
 }
 
 export default function Template3({ data }: Template3Props) {
-  const { name, mediaUrl } = data;
+  const { name, mediaUrl, thumbnailUrl } = data;
   const {
     isPlaying,
     currentSubtitle,
@@ -31,7 +26,7 @@ export default function Template3({ data }: Template3Props) {
 
   const MediaComponent = isVideo ? 'video' : 'img';
   const mediaProps = {
-      ...(isVideo ? { ref: videoRef } : {}),
+      ...(isVideo ? { ref: videoRef, poster: thumbnailUrl } : {}),
       src: mediaUrl,
       playsInline: isVideo ? true : undefined,
       loop: isVideo ? true : undefined,
@@ -39,6 +34,11 @@ export default function Template3({ data }: Template3Props) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
+       <style jsx>{`
+        video[poster] {
+          object-fit: cover;
+        }
+      `}</style>
       {mediaUrl && (
         <MediaComponent
           {...mediaProps}
