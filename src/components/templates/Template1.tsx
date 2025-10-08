@@ -26,7 +26,6 @@ export default function Template1({ data }: Template1Props) {
     useVideoAsAudioSource,
     handleInitialInteraction,
     handlePlayPause,
-    thumbnail,
   } = useSaywithPlayer(data);
 
   return (
@@ -40,7 +39,6 @@ export default function Template1({ data }: Template1Props) {
               src={mediaUrl}
               playsInline
               loop
-              poster={thumbnail}
               className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (

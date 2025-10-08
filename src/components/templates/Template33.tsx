@@ -26,7 +26,6 @@ export default function Template33({ data }: Template33Props) {
     useVideoAsAudioSource,
     handleInitialInteraction,
     handlePlayPause,
-    thumbnail,
   } = useSaywithPlayer(data);
 
   return (
@@ -37,7 +36,7 @@ export default function Template33({ data }: Template33Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline poster={thumbnail}/>
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
           )}
@@ -52,7 +51,7 @@ export default function Template33({ data }: Template33Props) {
                  {mediaUrl && (
                    <>
                      {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline poster={thumbnail}/>
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}

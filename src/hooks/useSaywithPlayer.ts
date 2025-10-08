@@ -60,7 +60,6 @@ export const useSaywithPlayer = (data: SaywithData) => {
     const [progress, setProgress] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [thumbnail, setThumbnail] = useState<string>('https://placehold.co/600x400/000000/000000.png');
 
     const videoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -73,50 +72,6 @@ export const useSaywithPlayer = (data: SaywithData) => {
         playerStateRef.current.isPlaying = isPlaying;
     }, [isPlaying]);
     
-    useEffect(() => {
-        if (isVideo && videoRef.current) {
-          const video = videoRef.current;
-          video.crossOrigin = 'anonymous';
-
-          const generateThumbnail = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              try {
-                const dataUrl = canvas.toDataURL('image/jpeg');
-                setThumbnail(dataUrl);
-              } catch (e) {
-                console.error("Failed to generate thumbnail:", e);
-                // Keep the placeholder
-              }
-            }
-          };
-
-          const onSeeked = () => {
-            generateThumbnail();
-            video.removeEventListener('seeked', onSeeked);
-          };
-          
-          const onLoadedData = () => {
-            if (video.readyState >= 2) { // HAVE_CURRENT_DATA
-              video.currentTime = 0.1; // Seek to a very early frame
-            }
-            video.removeEventListener('loadeddata', onLoadedData);
-          };
-
-          video.addEventListener('loadeddata', onLoadedData);
-          video.addEventListener('seeked', onSeeked);
-
-          return () => {
-              video.removeEventListener('loadeddata', onLoadedData);
-              video.removeEventListener('seeked', onSeeked);
-          }
-        }
-      }, [isVideo, mediaUrl]);
-
     useEffect(() => {
         if (srtContent) {
             try {
@@ -222,13 +177,11 @@ export const useSaywithPlayer = (data: SaywithData) => {
             video.loop = true;
             video.playsInline = true;
             video.muted = !useVideoAsAudioSource;
-            video.crossOrigin = 'anonymous';
         }
          const audio = audioRef.current;
         if (audio) {
             audio.loop = true;
             audio.playsInline = true;
-            audio.crossOrigin = 'anonymous';
         }
     }, [useVideoAsAudioSource]);
     
@@ -313,6 +266,5 @@ export const useSaywithPlayer = (data: SaywithData) => {
         handleSeek,
         playMedia,
         pauseMedia,
-        thumbnail,
     };
 };
