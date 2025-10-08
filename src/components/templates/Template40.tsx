@@ -3,6 +3,7 @@
 
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { useRef, useEffect } from 'react';
 
 interface Template40Props {
   data: {
@@ -26,6 +27,19 @@ export default function Template40({ data }: Template40Props) {
     handleInitialInteraction,
     handlePlayPause,
   } = useSaywithPlayer(data);
+
+  const smallVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const smallVideo = smallVideoRef.current;
+    if (smallVideo) {
+      if (isPlaying) {
+        smallVideo.play().catch(console.error);
+      } else {
+        smallVideo.pause();
+      }
+    }
+  }, [isPlaying]);
 
   return (
     <div 
@@ -61,7 +75,7 @@ export default function Template40({ data }: Template40Props) {
                    {mediaUrl && (
                      <>
                        {isVideo ? (
-                          <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                          <video ref={smallVideoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline muted />
                       ) : (
                           <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                       )}

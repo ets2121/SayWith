@@ -3,6 +3,7 @@
 
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { useRef, useEffect } from 'react';
 
 interface Template38Props {
   data: {
@@ -28,6 +29,19 @@ export default function Template38({ data }: Template38Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
+  const smallVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const smallVideo = smallVideoRef.current;
+    if (smallVideo) {
+      if (isPlaying) {
+        smallVideo.play().catch(console.error);
+      } else {
+        smallVideo.pause();
+      }
+    }
+  }, [isPlaying]);
+
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
@@ -50,7 +64,7 @@ export default function Template38({ data }: Template38Props) {
                  {mediaUrl && (
                    <>
                      {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                        <video ref={smallVideoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline muted />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}
