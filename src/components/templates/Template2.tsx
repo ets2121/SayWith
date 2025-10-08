@@ -5,6 +5,7 @@ import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { type SaywithData } from '@/app/fr/[id]/page';
+import { useRef, useEffect } from 'react';
 
 interface Template2Props {
   data: SaywithData;
@@ -24,21 +25,38 @@ export default function Template2({ data }: Template2Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
-  const BlurredMediaComponent = isVideo ? 'video' : 'img';
-  const blurredMediaProps = {
-      ...(isVideo ? { ref: videoRef } : {}),
-      src: mediaUrl,
-      playsInline: isVideo ? true : undefined,
-      loop: isVideo ? true : undefined,
-  };
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
       {mediaUrl && (
-        <BlurredMediaComponent
-          {...blurredMediaProps}
-          className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
-        />
+        isVideo ? (
+          <video
+            ref={backgroundVideoRef}
+            src={mediaUrl}
+            playsInline
+            loop
+            muted
+            className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
+          />
+        ) : (
+          <img
+            src={mediaUrl}
+            alt="background"
+            className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
+          />
+        )
       )}
       <div className="absolute inset-0 bg-black/50" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}

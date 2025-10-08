@@ -1,7 +1,9 @@
+
 "use client";
 
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 
 interface Template42Props {
   data: {
@@ -20,10 +22,24 @@ export default function Template42({ data }: Template42Props) {
     videoRef,
     audioRef,
     isVideo,
+    isPlaying,
     useVideoAsAudioSource,
     handleInitialInteraction,
     handlePlayPause,
   } = useSaywithPlayer(data);
+
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
 
   const subtitleVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -37,23 +53,22 @@ export default function Template42({ data }: Template42Props) {
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        <>
-          {isVideo ? (
-            <video
-              ref={videoRef}
-              src={mediaUrl}
-              playsInline
-              loop
-              className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
-            />
-          ) : (
-            <img
-              src={mediaUrl}
-              alt="background"
-              className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
-            />
-          )}
-        </>
+        isVideo ? (
+          <video
+            ref={backgroundVideoRef}
+            src={mediaUrl}
+            playsInline
+            loop
+            muted
+            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
+          />
+        ) : (
+          <img
+            src={mediaUrl}
+            alt="background"
+            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
+          />
+        )
       )}
       <div className="absolute inset-0 bg-black/30" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}

@@ -4,6 +4,7 @@
 import { Play, Pause, Music } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 
 interface Template41Props {
   data: {
@@ -29,6 +30,19 @@ export default function Template41({ data }: Template41Props) {
     progress,
   } = useSaywithPlayer(data);
 
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
+
   const subtitleVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -42,23 +56,22 @@ export default function Template41({ data }: Template41Props) {
     >
       {/* Background Media */}
       {mediaUrl && (
-        <>
-          {isVideo ? (
-            <video
-              ref={videoRef}
-              src={mediaUrl}
-              playsInline
-              loop
-              className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
-            />
-          ) : (
-            <img
-              src={mediaUrl}
-              alt="background"
-              className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
-            />
-          )}
-        </>
+        isVideo ? (
+          <video
+            ref={backgroundVideoRef}
+            src={mediaUrl}
+            playsInline
+            loop
+            muted
+            className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
+          />
+        ) : (
+          <img
+            src={mediaUrl}
+            alt="background"
+            className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
+          />
+        )
       )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 

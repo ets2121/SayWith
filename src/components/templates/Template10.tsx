@@ -5,6 +5,7 @@ import { Play, Pause, Repeat, Shuffle, SkipBack, SkipForward } from 'lucide-reac
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { type SaywithData } from '@/app/fr/[id]/page';
+import { useRef, useEffect } from 'react';
 
 interface Template10Props {
   data: SaywithData;
@@ -35,19 +36,32 @@ export default function Template10({ data }: Template10Props) {
     handleSeek,
   } = useSaywithPlayer(data);
 
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    const foregroundVideo = videoRef.current;
+    if (backgroundVideo && foregroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying, videoRef]);
+
+
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 font-sans text-white overflow-hidden"
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        <>
-          {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" loop playsInline />
-          ) : (
-            <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" />
-          )}
-        </>
+        isVideo ? (
+          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" loop playsInline muted/>
+        ) : (
+          <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" />
+        )
       )}
       
         {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}

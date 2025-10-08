@@ -4,6 +4,7 @@
 import { ThumbsDown, ThumbsUp, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { useRef, useEffect } from 'react';
 
 interface Template20Props {
   data: {
@@ -41,6 +42,19 @@ export default function Template20({ data }: Template20Props) {
     handleSeek,
   } = useSaywithPlayer(data);
 
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
+
   const neonColor = 'text-cyan-400';
   const neonShadow = 'drop-shadow-[0_0_8px_rgba(0,255,255,0.7)]';
   
@@ -64,13 +78,11 @@ export default function Template20({ data }: Template20Props) {
         }
       `}</style>
       {mediaUrl && (
-        <>
-          {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" loop playsInline />
-          ) : (
-            <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
-          )}
-        </>
+        isVideo ? (
+          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" loop playsInline muted />
+        ) : (
+          <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-30" />
+        )
       )}
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}

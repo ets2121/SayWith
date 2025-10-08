@@ -3,6 +3,7 @@
 
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { useRef, useEffect } from 'react';
 
 interface Template36Props {
   data: {
@@ -28,19 +29,30 @@ export default function Template36({ data }: Template36Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
+
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-gray-100 text-black overflow-hidden"
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        <>
-          {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline />
-          ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
-          )}
-        </>
+        isVideo ? (
+          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline muted />
+        ) : (
+          <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
+        )
       )}
        <div className="absolute inset-0 bg-white/40"/>
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline/>}

@@ -5,6 +5,7 @@ import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { type SaywithData } from '@/app/fr/[id]/page';
+import { useRef, useEffect } from 'react';
 
 interface Template3Props {
   data: SaywithData;
@@ -24,21 +25,38 @@ export default function Template3({ data }: Template3Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
-  const MediaComponent = isVideo ? 'video' : 'img';
-  const mediaProps = {
-      ...(isVideo ? { ref: videoRef } : {}),
-      src: mediaUrl,
-      playsInline: isVideo ? true : undefined,
-      loop: isVideo ? true : undefined,
-  };
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
       {mediaUrl && (
-        <MediaComponent
-          {...mediaProps}
-          className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110"
-        />
+        isVideo ? (
+          <video
+            ref={backgroundVideoRef}
+            src={mediaUrl}
+            playsInline
+            loop
+            muted
+            className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110"
+          />
+        ) : (
+          <img
+            src={mediaUrl}
+            alt="background"
+            className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110"
+          />
+        )
       )}
       <div className="absolute inset-0 bg-black/50" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
@@ -50,7 +68,13 @@ export default function Template3({ data }: Template3Props) {
                 <p className="font-serif text-sm tracking-wider text-white whitespace-nowrap">{name}</p>
             </div>
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
-                 {mediaUrl && <MediaComponent {...mediaProps} className="w-full h-full object-cover" />}
+                 {mediaUrl && (
+                  isVideo ? (
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" playsInline loop />
+                  ) : (
+                    <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
+                  )
+                 )}
             </div>
             
             {!userInteracted && !isPlaying && (
