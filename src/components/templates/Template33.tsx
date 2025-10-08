@@ -3,6 +3,7 @@
 
 import { Pause, Play } from 'lucide-react';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { useRef, useEffect } from 'react';
 
 interface Template33Props {
   data: {
@@ -28,6 +29,19 @@ export default function Template33({ data }: Template33Props) {
     handlePlayPause,
   } = useSaywithPlayer(data);
 
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const backgroundVideo = backgroundVideoRef.current;
+    if (backgroundVideo) {
+      if (isPlaying) {
+        backgroundVideo.play().catch(console.error);
+      } else {
+        backgroundVideo.pause();
+      }
+    }
+  }, [isPlaying]);
+
   return (
     <div 
       className="w-full h-screen relative flex flex-col items-center justify-center p-4 bg-black text-white overflow-hidden"
@@ -36,7 +50,7 @@ export default function Template33({ data }: Template33Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline muted autoPlay />
+            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline muted />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
           )}
