@@ -53,16 +53,17 @@ export default function Template11({ data }: Template11Props) {
                     boxShadow: '0 0 0 10px #222, 0 0 0 12px #444',
                     backgroundImage: 'repeating-radial-gradient(circle, #222, #222 1px, #111 1px, #111 2px)'
                 }}>
-                <div className="w-32 h-32 rounded-full overflow-hidden">
+                <div className="relative w-32 h-32 rounded-full overflow-hidden">
                     {mediaUrl && (
                       <>
                         {isVideo ? (
-                          <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline/>
+                          <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline/>
                         ) : (
                           <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                         )}
                       </>
                     )}
+                    <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
                 </div>
             </div>
             <div className={`absolute top-2 -right-10 w-4 h-28 bg-gray-300 rounded-full transition-transform duration-500 ease-in-out origin-top-right ${isPlaying ? 'rotate-[25deg]' : 'rotate-0'}`}>

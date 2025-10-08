@@ -57,11 +57,14 @@ export default function Template10({ data }: Template10Props) {
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        isVideo ? (
-          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110 video-poster-fallback" loop playsInline muted/>
+        <div className="absolute inset-0 w-full h-full">
+        {isVideo ? (
+          <video ref={backgroundVideoRef} src={mediaUrl} className="w-full h-full object-cover filter blur-lg scale-110" loop playsInline muted/>
         ) : (
-          <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" />
-        )
+          <img src={mediaUrl} alt="Background" className="w-full h-full object-cover filter blur-lg scale-110" />
+        )}
+        <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       
         {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
@@ -76,16 +79,17 @@ export default function Template10({ data }: Template10Props) {
               </div>
           </div>
           
-          <div className="w-10/12 aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
+          <div className="relative w-10/12 aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
               {mediaUrl && (
                 <>
                   {isVideo ? (
-                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                   ) : (
                       <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                   )}
                 </>
               )}
+               <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
           </div>
 
           <div className="w-10/12">

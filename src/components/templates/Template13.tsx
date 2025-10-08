@@ -40,12 +40,13 @@ export default function Template13({ data }: Template13Props) {
           {mediaUrl && (
             <>
               {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
               ) : (
                 <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
               )}
             </>
           )}
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
            <div 
                 className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300"
                 onClick={handlePlayPause}

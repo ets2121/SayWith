@@ -53,13 +53,14 @@ export default function Template34({ data }: Template34Props) {
         `}</style>
 
        {mediaUrl && (
-         <>
+         <div className="absolute inset-0 w-full h-full">
            {isVideo ? (
-            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover opacity-30 video-poster-fallback" loop playsInline muted />
+            <video ref={backgroundVideoRef} src={mediaUrl} className="w-full h-full object-cover opacity-30" loop playsInline muted />
           ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            <img src={mediaUrl} alt="background" className="w-full h-full object-cover opacity-30" />
           )}
-         </>
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+         </div>
        )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline/>}
       
@@ -69,12 +70,13 @@ export default function Template34({ data }: Template34Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Polaroid" className="w-full h-full object-cover" />
                     )}
                   </>
                 )}
+                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
                  {!isPlaying && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
                         <Play size={48} className="text-white/80" fill="white" />

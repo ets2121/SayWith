@@ -32,23 +32,24 @@ export default function Template1({ data }: Template1Props) {
     <div className="relative h-screen w-screen overflow-hidden font-sans" onClick={handleInitialInteraction}>
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-10" />
       {mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
             <video
               ref={videoRef}
               src={mediaUrl}
               playsInline
               loop
-              className="absolute inset-0 w-full h-full object-cover video-poster-fallback"
+              className="w-full h-full object-cover"
             />
           ) : (
             <img
               src={mediaUrl}
               alt="background"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="w-full h-full object-cover"
             />
           )}
-        </>
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 

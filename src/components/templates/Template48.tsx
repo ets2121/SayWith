@@ -247,7 +247,7 @@ export default function Template48({ data }: Template48Props) {
                         src={mediaUrl}
                         playsInline
                         loop
-                        className="w-full h-full object-cover video-poster-fallback"
+                        className="w-full h-full object-cover"
                         />
                     ) : (
                         <img
@@ -258,6 +258,7 @@ export default function Template48({ data }: Template48Props) {
                     )}
                     </>
                 )}
+                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-2xl`} />
                 <motion.div 
                     className="absolute inset-0 flex items-center justify-center bg-black/30"
                     initial={{ opacity: 0 }}

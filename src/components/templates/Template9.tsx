@@ -52,16 +52,17 @@ export default function Template9({ data }: Template9Props) {
                 </div>
             </div>
             
-            <div className="w-10/12 aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
+            <div className="relative w-10/12 aspect-[4/5] max-h-[400px] rounded-lg overflow-hidden shadow-2xl">
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}
                   </>
                 )}
+                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
             </div>
 
             <div className="w-full">

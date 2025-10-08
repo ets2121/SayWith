@@ -48,16 +48,17 @@ export default function Template12({ data }: Template12Props) {
         {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
         
         <div className="relative w-full max-w-xs flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-2xl">
-          <div className="w-full aspect-square rounded-lg overflow-hidden shadow-lg">
+          <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg">
               {mediaUrl && (
                 <>
                   {isVideo ? (
-                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                   ) : (
                       <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                   )}
                 </>
               )}
+              <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
           </div>
 
           <div className="w-full mt-6 text-center">

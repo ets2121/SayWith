@@ -260,7 +260,7 @@ export default function Template46({ data }: Template46Props) {
                         src={mediaUrl}
                         playsInline
                         loop
-                        className="w-full h-full object-cover video-poster-fallback"
+                        className="w-full h-full object-cover"
                         />
                     ) : (
                         <img
@@ -271,6 +271,7 @@ export default function Template46({ data }: Template46Props) {
                     )}
                     </>
                 )}
+                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-full`} />
                 <AnimatePresence>
                     {!isPlaying && (
                          <motion.div 

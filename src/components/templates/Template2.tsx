@@ -41,22 +41,25 @@ export default function Template2({ data }: Template2Props) {
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans bg-black" onClick={handleInitialInteraction}>
       {mediaUrl && (
-        isVideo ? (
-          <video
-            ref={backgroundVideoRef}
-            src={mediaUrl}
-            playsInline
-            loop
-            muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110 video-poster-fallback"
-          />
-        ) : (
-          <img
-            src={mediaUrl}
-            alt="background"
-            className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110"
-          />
-        )
+        <div className="absolute inset-0 w-full h-full">
+          {isVideo ? (
+            <video
+              ref={backgroundVideoRef}
+              src={mediaUrl}
+              playsInline
+              loop
+              muted
+              className="w-full h-full object-cover filter blur-md scale-110"
+            />
+          ) : (
+            <img
+              src={mediaUrl}
+              alt="background"
+              className="w-full h-full object-cover filter blur-md scale-110"
+            />
+          )}
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-black/50" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
@@ -67,11 +70,12 @@ export default function Template2({ data }: Template2Props) {
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && (
                   isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" playsInline loop />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" playsInline loop />
                   ) : (
                     <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                   )
                  )}
+                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
                  <div className="absolute bottom-0 left-0 right-0 p-1 bg-black/50 backdrop-blur-sm text-center">
                     <p className="font-serif text-xs tracking-wider text-white">{name}</p>
                 </div>

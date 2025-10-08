@@ -94,12 +94,13 @@ export default function Template25({ data }: Template25Props) {
           {mediaUrl && (
             <>
               {isVideo ? (
-                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
               ) : (
                 <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
               )}
             </>
           )}
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
 
         <div className="w-full text-center text-cyan-300 font-normal h-12 flex items-center justify-center border-y border-cyan-400/50 py-2">

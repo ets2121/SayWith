@@ -37,7 +37,7 @@ export default function Template15({ data }: Template15Props) {
       
       <div className="w-full max-w-md flex flex-col items-center justify-center text-center">
         <div 
-            className="relative w-full aspect-square max-w-[350px] flex items-center justify-center video-poster-fallback"
+            className="relative w-full aspect-square max-w-[350px] flex items-center justify-center"
             style={{ clipPath: 'url(#heart-clip)' }}
             onClick={handlePlayPause}
         >
@@ -50,6 +50,7 @@ export default function Template15({ data }: Template15Props) {
               )}
             </>
           )}
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
           <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <Heart size={64} className={`transition-all duration-300 ${isPlaying ? 'fill-white text-white' : 'text-white'}`} />
           </div>

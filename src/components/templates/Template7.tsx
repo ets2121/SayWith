@@ -34,16 +34,17 @@ export default function Template7({ data }: Template7Props) {
 
             <div className="text-lg font-thin text-slate-800 w-full text-center">{name}</div>
             
-            <div className="mt-4 w-full aspect-square max-h-[350px] rounded-lg overflow-hidden">
+            <div className="relative mt-4 w-full aspect-square max-h-[350px] rounded-lg overflow-hidden">
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain video-poster-fallback" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="background" className="w-full h-full object-contain" />
                     )}
                   </>
                 )}
+                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
             </div>
 
             <div className="mt-6 text-sm font-thin text-slate-800 w-full text-center h-10 flex items-center justify-center px-4">

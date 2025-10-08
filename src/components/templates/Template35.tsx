@@ -38,13 +38,14 @@ export default function Template35({ data }: Template35Props) {
       `}</style>
       
       {mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover video-poster-fallback" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
           ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={mediaUrl} alt="background" className="w-full h-full object-cover" />
           )}
-        </>
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/80" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline/>}

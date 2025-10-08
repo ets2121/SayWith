@@ -48,29 +48,31 @@ export default function Template33({ data }: Template33Props) {
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        <>
-          {isVideo ? (
-            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md video-poster-fallback" loop playsInline muted />
-          ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
-          )}
-        </>
+        <div className="absolute inset-0 w-full h-full">
+        {isVideo ? (
+          <video ref={backgroundVideoRef} src={mediaUrl} className="w-full h-full object-cover filter blur-md" loop playsInline muted />
+        ) : (
+          <img src={mediaUrl} alt="background" className="w-full h-full object-cover filter blur-md" />
+        )}
+         <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
        <div className="absolute inset-0 bg-black/40"/>
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline/>}
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-4 animate-fade-in-up">
         <div className="w-full bg-white/10 backdrop-blur-md rounded-lg p-3 flex items-center gap-3">
-            <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
+            <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
                  {mediaUrl && (
                    <>
                      {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}
                    </>
                  )}
+                  <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-md`} />
             </div>
             <div className="flex-grow overflow-hidden">
                 <p className="text-sm font-bold truncate">{name}</p>

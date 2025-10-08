@@ -1,10 +1,14 @@
 
 "use client";
 
-import { Play, Pause, Music } from 'lucide-react';
-import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRef, useEffect } from 'react';
+import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
+import { Play, Pause, Music } from 'lucide-react';
+import Particles, { type Container, type Engine } from "@tsparticles/react";
+import { loadFull } from "tsparticles";
+import { initParticlesEngine } from '@tsparticles/react';
+
 
 interface Template41Props {
   data: {
@@ -30,18 +34,17 @@ export default function Template41({ data }: Template41Props) {
     progress,
   } = useSaywithPlayer(data);
 
-  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const [backgroundVideoRef, setBackgroundVideoRef] = useState<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    const backgroundVideo = backgroundVideoRef.current;
-    if (backgroundVideo) {
+    if (backgroundVideoRef) {
       if (isPlaying) {
-        backgroundVideo.play().catch(console.error);
+        backgroundVideoRef.play().catch(console.error);
       } else {
-        backgroundVideo.pause();
+        backgroundVideoRef.pause();
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, backgroundVideoRef]);
 
   const subtitleVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -56,28 +59,31 @@ export default function Template41({ data }: Template41Props) {
     >
       {/* Background Media */}
       {mediaUrl && (
-        isVideo ? (
+        <div className="absolute inset-0 w-full h-full">
+        {isVideo ? (
           <video
-            ref={backgroundVideoRef}
+            ref={setBackgroundVideoRef}
             src={mediaUrl}
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50 video-poster-fallback"
+            className="w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
           />
         ) : (
           <img
             src={mediaUrl}
             alt="background"
-            className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
+            className="w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
           />
-        )
+        )}
+        <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="relative z-10 w-full max-w-sm flex flex-col items-center space-y-6">
         {/* Media Display */}
-        <div className="w-full aspect-square max-h-[350px] rounded-2xl overflow-hidden shadow-2xl bg-black/30">
+        <div className="relative w-full aspect-square max-h-[350px] rounded-2xl overflow-hidden shadow-2xl bg-black/30">
           {mediaUrl && (
             <>
               {isVideo ? (
@@ -86,7 +92,7 @@ export default function Template41({ data }: Template41Props) {
                   src={mediaUrl}
                   playsInline
                   loop
-                  className="w-full h-full object-cover video-poster-fallback"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <img
@@ -97,6 +103,7 @@ export default function Template41({ data }: Template41Props) {
               )}
             </>
           )}
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-2xl`} />
         </div>
 
         {/* Info & Subtitles */}

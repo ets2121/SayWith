@@ -38,16 +38,17 @@ export default function Template29({ data }: Template29Props) {
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} />}
       
       <div className="relative w-full max-w-4xl flex flex-col md:flex-row items-center justify-center gap-8 z-10">
-        <div className="w-full md:w-1/2 aspect-video max-w-md">
+        <div className="relative w-full md:w-1/2 aspect-video max-w-md">
            {mediaUrl && (
              <>
                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl video-poster-fallback" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="background" className="w-full h-full object-cover rounded-lg shadow-2xl" />
                 )}
              </>
            )}
+            <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
         <div className="w-full md:w-1/2 text-center md:text-left">
             <h2 className="text-lg font-semibold tracking-widest uppercase text-white/80">{name}</h2>

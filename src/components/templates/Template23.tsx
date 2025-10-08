@@ -44,7 +44,7 @@ export default function Template23({ data }: Template23Props) {
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-6 z-10">
         <div 
-          className="w-full aspect-square max-w-[320px] rounded-lg overflow-hidden p-1"
+          className="relative w-full aspect-square max-w-[320px] rounded-lg overflow-hidden p-1"
           style={{ 
             background: 'rgba(0, 100, 100, 0.1)',
             boxShadow: '0 0 15px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 255, 255, 0.2)',
@@ -54,12 +54,13 @@ export default function Template23({ data }: Template23Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md video-poster-fallback" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover rounded-md" />
                 )}
               </>
             )}
+             <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
 
         <div className="w-full text-center">

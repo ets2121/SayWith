@@ -23,6 +23,7 @@ export default function Template44({ data }: Template44Props) {
     useVideoAsAudioSource,
     handleInitialInteraction,
     progress,
+    isPlaying
   } = useSaywithPlayer(data);
 
   const subtitleVariants = {
@@ -38,23 +39,24 @@ export default function Template44({ data }: Template44Props) {
     >
       {/* Main Media */}
       {data.mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
             <video
               ref={videoRef}
               src={data.mediaUrl}
               playsInline
               loop
-              className="absolute inset-0 w-full h-full object-cover video-poster-fallback"
+              className="w-full h-full object-cover"
             />
           ) : (
             <img
               src={data.mediaUrl}
               alt="background"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="w-full h-full object-cover"
             />
           )}
-        </>
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 

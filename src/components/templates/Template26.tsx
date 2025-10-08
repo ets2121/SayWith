@@ -26,6 +26,7 @@ export default function Template26({ data }: Template26Props) {
     isVideo,
     useVideoAsAudioSource,
     handleInitialInteraction,
+    isPlaying
   } = useSaywithPlayer(data);
 
   const onInitialInteraction = (e: React.MouseEvent) => {
@@ -43,13 +44,14 @@ export default function Template26({ data }: Template26Props) {
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&display=swap');
       `}</style>
       {mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50 video-poster-fallback" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover filter blur-sm opacity-50" loop playsInline />
           ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" />
+            <img src={mediaUrl} alt="background" className="w-full h-full object-cover filter blur-sm opacity-50" />
           )}
-        </>
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} />}
       

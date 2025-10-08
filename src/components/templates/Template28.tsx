@@ -50,13 +50,14 @@ export default function Template28({ data }: Template28Props) {
         }
         `}</style>
       {mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter grayscale video-poster-fallback" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover filter grayscale" loop playsInline />
           ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter grayscale" />
+            <img src={mediaUrl} alt="background" className="w-full h-full object-cover filter grayscale" />
           )}
-        </>
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-black/50 rain-effect" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} />}

@@ -51,16 +51,17 @@ export default function Template30({ data }: Template30Props) {
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} />}
       
       <div className="relative w-full max-w-lg flex flex-col items-center justify-center space-y-6 z-10 text-center">
-        <div className="w-full max-w-sm aspect-video bg-black border-4 border-gray-700 rounded-md p-2 shadow-2xl">
+        <div className="relative w-full max-w-sm aspect-video bg-black border-4 border-gray-700 rounded-md p-2 shadow-2xl">
            {mediaUrl && (
              <>
                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                 )}
              </>
            )}
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
         <div className="min-h-[80px]">
             {currentSubtitle.split('\n').map((line, index) => (

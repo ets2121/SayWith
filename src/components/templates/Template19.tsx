@@ -46,13 +46,14 @@ export default function Template19({ data }: Template19Props) {
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover video-poster-fallback" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
           ) : (
-            <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={mediaUrl} alt="Background" className="w-full h-full object-cover" />
           )}
-        </>
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       

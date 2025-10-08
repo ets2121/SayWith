@@ -56,22 +56,25 @@ export default function Template45({ data }: Template45Props) {
     >
       {/* Background Media */}
       {mediaUrl && (
-        isVideo ? (
+        <div className="absolute inset-0 w-full h-full">
+        {isVideo ? (
           <video
             ref={backgroundVideoRef}
             src={mediaUrl}
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110 video-poster-fallback"
+            className="w-full h-full object-cover filter blur-lg scale-110"
           />
         ) : (
           <img
             src={mediaUrl}
             alt="background"
-            className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110"
+            className="w-full h-full object-cover filter blur-lg scale-110"
           />
-        )
+        )}
+        <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-black/30" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
@@ -93,7 +96,7 @@ export default function Template45({ data }: Template45Props) {
                     src={mediaUrl}
                     playsInline
                     loop
-                    className="w-full h-full object-cover video-poster-fallback"
+                    className="w-full h-full object-cover"
                     />
                 ) : (
                     <img
@@ -104,6 +107,7 @@ export default function Template45({ data }: Template45Props) {
                 )}
                 </>
             )}
+             <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
         
         {/* Content Area */}

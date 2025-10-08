@@ -32,13 +32,14 @@ export default function Template32({ data }: Template32Props) {
       onClick={handleInitialInteraction}
     >
        {mediaUrl && (
-         <>
+         <div className="absolute inset-0 w-full h-full">
            {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110 video-poster-fallback" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover filter blur-xl scale-110" loop playsInline />
           ) : (
-            <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110" />
+            <img src={mediaUrl} alt="background" className="w-full h-full object-cover filter blur-xl scale-110" />
           )}
-         </>
+          <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+         </div>
        )}
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline/>}
       
@@ -47,12 +48,13 @@ export default function Template32({ data }: Template32Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl video-poster-fallback" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="background" className="w-full h-full object-cover rounded-2xl shadow-2xl" />
                 )}
               </>
             )}
+             <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-2xl`} />
              {!isPlaying && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-2xl pointer-events-none">
                     <Play size={64} className="text-white/80" fill="white"/>

@@ -60,26 +60,30 @@ export default function Template17({ data }: Template17Props) {
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        isVideo ? (
-          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50 video-poster-fallback" loop playsInline muted />
+        <div className="absolute inset-0 w-full h-full">
+        {isVideo ? (
+          <video ref={backgroundVideoRef} src={mediaUrl} className="w-full h-full object-cover filter blur-2xl scale-125 opacity-50" loop playsInline muted />
         ) : (
-          <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50" />
-        )
+          <img src={mediaUrl} alt="Background" className="w-full h-full object-cover filter blur-2xl scale-125 opacity-50" />
+        )}
+         <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
       
       <div className="relative w-full max-w-md h-full flex flex-col items-center justify-center py-8">
-        <div className="w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
+        <div className="relative w-full aspect-square max-h-[350px] rounded-lg overflow-hidden shadow-2xl">
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                 )}
               </>
             )}
+             <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
 
         <div className="w-full mt-6 text-center">

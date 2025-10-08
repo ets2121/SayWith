@@ -53,29 +53,32 @@ export default function Template42({ data }: Template42Props) {
       onClick={handleInitialInteraction}
     >
       {mediaUrl && (
-        isVideo ? (
+        <div className="absolute inset-0 w-full h-full">
+        {isVideo ? (
           <video
             ref={backgroundVideoRef}
             src={mediaUrl}
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50 video-poster-fallback"
+            className="w-full h-full object-cover filter blur-xl scale-125 opacity-50"
           />
         ) : (
           <img
             src={mediaUrl}
             alt="background"
-            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
+            className="w-full h-full object-cover filter blur-xl scale-125 opacity-50"
           />
-        )
+        )}
+         <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-black/30" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-4 text-center">
         <div 
-            className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/30 border-2 border-white/50 backdrop-blur-sm"
+            className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-2xl bg-black/30 border-2 border-white/50 backdrop-blur-sm"
             onClick={(e) => { e.stopPropagation(); handlePlayPause(); }}
         >
           {mediaUrl && (
@@ -86,7 +89,7 @@ export default function Template42({ data }: Template42Props) {
                   src={mediaUrl}
                   playsInline
                   loop
-                  className="w-full h-full object-cover video-poster-fallback"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <img
@@ -97,6 +100,7 @@ export default function Template42({ data }: Template42Props) {
               )}
             </>
           )}
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-full`} />
         </div>
         
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight mt-6 drop-shadow-lg">{name}</h1>

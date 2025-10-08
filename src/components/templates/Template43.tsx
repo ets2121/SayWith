@@ -42,23 +42,24 @@ export default function Template43({ data }: Template43Props) {
     >
       {/* Background Media */}
       {mediaUrl && (
-        <>
+        <div className="absolute inset-0 w-full h-full">
           {isVideo ? (
             <video
               ref={videoRef}
               src={mediaUrl}
               playsInline
               loop
-              className="absolute inset-0 w-full h-full object-cover video-poster-fallback"
+              className="w-full h-full object-cover"
             />
           ) : (
             <img
               src={mediaUrl}
               alt="background"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="w-full h-full object-cover"
             />
           )}
-        </>
+           <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
+        </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/50" />
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}

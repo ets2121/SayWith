@@ -48,16 +48,17 @@ export default function Template22({ data }: Template22Props) {
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop playsInline />}
       
       <div className="relative w-full max-w-sm flex flex-col items-center justify-center space-y-5">
-        <div className="w-full aspect-square max-w-[340px] rounded-lg overflow-hidden shadow-2xl">
+        <div className="relative w-full aspect-square max-w-[340px] rounded-lg overflow-hidden shadow-2xl">
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                 )}
               </>
             )}
+            <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
         </div>
 
         <div className="w-full text-center">

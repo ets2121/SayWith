@@ -74,12 +74,13 @@ export default function Template24({ data }: Template24Props) {
               {mediaUrl && (
                 <>
                   {isVideo ? (
-                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
+                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
                   ) : (
                       <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                   )}
                 </>
               )}
+               <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''}`} />
               <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
                   {isPlaying ? <Pause size={60} /> : <Play size={60} className="ml-2" />}
               </div>
