@@ -36,7 +36,7 @@ export default function Template33({ data }: Template33Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline />
+            <video src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline muted autoPlay />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
           )}
