@@ -260,7 +260,7 @@ export default function Template46({ data }: Template46Props) {
                         src={mediaUrl}
                         playsInline
                         loop
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover video-poster-fallback"
                         />
                     ) : (
                         <img

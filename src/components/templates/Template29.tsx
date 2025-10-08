@@ -42,7 +42,7 @@ export default function Template29({ data }: Template29Props) {
            {mediaUrl && (
              <>
                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-lg shadow-2xl video-poster-fallback" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="background" className="w-full h-full object-cover rounded-lg shadow-2xl" />
                 )}

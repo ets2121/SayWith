@@ -58,7 +58,7 @@ export default function Template10({ data }: Template10Props) {
     >
       {mediaUrl && (
         isVideo ? (
-          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" loop playsInline muted/>
+          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110 video-poster-fallback" loop playsInline muted/>
         ) : (
           <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110" />
         )
@@ -80,7 +80,7 @@ export default function Template10({ data }: Template10Props) {
               {mediaUrl && (
                 <>
                   {isVideo ? (
-                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                      <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                   ) : (
                       <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                   )}

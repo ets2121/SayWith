@@ -54,7 +54,7 @@ export default function Template23({ data }: Template23Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-md video-poster-fallback" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover rounded-md" />
                 )}

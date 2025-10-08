@@ -61,7 +61,7 @@ export default function Template17({ data }: Template17Props) {
     >
       {mediaUrl && (
         isVideo ? (
-          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50" loop playsInline muted />
+          <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50 video-poster-fallback" loop playsInline muted />
         ) : (
           <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50" />
         )
@@ -74,7 +74,7 @@ export default function Template17({ data }: Template17Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                 )}

@@ -45,7 +45,7 @@ export default function Template26({ data }: Template26Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50 video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-sm opacity-50" />
           )}

@@ -49,7 +49,7 @@ export default function Template18({ data }: Template18Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-20" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-20 video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-20" />
           )}
@@ -63,7 +63,7 @@ export default function Template18({ data }: Template18Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                 )}

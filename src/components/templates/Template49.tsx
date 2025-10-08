@@ -165,7 +165,7 @@ export default function Template49({ data }: Template49Props) {
                     src={mediaUrl}
                     playsInline
                     loop
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover video-poster-fallback"
                     />
                 ) : (
                     <img

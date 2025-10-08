@@ -37,7 +37,7 @@ export default function Template15({ data }: Template15Props) {
       
       <div className="w-full max-w-md flex flex-col items-center justify-center text-center">
         <div 
-            className="relative w-full aspect-square max-w-[350px] flex items-center justify-center"
+            className="relative w-full aspect-square max-w-[350px] flex items-center justify-center video-poster-fallback"
             style={{ clipPath: 'url(#heart-clip)' }}
             onClick={handlePlayPause}
         >

@@ -40,7 +40,7 @@ export default function Template35({ data }: Template35Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover" />
           )}

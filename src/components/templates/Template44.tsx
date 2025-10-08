@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
@@ -44,7 +45,7 @@ export default function Template44({ data }: Template44Props) {
               src={data.mediaUrl}
               playsInline
               loop
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover video-poster-fallback"
             />
           ) : (
             <img

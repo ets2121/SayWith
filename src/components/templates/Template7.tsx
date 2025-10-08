@@ -38,7 +38,7 @@ export default function Template7({ data }: Template7Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain video-poster-fallback" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="background" className="w-full h-full object-contain" />
                     )}

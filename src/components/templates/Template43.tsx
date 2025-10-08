@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Play, Pause } from 'lucide-react';
@@ -48,7 +49,7 @@ export default function Template43({ data }: Template43Props) {
               src={mediaUrl}
               playsInline
               loop
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover video-poster-fallback"
             />
           ) : (
             <img

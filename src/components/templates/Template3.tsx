@@ -48,7 +48,7 @@ export default function Template3({ data }: Template3Props) {
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110"
+            className="absolute inset-0 w-full h-full object-cover filter blur-sm scale-110 video-poster-fallback"
           />
         ) : (
           <img
@@ -70,7 +70,7 @@ export default function Template3({ data }: Template3Props) {
             <div className="relative w-full h-full border-2 border-white rounded-lg overflow-hidden shadow-2xl">
                  {mediaUrl && (
                   isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" playsInline loop />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" playsInline loop />
                   ) : (
                     <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                   )

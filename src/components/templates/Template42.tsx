@@ -60,7 +60,7 @@ export default function Template42({ data }: Template42Props) {
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50"
+            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-125 opacity-50 video-poster-fallback"
           />
         ) : (
           <img
@@ -86,7 +86,7 @@ export default function Template42({ data }: Template42Props) {
                   src={mediaUrl}
                   playsInline
                   loop
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover video-poster-fallback"
                 />
               ) : (
                 <img

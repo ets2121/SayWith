@@ -50,7 +50,7 @@ export default function Template33({ data }: Template33Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md" loop playsInline muted />
+            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md video-poster-fallback" loop playsInline muted />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md" />
           )}
@@ -65,7 +65,7 @@ export default function Template33({ data }: Template33Props) {
                  {mediaUrl && (
                    <>
                      {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}

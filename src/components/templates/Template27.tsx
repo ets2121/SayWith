@@ -48,7 +48,7 @@ export default function Template27({ data }: Template27Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20 video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-md opacity-20" />
           )}

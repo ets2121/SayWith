@@ -41,7 +41,7 @@ export default function Template14({ data }: Template14Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                  <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                  <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                 ) : (
                   <img src={mediaUrl} alt="Polaroid" className="w-full h-full object-cover" />
                 )}

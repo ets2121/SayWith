@@ -63,7 +63,7 @@ export default function Template45({ data }: Template45Props) {
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110"
+            className="absolute inset-0 w-full h-full object-cover filter blur-lg scale-110 video-poster-fallback"
           />
         ) : (
           <img
@@ -93,7 +93,7 @@ export default function Template45({ data }: Template45Props) {
                     src={mediaUrl}
                     playsInline
                     loop
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover video-poster-fallback"
                     />
                 ) : (
                     <img

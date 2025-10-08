@@ -44,3 +44,11 @@
     transform: translateY(0);
   }
 }
+
+.video-poster-fallback {
+    background-color: hsl(var(--background));
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 24 24' fill='none' stroke='hsl(210 40% 98% / 0.5)' stroke-width='1' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-play'%3e%3cpolygon points='6 3 20 12 6 21 6 3'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 48px 48px;
+}

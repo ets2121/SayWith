@@ -39,7 +39,7 @@ export default function Template1({ data }: Template1Props) {
               src={mediaUrl}
               playsInline
               loop
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover video-poster-fallback"
             />
           ) : (
             <img

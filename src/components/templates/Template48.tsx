@@ -247,7 +247,7 @@ export default function Template48({ data }: Template48Props) {
                         src={mediaUrl}
                         playsInline
                         loop
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover video-poster-fallback"
                         />
                     ) : (
                         <img

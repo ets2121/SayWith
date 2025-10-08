@@ -55,7 +55,7 @@ export default function Template30({ data }: Template30Props) {
            {mediaUrl && (
              <>
                {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="media" className="w-full h-full object-cover" />
                 )}

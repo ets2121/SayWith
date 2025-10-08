@@ -48,7 +48,7 @@ export default function Template19({ data }: Template19Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="Background" className="absolute inset-0 w-full h-full object-cover" />
           )}

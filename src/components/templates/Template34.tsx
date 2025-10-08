@@ -31,14 +31,17 @@ export default function Template34({ data }: Template34Props) {
 
   useEffect(() => {
     const backgroundVideo = backgroundVideoRef.current;
-    if (backgroundVideo) {
+    const mainVideo = videoRef.current;
+    if (backgroundVideo && mainVideo) {
       if (isPlaying) {
         backgroundVideo.play().catch(console.error);
+        mainVideo.play().catch(console.error);
       } else {
         backgroundVideo.pause();
+        mainVideo.pause();
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, videoRef]);
 
   return (
     <div 
@@ -52,7 +55,7 @@ export default function Template34({ data }: Template34Props) {
        {mediaUrl && (
          <>
            {isVideo ? (
-            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" loop playsInline muted />
+            <video ref={backgroundVideoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover opacity-30 video-poster-fallback" loop playsInline muted />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
           )}
@@ -66,7 +69,7 @@ export default function Template34({ data }: Template34Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="Polaroid" className="w-full h-full object-cover" />
                     )}

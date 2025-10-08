@@ -63,7 +63,7 @@ export default function Template41({ data }: Template41Props) {
             playsInline
             loop
             muted
-            className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50"
+            className="absolute inset-0 w-full h-full object-cover filter blur-2xl scale-125 opacity-50 video-poster-fallback"
           />
         ) : (
           <img
@@ -86,7 +86,7 @@ export default function Template41({ data }: Template41Props) {
                   src={mediaUrl}
                   playsInline
                   loop
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover video-poster-fallback"
                 />
               ) : (
                 <img

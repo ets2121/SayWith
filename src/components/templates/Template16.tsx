@@ -42,7 +42,7 @@ export default function Template16({ data }: Template16Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded video-poster-fallback" loop playsInline />
                     ) : (
                     <img src={mediaUrl} alt="Romantic Memory" className="w-full h-full object-cover rounded" />
                     )}

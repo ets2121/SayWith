@@ -34,7 +34,7 @@ export default function Template32({ data }: Template32Props) {
        {mediaUrl && (
          <>
            {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110 video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110" />
           )}
@@ -47,7 +47,7 @@ export default function Template32({ data }: Template32Props) {
             {mediaUrl && (
               <>
                 {isVideo ? (
-                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl" loop playsInline />
+                    <video ref={videoRef} src={mediaUrl} className="w-full h-full object-cover rounded-2xl shadow-2xl video-poster-fallback" loop playsInline />
                 ) : (
                     <img src={mediaUrl} alt="background" className="w-full h-full object-cover rounded-2xl shadow-2xl" />
                 )}

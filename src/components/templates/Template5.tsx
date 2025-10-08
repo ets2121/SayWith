@@ -38,7 +38,7 @@ export default function Template5({ data }: Template5Props) {
                 {mediaUrl && (
                   <>
                     {isVideo ? (
-                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain" loop playsInline />
+                        <video ref={videoRef} src={mediaUrl} className="w-full h-full object-contain video-poster-fallback" loop playsInline />
                     ) : (
                         <img src={mediaUrl} alt="background" className="w-full h-full object-contain" />
                     )}

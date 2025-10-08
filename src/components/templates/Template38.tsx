@@ -32,15 +32,21 @@ export default function Template38({ data }: Template38Props) {
   const smallVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    const mainVideo = videoRef.current;
     const smallVideo = smallVideoRef.current;
-    if (smallVideo) {
+    if (mainVideo && smallVideo) {
       if (isPlaying) {
+        mainVideo.play().catch(console.error);
         smallVideo.play().catch(console.error);
       } else {
+        mainVideo.pause();
         smallVideo.pause();
       }
+    } else if (mainVideo) { // Handle case where only main video exists (e.g. background is an image)
+        if (isPlaying) mainVideo.play().catch(console.error);
+        else mainVideo.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, videoRef]);
 
   return (
     <div 
@@ -50,7 +56,7 @@ export default function Template38({ data }: Template38Props) {
       {mediaUrl && (
         <>
           {isVideo ? (
-            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover" loop playsInline />
+            <video ref={videoRef} src={mediaUrl} className="absolute inset-0 w-full h-full object-cover video-poster-fallback" loop playsInline />
           ) : (
             <img src={mediaUrl} alt="background" className="absolute inset-0 w-full h-full object-cover" />
           )}
@@ -64,7 +70,7 @@ export default function Template38({ data }: Template38Props) {
                  {mediaUrl && (
                    <>
                      {isVideo ? (
-                        <video ref={smallVideoRef} src={mediaUrl} className="w-full h-full object-cover" loop playsInline muted />
+                        <video ref={smallVideoRef} src={mediaUrl} className="w-full h-full object-cover video-poster-fallback" loop playsInline muted />
                     ) : (
                         <img src={mediaUrl} alt="Album Art" className="w-full h-full object-cover" />
                     )}
