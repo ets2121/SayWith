@@ -51,7 +51,15 @@ const formatTextForDisplay = (text: string): string => {
 };
 
 
-export const useSaywithPlayer = (data: SaywithData) => {
+export interface SaywithPlayerData {
+  mediaUrl: string;
+  audioUrl: string;
+  srtContent: string;
+  name: string;
+  mute?: boolean;
+}
+
+export const useSaywithPlayer = (data: SaywithPlayerData) => {
     const { mediaUrl, audioUrl, srtContent, name, mute } = data;
     const [isPlaying, setIsPlaying] = useState(false);
     const [subtitles, setSubtitles] = useState<SrtLine[]>([]);
@@ -181,7 +189,6 @@ export const useSaywithPlayer = (data: SaywithData) => {
          const audio = audioRef.current;
         if (audio) {
             audio.loop = true;
-            audio.playsInline = true;
         }
     }, [useVideoAsAudioSource]);
     

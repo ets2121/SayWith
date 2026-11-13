@@ -28,7 +28,6 @@ export const metadata: Metadata = {
     title: "SayWith — Say it with style. Make it unforgettable.",
     description: "Transform your words, media, and ideas into stunning, shareable templates.",
     images: ["/icons/icon-512x512.png"],
-    url: "https://saywith.vercel.app/",
   },
   other: {
     "tiktok:creator": "@saywith",

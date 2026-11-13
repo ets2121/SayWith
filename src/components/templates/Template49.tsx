@@ -5,9 +5,9 @@ import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { Play } from 'lucide-react';
-import Particles, { type Container, type Engine } from "@tsparticles/react";
-import { loadFull } from "tsparticles"; 
-import { initParticlesEngine } from '@tsparticles/react';
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import type { Container, Engine } from "@tsparticles/engine";
+import { loadFull } from "tsparticles";
 
 interface Template49Props {
   data: {

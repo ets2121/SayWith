@@ -22,6 +22,10 @@ import {
   CarouselItem 
 } from "@/components/ui/carousel";
 import LandingPageLoader from "@/components/LandingPageLoader";
+import defaultQrcodes from "../../public/qrcodes.json";
+import defaultTemplates from "../../public/templates.json";
+import defaultLinks from "../../public/links.json";
+import defaultTestimonials from "../../public/testimonials.json";
 
 const socialIcons: { [key: string]: React.ComponentType<SVGProps<SVGSVGElement>> } = {
   facebook: Facebook,
@@ -137,11 +141,11 @@ const Section = ({ children, className, ...props }: React.HTMLAttributes<HTMLEle
 
 
 export default function SayWithLandingPage() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [qrcodes, setQrcodes] = useState<QrCode[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [qrcodes, setQrcodes] = useState<QrCode[]>(defaultQrcodes as QrCode[]);
+  const [templates, setTemplates] = useState<Template[]>(defaultTemplates as Template[]);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>((defaultLinks.socials || []) as SocialLink[]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials as Testimonial[]);
 
   useEffect(() => {
     const fetchData = async () => {

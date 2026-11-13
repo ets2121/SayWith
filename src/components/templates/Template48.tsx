@@ -5,9 +5,9 @@ import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSaywithPlayer } from '@/hooks/useSaywithPlayer';
 import { Play } from 'lucide-react';
-import Particles, { type Container, type Engine } from "@tsparticles/react";
-import { loadFull } from "tsparticles"; 
-import { initParticlesEngine } from '@tsparticles/react';
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import type { Container, Engine } from "@tsparticles/engine";
+import { loadFull } from "tsparticles";
 
 
 interface Template48Props {
@@ -21,39 +21,39 @@ interface Template48Props {
 }
 
 const Star = () => {
-    const size = Math.random() * 2 + 1;
-    const duration = Math.random() * 2 + 1.5;
-    const delay = Math.random() * 2;
+  const size = Math.random() * 2 + 1;
+  const duration = Math.random() * 2 + 1.5;
+  const delay = Math.random() * 2;
 
-    return (
-        <motion.div
-            className="absolute rounded-full bg-white"
-            style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: size,
-                height: size,
-                boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
-            }}
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{
-                duration,
-                repeat: Infinity,
-                repeatType: 'loop',
-                ease: 'easeInOut',
-                delay,
-            }}
-        />
-    );
+  return (
+    <motion.div
+      className="absolute rounded-full bg-white"
+      style={{
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        width: size,
+        height: size,
+        boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
+      }}
+      animate={{ opacity: [0, 1, 0] }}
+      transition={{
+        duration,
+        repeat: Infinity,
+        repeatType: 'loop',
+        ease: 'easeInOut',
+        delay,
+      }}
+    />
+  );
 };
 
 const TwinklingStars = memo(() => {
-    const [stars] = useState(() => Array.from({ length: 100 }, (_, i) => <Star key={i} />));
-    return (
-        <div className="absolute inset-0 z-0">
-            {stars}
-        </div>
-    );
+  const [stars] = useState(() => Array.from({ length: 100 }, (_, i) => <Star key={i} />));
+  return (
+    <div className="absolute inset-0 z-0">
+      {stars}
+    </div>
+  );
 });
 TwinklingStars.displayName = 'TwinklingStars';
 
@@ -69,7 +69,7 @@ const DigitalRainParticles = memo(() => {
   }, []);
 
   const particlesLoaded = useCallback(
-    async (container: Container | undefined) => {},
+    async (container: Container | undefined) => { },
     []
   );
 
@@ -105,7 +105,7 @@ const DigitalRainParticles = memo(() => {
         straight: true,
         outModes: 'out' as const,
       },
-       links: {
+      links: {
         enable: false,
       },
       collisions: {
@@ -134,12 +134,12 @@ const DigitalRainParticles = memo(() => {
   }
 
   return (
-      <Particles
-        id="tsparticles-digital-rain"
-        particlesLoaded={particlesLoaded}
-        options={particleOptions as any}
-        className="absolute inset-0"
-      />
+    <Particles
+      id="tsparticles-digital-rain"
+      particlesLoaded={particlesLoaded}
+      options={particleOptions as any}
+      className="absolute inset-0"
+    />
   );
 });
 DigitalRainParticles.displayName = 'DigitalRainParticles';
@@ -170,7 +170,7 @@ export default function Template48({ data }: Template48Props) {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
     exit: { opacity: 0, y: -15, transition: { duration: 0.3, ease: 'easeIn' } },
   };
-  
+
   return (
     <div
       className="relative h-screen w-full overflow-hidden bg-background text-foreground font-mono"
@@ -220,80 +220,80 @@ export default function Template48({ data }: Template48Props) {
       `}</style>
       <TwinklingStars />
       <DigitalRainParticles />
-      
+
       {data.audioUrl && !useVideoAsAudioSource && <audio ref={audioRef} src={data.audioUrl} loop />}
 
       <div className="z-30 flex items-center justify-center h-full">
         <div className="text-center">
-            
-            <motion.div 
-                className="pointer-events-auto w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl bg-black/10 border-2 border-cyan-400/50 backdrop-blur-sm mx-auto cursor-pointer relative"
-                 style={{
-                    boxShadow: '0 0 15px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.2)',
-                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePlayPause();
-                }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7, ease: 'easeOut' }}
-            >
-                {mediaUrl && (
-                    <>
-                    {isVideo ? (
-                        <video
-                        ref={videoRef}
-                        src={mediaUrl}
-                        playsInline
-                        loop
-                        className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <img
-                        src={mediaUrl}
-                        alt={name}
-                        className="w-full h-full object-cover"
-                        />
-                    )}
-                    </>
+
+          <motion.div
+            className="pointer-events-auto w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl bg-black/10 border-2 border-cyan-400/50 backdrop-blur-sm mx-auto cursor-pointer relative"
+            style={{
+              boxShadow: '0 0 15px rgba(0, 255, 255, 0.3), 0 0 25px rgba(0, 255, 255, 0.2)',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePlayPause();
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+          >
+            {mediaUrl && (
+              <>
+                {isVideo ? (
+                  <video
+                    ref={videoRef}
+                    src={mediaUrl}
+                    playsInline
+                    loop
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={mediaUrl}
+                    alt={name}
+                    className="w-full h-full object-cover"
+                  />
                 )}
-                 <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-2xl`} />
-                <motion.div 
-                    className="absolute inset-0 flex items-center justify-center bg-black/30"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isPlaying ? 0 : 1 }}
-                    exit={{ opacity: 0 }}
-                >
-                    <Play size={64} className="text-white/80" fill="white" />
-                </motion.div>
-            </motion.div>
-
+              </>
+            )}
+            <div className={`video-cover ${isPlaying || !isVideo ? 'hidden' : ''} rounded-2xl`} />
             <motion.div
-              className="mt-8 pointer-events-none"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+              className="absolute inset-0 flex items-center justify-center bg-black/30"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isPlaying ? 0 : 1 }}
+              exit={{ opacity: 0 }}
             >
-              <h1 className="text-3xl tracking-wider text-cyan-300 drop-shadow-lg md:text-4xl" style={{ textShadow: '0 0 8px rgba(0, 255, 255, 0.7)'}}>
-                {name}
-              </h1>
-
-              <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentSubtitle}
-                      variants={subtitleVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl"
-                    >
-                        <GlitchText text={currentSubtitle} />
-                    </motion.div>
-                  </AnimatePresence>
-              </div>
+              <Play size={64} className="text-white/80" fill="white" />
             </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="mt-8 pointer-events-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+          >
+            <h1 className="text-3xl tracking-wider text-cyan-300 drop-shadow-lg md:text-4xl" style={{ textShadow: '0 0 8px rgba(0, 255, 255, 0.7)' }}>
+              {name}
+            </h1>
+
+            <div className="min-h-[56px] mt-2 max-w-md mx-auto text-center">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSubtitle}
+                  variants={subtitleVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="text-lg text-fuchsia-300 drop-shadow-md md:text-xl"
+                >
+                  <GlitchText text={currentSubtitle} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

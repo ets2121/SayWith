@@ -38,9 +38,9 @@ async function refreshUrlIfNeeded(data: any, type: 'media' | 'audio', dbRef: any
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const { id } = await params;
 
   if (typeof id !== 'string' || id.length === 0 || id.length > 9) {
     return NextResponse.json({ error: 'Invalid ID format.' }, { status: 400 });
