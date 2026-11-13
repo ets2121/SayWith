@@ -107,9 +107,18 @@ export const useSaywithPlayer = (data: SaywithPlayerData) => {
         e?.stopPropagation();
         if (!userInteracted) {
             setUserInteracted(true);
+            const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
+            if (audioSource) {
+                audioSource.currentTime = 0;
+            }
+            if (videoRef.current && !useVideoAsAudioSource) {
+                videoRef.current.currentTime = 0;
+            }
+            setIsPlaying(true);
+        } else {
+            setIsPlaying(prev => !prev);
         }
-        setIsPlaying(prev => !prev);
-    }, [userInteracted]);
+    }, [userInteracted, useVideoAsAudioSource]);
 
     const seek = useCallback((delta: number) => {
         const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;
@@ -139,7 +148,10 @@ export const useSaywithPlayer = (data: SaywithPlayerData) => {
 
         const syncPlay = async () => {
             try {
-                if (video) await video.play();
+                if (video) {
+                    video.muted = !useVideoAsAudioSource;
+                    await video.play();
+                }
                 if (audio) await audio.play();
                 if (!isCancelled && !playerStateRef.current.isPlaying) {
                     setIsPlaying(true);
@@ -179,18 +191,37 @@ export const useSaywithPlayer = (data: SaywithPlayerData) => {
         }
     }, [pauseMedia]);
 
+    // Autoplay video in muted mode on initial mount (allowed by all browsers without user gesture)
     useEffect(() => {
         const video = videoRef.current;
         if (video) {
             video.loop = true;
             video.playsInline = true;
-            video.muted = !useVideoAsAudioSource;
+            video.preload = "auto";
+            video.muted = true; // Required by all browsers for initial autoplay
+
+            const startMutedAutoplay = async () => {
+                try {
+                    await video.play();
+                } catch {
+                    // Browser power saving blocked autoplay; #t=0.001 keeps real frame painted
+                }
+            };
+            startMutedAutoplay();
         }
-         const audio = audioRef.current;
+        const audio = audioRef.current;
         if (audio) {
             audio.loop = true;
         }
-    }, [useVideoAsAudioSource]);
+    }, [mediaUrl]);
+
+    // Apply database mute setting once user interacts
+    useEffect(() => {
+        const video = videoRef.current;
+        if (video && userInteracted) {
+            video.muted = !useVideoAsAudioSource;
+        }
+    }, [userInteracted, useVideoAsAudioSource]);
     
     useEffect(() => {
         const audioSource = useVideoAsAudioSource ? videoRef.current : audioRef.current;

@@ -38,7 +38,12 @@ export default function ForYouPage() {
             return;
           }
 
-          const fetchedData = await response.json();
+          const fetchedData: SaywithData = await response.json();
+          if (fetchedData.mediaUrl && (fetchedData.mediaUrl.includes('.mp4') || fetchedData.mediaUrl.includes('.mov') || fetchedData.mediaUrl.includes('video'))) {
+            if (!fetchedData.mediaUrl.includes('#t=')) {
+              fetchedData.mediaUrl = `${fetchedData.mediaUrl}#t=0.001`;
+            }
+          }
           setData(fetchedData);
         } catch (err: any) {
           console.error(err);
