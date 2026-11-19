@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -27,6 +27,8 @@ import {
   Play,
   Pause,
   Send,
+  Maximize2,
+  Film,
   type LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,10 +41,11 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import {
-  TEMPLATE_CATALOG,
   TEMPLATE_CATEGORIES,
   type TemplateItem
 } from "@/data/templateCatalog";
+import siteConfigDefault from "../../public/data/site-config.json";
+import templatesDefault from "../../public/data/templates.json";
 
 const socialIcons: Record<string, LucideIcon> = {
   facebook: Facebook,
@@ -172,6 +175,8 @@ const faqs = [
 ];
 
 export default function SayWithLandingPage() {
+  const [siteConfig, setSiteConfig] = useState(siteConfigDefault);
+  const [templates, setTemplates] = useState<TemplateItem[]>(templatesDefault as TemplateItem[]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isPlayingHero, setIsPlayingHero] = useState<boolean>(true);
@@ -182,12 +187,33 @@ export default function SayWithLandingPage() {
   const [selectedUseCase, setSelectedUseCase] = useState<string>("Acrylic Photo Keychains");
   const [copiedText, setCopiedText] = useState<boolean>(false);
 
-  const filteredTemplates = TEMPLATE_CATALOG.filter((t) => {
+  // Full Screen Template Preview Lightbox Modal
+  const [fullScreenTemplate, setFullScreenTemplate] = useState<TemplateItem | null>(null);
+
+  // Runtime live fetch from public/data JSON files so edits in public/data update immediately
+  useEffect(() => {
+    fetch("/data/site-config.json")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setSiteConfig(data);
+      })
+      .catch(() => {});
+
+    fetch("/data/templates.json")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data)) setTemplates(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const filteredTemplates = templates.filter((t) => {
     const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
     const matchesSearch =
       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.tag.toLowerCase().includes(searchQuery.toLowerCase());
+      t.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `#${t.num}`.includes(searchQuery);
     return matchesCategory && matchesSearch;
   });
 
@@ -213,6 +239,9 @@ export default function SayWithLandingPage() {
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 2500);
   };
+
+  const hero = siteConfig.hero || siteConfigDefault.hero;
+  const socials = siteConfig.socials || siteConfigDefault.socials;
 
   return (
     <div className="bg-background text-foreground antialiased selection:bg-primary selection:text-white" suppressHydrationWarning>
@@ -260,47 +289,60 @@ export default function SayWithLandingPage() {
       </header>
 
       <main>
-        {/* Hero Section */}
+        {/* Hero Section with Visible Background Image */}
         <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-12 md:py-20 px-4">
-          {/* Subtle Ambient Background */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-950/30 via-background to-background">
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-10 right-10 w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          {/* Visible Hero Background with High Priority per Modern Web Guidance */}
+          <div className="absolute inset-0 z-0 overflow-hidden">
+            <Image
+              src={hero.bgImageUrl || "https://placehold.co/1920x1080/0f172a/38bdf8.png?text=SayWith+Hero+Atmosphere"}
+              alt="SayWith Memory Keepsake Atmosphere"
+              fill
+              priority
+              sizes="100vw"
+              className="transition-opacity duration-700"
+              style={{
+                objectFit: "cover",
+                opacity: hero.bgImageOpacity ?? 0.55
+              }}
+            />
+            {/* Subtle Vignette & Contrast Overlay so text is easily readable while background remains visible */}
+            <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background"></div>
+            <div className="absolute inset-0 bg-black/25"></div>
           </div>
 
           <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
             {/* Top Badge */}
             <div className="flex justify-center">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs md:text-sm font-semibold mb-6">
-                <Sparkles className="w-4 h-4" />
-                <span>The Digital Presence for Keychains, Gifts & Keepsakes</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/40 text-primary-foreground text-xs md:text-sm font-semibold mb-6 backdrop-blur-md shadow-sm">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span>{hero.badgeText || "The Digital Presence for Keychains, Gifts & Keepsakes"}</span>
               </div>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-headline font-bold tracking-tight text-center drop-shadow-md text-foreground">
-              The Digital Heart of Your Keepsake. <br />
-              <span className="bg-gradient-to-r from-blue-400 via-primary to-cyan-300 bg-clip-text text-transparent">
-                Tap with NFC. Scan with Styled QR.
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-headline font-bold tracking-tight text-center drop-shadow-lg text-white">
+              {hero.mainTitle || "The Digital Heart of Your Keepsake."} <br />
+              <span className="bg-gradient-to-r from-blue-300 via-primary to-cyan-200 bg-clip-text text-transparent">
+                {hero.highlightTitle || "Tap with NFC. Scan with Styled QR."}
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-5 max-w-2xl mx-auto text-center text-sm sm:text-base md:text-lg text-muted-foreground font-light leading-relaxed">
-              SayWith crafts the interactive <strong className="text-foreground font-medium">digital presence</strong> for your physical gifts. Connect 50+ cinematic templates, personal videos, and favorite music to keychains, tokens, and gift cards using <strong className="text-foreground font-medium">NFC chips</strong> or custom <strong className="text-foreground font-medium">styled QR code photos</strong>.
+            <p className="mt-5 max-w-2xl mx-auto text-center text-sm sm:text-base md:text-lg text-slate-200 font-light leading-relaxed drop-shadow">
+              {hero.description}
             </p>
 
             {/* Technology Pill Bar */}
-            <div className="mt-6 flex flex-wrap justify-center items-center gap-3 text-xs sm:text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5 bg-secondary/80 px-3.5 py-1.5 rounded-full border border-border">
+            <div className="mt-6 flex flex-wrap justify-center items-center gap-3 text-xs sm:text-sm text-slate-200">
+              <span className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-700/80 backdrop-blur-sm">
                 <Smartphone className="w-4 h-4 text-cyan-400" />
                 NFC Ready (Instant Phone Tap)
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-secondary/80 px-3.5 py-1.5 rounded-full border border-border">
+              <span className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-700/80 backdrop-blur-sm">
                 <QrCode className="w-4 h-4 text-emerald-400" />
                 Custom Styled QR Code Photo
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-secondary/80 px-3.5 py-1.5 rounded-full border border-border">
+              <span className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-700/80 backdrop-blur-sm">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
                 No App Download Needed
               </span>
@@ -309,7 +351,7 @@ export default function SayWithLandingPage() {
             {/* Action Buttons */}
             <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
               <a href="#templates" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto text-base gap-2 px-8 py-6 shadow-xl shadow-primary/25">
+                <Button size="lg" className="w-full sm:w-auto text-base gap-2 px-8 py-6 shadow-xl shadow-primary/30">
                   <Eye className="w-5 h-5" />
                   Explore 50+ Templates
                 </Button>
@@ -318,7 +360,7 @@ export default function SayWithLandingPage() {
                 size="lg"
                 variant="outline"
                 onClick={() => openInquiryModal()}
-                className="w-full sm:w-auto text-base gap-2 px-8 py-6 bg-secondary/80 border-border hover:bg-secondary"
+                className="w-full sm:w-auto text-base gap-2 px-8 py-6 bg-slate-900/80 border-slate-700 hover:bg-slate-800 text-white backdrop-blur-sm"
               >
                 <MessageCircle className="w-5 h-5 text-primary" />
                 Contact Us to Order
@@ -327,18 +369,18 @@ export default function SayWithLandingPage() {
 
             {/* HERO VISUAL MOCKUP: Example Application (Acrylic Keychain + Styled QR Photo + Phone Screen) */}
             <div className="mt-14 max-w-4xl mx-auto">
-              <div className="relative rounded-3xl bg-secondary/40 border border-border/80 p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden">
+              <div className="relative rounded-3xl bg-slate-950/75 border border-slate-800 p-6 md:p-10 shadow-2xl backdrop-blur-md overflow-hidden">
                 {/* Decorative background grid and glow */}
                 <div className="absolute -top-24 -right-24 w-72 h-72 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary-foreground text-xs font-semibold mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-primary" />
                     <span>Example Real-World Application</span>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold">Physical Keepsake + SayWith Digital Presence</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-1">
+                  <h3 className="text-xl md:text-2xl font-bold text-white">Physical Keepsake + SayWith Digital Presence</h3>
+                  <p className="text-xs md:text-sm text-slate-300 mt-1">
                     Use your digital presence in an acrylic keychain with an NFC chip, or with your custom styled QR photo card
                   </p>
                 </div>
@@ -355,34 +397,46 @@ export default function SayWithLandingPage() {
                       <div className="w-1.5 h-4 bg-gradient-to-b from-slate-400 to-slate-500 rounded -mb-1 z-20"></div>
 
                       {/* Acrylic Keychain Capsule */}
-                      <div className="w-48 sm:w-56 h-64 rounded-3xl bg-gradient-to-b from-white/30 via-white/10 to-white/5 dark:from-white/15 dark:via-white/5 dark:to-transparent border-2 border-white/40 dark:border-white/20 p-3 shadow-2xl backdrop-blur-md flex flex-col justify-between relative overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                      <div className="w-48 sm:w-56 h-64 rounded-3xl bg-gradient-to-b from-white/30 via-white/10 to-white/5 border-2 border-white/40 p-3 shadow-2xl backdrop-blur-md flex flex-col justify-between relative overflow-hidden transition-transform duration-300 group-hover:scale-105">
                         {/* Acrylic Gloss Reflection Highlight */}
                         <div className="absolute -top-12 -left-12 w-36 h-36 bg-gradient-to-br from-white/40 to-transparent rotate-45 rounded-full pointer-events-none"></div>
                         
                         {/* Top: NFC Loop Indicator */}
                         <div className="flex justify-between items-center z-10">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
-                            <Radio className="w-2.5 h-2.5 animate-pulse" />
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/30 text-white border border-primary/40">
+                            <Radio className="w-2.5 h-2.5 animate-pulse text-primary" />
                             NFC Chip Tap
                           </span>
-                          <span className="text-[10px] text-muted-foreground font-mono">NTAG215</span>
+                          <span className="text-[10px] text-slate-300 font-mono">NTAG215</span>
                         </div>
 
                         {/* Center Photo Inside Keychain */}
                         <div className="relative rounded-2xl overflow-hidden h-36 bg-gradient-to-br from-rose-500/80 via-purple-600/80 to-blue-600/80 p-3 flex flex-col justify-between text-white shadow-inner">
-                          <div className="flex items-center gap-1.5">
-                            <Heart className="w-3.5 h-3.5 text-rose-300 fill-rose-300 animate-pulse" />
-                            <span className="text-[10px] font-semibold tracking-wide">Always Together</span>
-                          </div>
-                          
-                          {/* Golden NFC Antenna Coil Illustration */}
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
-                            <div className="w-24 h-24 rounded-full border border-amber-300/80 flex items-center justify-center">
-                              <div className="w-16 h-16 rounded-full border border-amber-300/60 flex items-center justify-center">
-                                <div className="w-8 h-8 rounded-full border border-amber-300/40"></div>
+                          {hero.keychainPhotoUrl ? (
+                            <img
+                              src={hero.keychainPhotoUrl}
+                              alt="Custom Keychain Photo"
+                              className="absolute inset-0 w-full h-full object-cover"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-1.5 z-10">
+                                <Heart className="w-3.5 h-3.5 text-rose-300 fill-rose-300 animate-pulse" />
+                                <span className="text-[10px] font-semibold tracking-wide">Always Together</span>
                               </div>
-                            </div>
-                          </div>
+                              
+                              {/* Golden NFC Antenna Coil Illustration */}
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
+                                <div className="w-24 h-24 rounded-full border border-amber-300/80 flex items-center justify-center">
+                                  <div className="w-16 h-16 rounded-full border border-amber-300/60 flex items-center justify-center">
+                                    <div className="w-8 h-8 rounded-full border border-amber-300/40"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          )}
 
                           <div className="z-10">
                             <p className="text-[11px] font-bold">2nd Anniversary Keepsake</p>
@@ -392,21 +446,33 @@ export default function SayWithLandingPage() {
 
                         {/* Bottom Tag */}
                         <div className="text-center z-10 py-1">
-                          <span className="text-[11px] font-medium text-foreground">Example Keychain Usage</span>
+                          <span className="text-[11px] font-medium text-white">Example Keychain Usage</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Styled QR Code Photo Card Mockup */}
-                    <div className="w-48 sm:w-56 p-3 rounded-2xl bg-background border border-border/80 shadow-lg flex items-center gap-3">
+                    <div className="w-48 sm:w-56 p-3 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg flex items-center gap-3">
                       {/* Stylized QR Thumbnail */}
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-cyan-500/20 border border-primary/30 p-1.5 flex flex-col items-center justify-center relative shrink-0">
-                        <QrCode className="w-8 h-8 text-primary" />
-                        <span className="text-[7px] text-primary font-bold mt-0.5">SCAN</span>
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/30 to-cyan-500/30 border border-primary/40 p-1.5 flex flex-col items-center justify-center relative shrink-0 overflow-hidden">
+                        {hero.styledQrPhotoUrl ? (
+                          <img
+                            src={hero.styledQrPhotoUrl}
+                            alt="Styled QR Photo"
+                            className="w-full h-full object-cover rounded-lg"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <>
+                            <QrCode className="w-8 h-8 text-primary" />
+                            <span className="text-[7px] text-primary font-bold mt-0.5">SCAN</span>
+                          </>
+                        )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold text-foreground truncate">Styled QR Photo</p>
-                        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Printable custom photo card</p>
+                        <p className="text-xs font-bold text-white truncate">Styled QR Photo</p>
+                        <p className="text-[10px] text-slate-300 leading-tight mt-0.5">Printable custom photo card</p>
                         <span className="inline-block mt-1 text-[9px] text-emerald-400 font-medium">Any camera can scan</span>
                       </div>
                     </div>
@@ -451,12 +517,33 @@ export default function SayWithLandingPage() {
 
                         {/* Template Story Player Card */}
                         <div className="relative rounded-2xl overflow-hidden h-44 bg-gradient-to-tr from-pink-600 via-rose-500 to-amber-500 p-3 flex flex-col justify-between shadow-lg">
-                          {/* Floating Particles Animation */}
-                          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                            <Heart className="w-3.5 h-3.5 text-white/50 absolute top-4 left-6 animate-bounce" />
-                            <Sparkles className="w-3.5 h-3.5 text-amber-200/70 absolute top-8 right-6 animate-pulse" />
-                            <Heart className="w-3 h-3 text-pink-200/60 absolute bottom-6 right-8 animate-ping" />
-                          </div>
+                          {hero.phonePreviewMediaUrl ? (
+                            hero.phonePreviewMediaType === "video" ? (
+                              <video
+                                src={hero.phonePreviewMediaUrl}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="absolute inset-0 w-full h-full object-cover"
+                              />
+                            ) : (
+                              <img
+                                src={hero.phonePreviewMediaUrl}
+                                alt="Phone Preview Media"
+                                className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            )
+                          ) : (
+                            /* Floating Particles Animation Default */
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                              <Heart className="w-3.5 h-3.5 text-white/50 absolute top-4 left-6 animate-bounce" />
+                              <Sparkles className="w-3.5 h-3.5 text-amber-200/70 absolute top-8 right-6 animate-pulse" />
+                              <Heart className="w-3 h-3 text-pink-200/60 absolute bottom-6 right-8 animate-ping" />
+                            </div>
+                          )}
 
                           <div className="flex justify-between items-center z-10">
                             <span className="text-[9px] font-semibold uppercase tracking-wider bg-black/40 px-2 py-0.5 rounded-full backdrop-blur-sm">
@@ -485,8 +572,8 @@ export default function SayWithLandingPage() {
                                 {isPlayingHero ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
                               </button>
                               <div className="min-w-0">
-                                <p className="text-[11px] font-semibold truncate leading-tight">Until I Found You</p>
-                                <p className="text-[9px] text-slate-300 truncate">Synchronized music track</p>
+                                <p className="text-[11px] font-semibold truncate leading-tight">{hero.musicTitle || "Until I Found You"}</p>
+                                <p className="text-[9px] text-slate-300 truncate">{hero.musicSubtitle || "Synchronized music track"}</p>
                               </div>
                             </div>
 
@@ -502,7 +589,7 @@ export default function SayWithLandingPage() {
 
                         {/* Personal Letter Text Preview */}
                         <div className="bg-black/30 rounded-xl p-2.5 mt-2 text-[10px] text-slate-200 leading-relaxed border border-white/5 italic">
-                          &ldquo;Every single day with you is a gift I never take for granted. Forever and always. ❤️&rdquo;
+                          &ldquo;{hero.letterText || "Every single day with you is a gift I never take for granted. Forever and always. ❤️"}&rdquo;
                         </div>
 
                         {/* Bottom Bar */}
@@ -534,14 +621,23 @@ export default function SayWithLandingPage() {
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-blue-900/40 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
-                    {/* Visual Keychain Illustration */}
-                    <div className="w-24 h-32 rounded-2xl bg-white/10 dark:bg-white/5 border-2 border-white/30 backdrop-blur-sm p-2 flex flex-col justify-between items-center shadow-lg group-hover:scale-105 transition-transform">
-                      <div className="w-5 h-5 rounded-full border-2 border-slate-400"></div>
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-primary to-cyan-400 flex items-center justify-center text-white">
-                        <Heart className="w-7 h-7 fill-white" />
+                    {siteConfig.showcaseMedia?.acrylicKeychainImageUrl ? (
+                      <img
+                        src={siteConfig.showcaseMedia.acrylicKeychainImageUrl}
+                        alt="Acrylic Keychain Example"
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="w-24 h-32 rounded-2xl bg-white/10 dark:bg-white/5 border-2 border-white/30 backdrop-blur-sm p-2 flex flex-col justify-between items-center shadow-lg group-hover:scale-105 transition-transform">
+                        <div className="w-5 h-5 rounded-full border-2 border-slate-400"></div>
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-tr from-primary to-cyan-400 flex items-center justify-center text-white">
+                          <Heart className="w-7 h-7 fill-white" />
+                        </div>
+                        <div className="w-8 h-1 rounded-full bg-white/40"></div>
                       </div>
-                      <div className="w-8 h-1 rounded-full bg-white/40"></div>
-                    </div>
+                    )}
                     <span className="absolute bottom-2 text-[10px] text-primary font-semibold">Example: Acrylic Keychain</span>
                   </div>
                   <h3 className="text-lg font-bold mt-4">Keychains & Bag Charms</h3>
@@ -559,16 +655,25 @@ export default function SayWithLandingPage() {
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-pink-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
-                    {/* Styled QR Photo Mockup */}
-                    <div className="w-28 h-32 rounded-xl bg-white dark:bg-slate-900 border border-border shadow-lg p-2 flex flex-col justify-between items-center group-hover:scale-105 transition-transform">
-                      <div className="w-full h-12 rounded-lg bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-[9px] text-white font-bold">
-                        Couple Photo
+                    {siteConfig.showcaseMedia?.styledQrCardImageUrl ? (
+                      <img
+                        src={siteConfig.showcaseMedia.styledQrCardImageUrl}
+                        alt="Styled QR Photo Card Example"
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="w-28 h-32 rounded-xl bg-white dark:bg-slate-900 border border-border shadow-lg p-2 flex flex-col justify-between items-center group-hover:scale-105 transition-transform">
+                        <div className="w-full h-12 rounded-lg bg-gradient-to-r from-rose-400 to-pink-500 flex items-center justify-center text-[9px] text-white font-bold">
+                          Couple Photo
+                        </div>
+                        <div className="w-12 h-12 rounded-md bg-secondary border border-border flex items-center justify-center">
+                          <QrCode className="w-9 h-9 text-foreground" />
+                        </div>
+                        <span className="text-[8px] text-muted-foreground font-mono">SCAN ME</span>
                       </div>
-                      <div className="w-12 h-12 rounded-md bg-secondary border border-border flex items-center justify-center">
-                        <QrCode className="w-9 h-9 text-foreground" />
-                      </div>
-                      <span className="text-[8px] text-muted-foreground font-mono">SCAN ME</span>
-                    </div>
+                    )}
                     <span className="absolute bottom-2 text-[10px] text-rose-400 font-semibold">Printable Photo Card</span>
                   </div>
                   <h3 className="text-lg font-bold mt-4">Styled QR Code Photo</h3>
@@ -586,17 +691,26 @@ export default function SayWithLandingPage() {
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-cyan-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
-                    {/* Phone Tapping Animation Illustration */}
-                    <div className="w-32 h-28 rounded-2xl bg-slate-900 border-2 border-slate-700 p-2 flex flex-col justify-between shadow-xl group-hover:scale-105 transition-transform">
-                      <div className="w-full bg-primary/20 border border-primary/40 rounded-lg p-1.5 flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                        <span className="text-[8px] text-primary font-bold truncate">Open SayWith Story</span>
+                    {siteConfig.showcaseMedia?.phoneTapImageUrl ? (
+                      <img
+                        src={siteConfig.showcaseMedia.phoneTapImageUrl}
+                        alt="Phone Tap Action"
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="w-32 h-28 rounded-2xl bg-slate-900 border-2 border-slate-700 p-2 flex flex-col justify-between shadow-xl group-hover:scale-105 transition-transform">
+                        <div className="w-full bg-primary/20 border border-primary/40 rounded-lg p-1.5 flex items-center gap-1.5">
+                          <Sparkles className="w-3 h-3 text-primary shrink-0" />
+                          <span className="text-[8px] text-primary font-bold truncate">Open SayWith Story</span>
+                        </div>
+                        <div className="flex justify-center items-center py-2">
+                          <Radio className="w-6 h-6 text-cyan-400 animate-pulse" />
+                        </div>
+                        <span className="text-[8px] text-center text-slate-400">Zero App Needed</span>
                       </div>
-                      <div className="flex justify-center items-center py-2">
-                        <Radio className="w-6 h-6 text-cyan-400 animate-pulse" />
-                      </div>
-                      <span className="text-[8px] text-center text-slate-400">Zero App Needed</span>
-                    </div>
+                    )}
                     <span className="absolute bottom-2 text-[10px] text-cyan-400 font-semibold">Instant Web Popup</span>
                   </div>
                   <h3 className="text-lg font-bold mt-4">Cards & Gift Boxes</h3>
@@ -614,17 +728,26 @@ export default function SayWithLandingPage() {
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-amber-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
-                    {/* Gift Presentation Mockup */}
-                    <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-amber-400/40 p-2.5 flex flex-col justify-between items-center shadow-xl group-hover:scale-105 transition-transform relative">
-                      <div className="w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center">
-                        <Gift className="w-4 h-4" />
+                    {siteConfig.showcaseMedia?.giftPackagingImageUrl ? (
+                      <img
+                        src={siteConfig.showcaseMedia.giftPackagingImageUrl}
+                        alt="Gift Packaging Presentation"
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-amber-400/40 p-2.5 flex flex-col justify-between items-center shadow-xl group-hover:scale-105 transition-transform relative">
+                        <div className="w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center">
+                          <Gift className="w-4 h-4" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[10px] font-bold text-amber-200">Pocket Token / Frame</p>
+                          <p className="text-[8px] text-slate-300">Desk Photo & Token</p>
+                        </div>
+                        <div className="w-12 h-1 rounded-full bg-amber-400/40"></div>
                       </div>
-                      <div className="text-center">
-                        <p className="text-[10px] font-bold text-amber-200">Pocket Token / Frame</p>
-                        <p className="text-[8px] text-slate-300">Desk Photo & Token</p>
-                      </div>
-                      <div className="w-12 h-1 rounded-full bg-amber-400/40"></div>
-                    </div>
+                    )}
                     <span className="absolute bottom-2 text-[10px] text-amber-400 font-semibold">Framed or Pocket Size</span>
                   </div>
                   <h3 className="text-lg font-bold mt-4">Tokens & Desk Displays</h3>
@@ -716,7 +839,7 @@ export default function SayWithLandingPage() {
           </div>
         </section>
 
-        {/* 50+ Templates Showcase */}
+        {/* 50+ Templates Showcase with Mobile Phone Ratio Cards & Full Screen Buttons */}
         <section id="templates" className="py-20 bg-secondary/30 border-t border-border/50">
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -727,7 +850,7 @@ export default function SayWithLandingPage() {
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-headline font-bold">Explore All 50+ Templates</h2>
                 <p className="mt-2 text-muted-foreground max-w-xl">
-                  Choose the exact vibe for your digital presence: from falling rose petals and stardust particles to retro vinyls and movie reels.
+                  Shown in actual mobile phone ratio. Tap the full-screen button on any card to preview the full high-res layout or video.
                 </p>
               </div>
 
@@ -735,7 +858,7 @@ export default function SayWithLandingPage() {
               <div className="w-full md:w-72">
                 <input
                   type="text"
-                  placeholder="Search template name or style..."
+                  placeholder="Search template name, #, or style..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -762,46 +885,146 @@ export default function SayWithLandingPage() {
             </div>
 
             <div className="mt-4 text-xs text-muted-foreground">
-              Showing {filteredTemplates.length} of {TEMPLATE_CATALOG.length} templates
+              Showing {filteredTemplates.length} of {templates.length} templates
             </div>
 
-            {/* Template Grid */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTemplates.slice(0, 15).map((template: TemplateItem) => (
+            {/* Template Grid with Mobile Phone Ratio (aspect-[9/16]) */}
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredTemplates.slice(0, 18).map((template: TemplateItem) => (
                 <div
                   key={template.id}
-                  className="bg-background rounded-2xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl flex flex-col group"
+                  className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-4 group"
                 >
-                  {/* Visual Top Preview */}
-                  <div className={cn("h-44 p-4 flex flex-col justify-between relative bg-gradient-to-br", template.accent)}>
-                    <div className="flex justify-between items-start">
-                      <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded-md bg-black/50 text-white backdrop-blur-sm">
+                  {/* Top Bar with Number & Full Screen Action */}
+                  <div className="flex items-center justify-between mb-3 px-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-secondary border border-border text-foreground">
                         #{template.num}
                       </span>
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-white/20 text-white backdrop-blur-sm">
+                      <span className="text-[11px] font-semibold text-primary">
                         {template.tag}
                       </span>
                     </div>
 
-                    <div className="text-white drop-shadow-md">
-                      <p className="text-xs uppercase tracking-wider opacity-80">{template.category}</p>
-                      <h4 className="text-xl font-bold font-headline">{template.name}</h4>
-                    </div>
+                    {/* Full Screen Button */}
+                    <button
+                      onClick={() => setFullScreenTemplate(template)}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary hover:bg-primary hover:text-white transition-colors text-xs font-medium text-muted-foreground"
+                      title="View full screen mobile preview"
+                      aria-label={`View ${template.name} full screen`}
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      <span className="text-[11px]">Full Screen</span>
+                    </button>
                   </div>
 
-                  {/* Body description */}
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {template.desc}
-                    </p>
+                  {/* MOBILE PHONE FRAME CONTAINER (aspect-[9/16] Mobile Ratio) */}
+                  <div className="relative w-full aspect-[9/16] rounded-[24px] bg-slate-950 border-[4px] border-slate-800 shadow-xl overflow-hidden flex flex-col justify-between group-hover:border-primary/60 transition-colors">
+                    {/* Phone Top Speaker Notch */}
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3 bg-black rounded-full z-20 flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-800 mr-1.5"></div>
+                      <div className="w-1 h-1 rounded-full bg-blue-900"></div>
+                    </div>
 
-                    <div className="mt-5 pt-4 border-t border-border flex items-center justify-between">
-                      <span className="text-xs text-primary font-medium">NFC & Styled QR Ready</span>
+                    {/* Full Screen Overlay Button inside phone screen */}
+                    <button
+                      onClick={() => setFullScreenTemplate(template)}
+                      className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-black/60 hover:bg-primary text-white backdrop-blur-md flex items-center justify-center transition-all shadow-md group-hover:scale-110"
+                      title="Expand full screen"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Phone Screen Media Content (Dynamic Image or Video) */}
+                    {template.previewUrl ? (
+                      template.previewType === "video" ? (
+                        <div className="relative w-full h-full bg-black">
+                          <video
+                            src={template.previewUrl}
+                            poster={template.posterUrl || undefined}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            preload="metadata"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 text-[9px] text-white backdrop-blur-sm">
+                            <Film className="w-2.5 h-2.5 text-primary" />
+                            <span>Video Preview</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative w-full h-full bg-black">
+                          <img
+                            src={template.previewUrl}
+                            alt={`${template.name} mobile screenshot`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      )
+                    ) : (
+                      /* Stylized Mobile Template Mockup (When screenshot URL is yet to be set) */
+                      <div className={cn("w-full h-full p-4 pt-8 flex flex-col justify-between bg-gradient-to-br text-white relative", template.accent)}>
+                        <div className="flex justify-between items-center text-[10px] opacity-75">
+                          <span>9:41</span>
+                          <span className="font-semibold uppercase tracking-wider text-[9px] bg-black/30 px-2 py-0.5 rounded-full">
+                            {template.category}
+                          </span>
+                        </div>
+
+                        {/* Template Center Visual */}
+                        <div className="my-auto text-center p-3 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10">
+                          <Sparkles className="w-6 h-6 mx-auto mb-2 text-white/80 animate-pulse" />
+                          <h4 className="font-headline font-bold text-lg leading-tight">{template.name}</h4>
+                          <p className="text-[10px] text-white/80 mt-1.5 leading-relaxed line-clamp-3">
+                            {template.desc}
+                          </p>
+                        </div>
+
+                        {/* Mobile Bottom Audio & Letter Simulation */}
+                        <div className="space-y-1.5">
+                          <div className="p-2 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-between text-[10px]">
+                            <div className="flex items-center gap-1.5 truncate">
+                              <Music className="w-3 h-3 text-cyan-300 shrink-0" />
+                              <span className="truncate">Music Sync Ready</span>
+                            </div>
+                            <span className="text-[8px] bg-white/20 px-1.5 py-0.5 rounded">NFC</span>
+                          </div>
+                          <p className="text-[8px] text-center text-white/70">Tap phone to replay</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Bottom Details & Inquire CTA */}
+                  <div className="mt-4 flex-1 flex flex-col justify-between px-1">
+                    <div>
+                      <div className="flex justify-between items-baseline">
+                        <h4 className="font-headline font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                          {template.name}
+                        </h4>
+                        <span className="text-[11px] text-muted-foreground uppercase font-medium">
+                          {template.category}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
+                        {template.desc}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+                      <span className="text-xs text-primary font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>NFC & Styled QR</span>
+                      </span>
                       <button
                         onClick={() => openInquiryModal(template)}
                         className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-primary transition-colors"
                       >
-                        Inquire With This <ArrowRight className="w-3.5 h-3.5" />
+                        Inquire with This <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -809,10 +1032,10 @@ export default function SayWithLandingPage() {
               ))}
             </div>
 
-            {filteredTemplates.length > 15 && (
-              <div className="mt-12 text-center">
+            {filteredTemplates.length > 18 && (
+              <div className="mt-14 text-center">
                 <p className="text-sm text-muted-foreground mb-4">
-                  Plus {filteredTemplates.length - 15} more handcrafted templates available for your gift.
+                  Plus {filteredTemplates.length - 18} more handcrafted templates available in the catalog.
                 </p>
                 <Button size="lg" onClick={() => openInquiryModal()} className="gap-2">
                   <MessageCircle className="w-4 h-4" />
@@ -992,7 +1215,7 @@ export default function SayWithLandingPage() {
             {/* Direct Contact Buttons */}
             <div className="mt-10 flex flex-wrap justify-center items-center gap-4">
               <a
-                href="https://messenger.com"
+                href={socials.messengerUrl || "https://messenger.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto"
@@ -1004,7 +1227,7 @@ export default function SayWithLandingPage() {
               </a>
 
               <a
-                href="https://instagram.com"
+                href={socials.instagramUrl || "https://instagram.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto"
@@ -1060,6 +1283,106 @@ export default function SayWithLandingPage() {
           </div>
         </section>
       </main>
+
+      {/* FULL SCREEN TEMPLATE PREVIEW MODAL */}
+      <Dialog open={!!fullScreenTemplate} onOpenChange={(open) => !open && setFullScreenTemplate(null)}>
+        <DialogContent className="sm:max-w-xl max-h-[95vh] overflow-y-auto bg-slate-950 border border-slate-800 p-6 text-white rounded-3xl">
+          {fullScreenTemplate && (
+            <div>
+              <DialogHeader className="mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-white/10 text-primary">
+                      #{fullScreenTemplate.num}
+                    </span>
+                    <span className="text-xs uppercase tracking-wider text-slate-300">
+                      {fullScreenTemplate.category}
+                    </span>
+                  </div>
+                </div>
+                <DialogTitle className="text-2xl font-bold mt-2 text-white">
+                  {fullScreenTemplate.name}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-slate-300 mt-1">
+                  {fullScreenTemplate.desc}
+                </DialogDescription>
+              </DialogHeader>
+
+              {/* Full Mobile Screen Frame */}
+              <div className="relative w-full aspect-[9/16] max-w-[340px] mx-auto rounded-[32px] bg-black border-[6px] border-slate-700 shadow-2xl overflow-hidden my-4">
+                {/* Speaker notch */}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-3 bg-slate-900 rounded-full z-20"></div>
+
+                {fullScreenTemplate.previewUrl ? (
+                  fullScreenTemplate.previewType === "video" ? (
+                    <video
+                      src={fullScreenTemplate.previewUrl}
+                      poster={fullScreenTemplate.posterUrl || undefined}
+                      controls
+                      autoPlay
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={fullScreenTemplate.previewUrl}
+                      alt={`${fullScreenTemplate.name} full view`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )
+                ) : (
+                  <div className={cn("w-full h-full p-6 pt-10 flex flex-col justify-between bg-gradient-to-br text-white", fullScreenTemplate.accent)}>
+                    <div className="flex justify-between items-center text-xs opacity-75">
+                      <span>9:41</span>
+                      <span className="font-mono">SayWith</span>
+                    </div>
+
+                    <div className="my-auto text-center p-4 rounded-2xl bg-black/30 backdrop-blur-md border border-white/10">
+                      <Sparkles className="w-8 h-8 mx-auto mb-2 text-white/90 animate-pulse" />
+                      <h4 className="font-headline font-bold text-xl">{fullScreenTemplate.name}</h4>
+                      <p className="text-xs text-white/80 mt-2 leading-relaxed">
+                        {fullScreenTemplate.desc}
+                      </p>
+                      <span className="inline-block mt-3 text-[10px] font-mono bg-white/20 px-2.5 py-1 rounded-full">
+                        Tag: {fullScreenTemplate.tag}
+                      </span>
+                    </div>
+
+                    <div className="text-center text-xs text-white/70">
+                      <span>Mobile Safari & Chrome Compatible</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons in Modal */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={() => {
+                    const temp = fullScreenTemplate;
+                    setFullScreenTemplate(null);
+                    openInquiryModal(temp);
+                  }}
+                  className="w-full gap-2 py-6 bg-primary text-white"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Inquire to Order with Template #{fullScreenTemplate.num}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setFullScreenTemplate(null)}
+                  className="w-full sm:w-auto py-6 border-slate-700 text-slate-300 hover:bg-slate-800"
+                >
+                  Close Preview
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Inquiry & Order Contact Dialog */}
       <Dialog open={inquiryOpen} onOpenChange={setInquiryOpen}>
@@ -1133,7 +1456,7 @@ export default function SayWithLandingPage() {
             {/* Direct Chat Channels */}
             <div className="space-y-2 pt-2">
               <a
-                href="https://messenger.com"
+                href={socials.messengerUrl || "https://messenger.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full block"
@@ -1145,7 +1468,7 @@ export default function SayWithLandingPage() {
               </a>
 
               <a
-                href="https://instagram.com"
+                href={socials.instagramUrl || "https://instagram.com"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full block"
@@ -1180,18 +1503,26 @@ export default function SayWithLandingPage() {
             </div>
 
             <div className="flex justify-center items-center gap-3">
-              {Object.entries(socialIcons).map(([name, Icon]) => (
-                <a
-                  key={name}
-                  href={`https://${name}.com`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={name.charAt(0).toUpperCase() + name.slice(1)}
-                  className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full hover:bg-secondary"
-                >
-                  <Icon className="h-5 w-5" />
-                </a>
-              ))}
+              {Object.entries(socialIcons).map(([name, Icon]) => {
+                const socialUrl =
+                  name === "messenger"
+                    ? socials.messengerUrl
+                    : name === "instagram"
+                    ? socials.instagramUrl
+                    : socials.facebookUrl || `https://${name}.com`;
+                return (
+                  <a
+                    key={name}
+                    href={socialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={name.charAt(0).toUpperCase() + name.slice(1)}
+                    className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full hover:bg-secondary"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

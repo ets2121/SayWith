@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "bgImageUrl": "https://placehold.co/1920x1080/0f172a/38bdf8.png?text=SayWith+Hero+Atmosphere",
+    "bgImageOpacity": 0.55,
+    "badgeText": "The Digital Presence for Keychains, Gifts & Keepsakes",
+    "mainTitle": "The Digital Heart of Your Keepsake.",
+    "highlightTitle": "Tap with NFC. Scan with Styled QR.",
+    "description": "SayWith crafts the interactive digital presence for your physical gifts. Connect 50+ cinematic templates, personal videos, and favorite music to keychains, tokens, and gift cards using NFC chips or custom styled QR code photos.",
+    "keychainPhotoUrl": "",
+    "styledQrPhotoUrl": "",
+    "phonePreviewMediaUrl": "",
+    "phonePreviewMediaType": "image",
+    "musicTitle": "Until I Found You",
+    "musicSubtitle": "Synchronized music track",
+    "letterText": "Every single day with you is a gift I never take for granted. Forever and always. ❤️"
+  },
+  "socials": {
+    "messengerUrl": "https://messenger.com",
+    "instagramUrl": "https://instagram.com",
+    "whatsappUrl": "https://whatsapp.com",
+    "facebookUrl": "https://facebook.com",
+    "tiktokUrl": "https://tiktok.com",
+    "email": "contact@saywith.com"
+  },
+  "showcaseMedia": {
+    "acrylicKeychainImageUrl": "",
+    "styledQrCardImageUrl": "",
+    "phoneTapImageUrl": "",
+    "giftPackagingImageUrl": ""
+  }
+}
