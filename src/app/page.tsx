@@ -28,10 +28,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { 
-  TEMPLATE_CATALOG, 
-  TEMPLATE_CATEGORIES, 
-  type TemplateItem 
+import {
+  TEMPLATE_CATALOG,
+  TEMPLATE_CATEGORIES,
+  type TemplateItem
 } from "@/data/templateCatalog";
 
 const socialIcons: Record<string, LucideIcon> = {
@@ -77,7 +77,7 @@ const keepsakeProducts = [
   {
     name: "Classic Acrylic NFC Keychain",
     tagline: "Everyday memory companion",
-    price: "$19.99",
+    format: "Crystal Clear Acrylic",
     badge: "Bestseller",
     features: [
       "Built-in NTAG213 / NTAG215 NFC smart chip",
@@ -91,8 +91,8 @@ const keepsakeProducts = [
   {
     name: "Couples Matching Set (2x Keychains)",
     tagline: "For two hearts sharing one memory",
-    price: "$34.99",
-    badge: "Save 15%",
+    format: "Synchronized Dual Pair",
+    badge: "Couples Favorite",
     features: [
       "Two synchronized NFC keychains",
       "Custom laser initials or anniversary date",
@@ -105,7 +105,7 @@ const keepsakeProducts = [
   {
     name: "Engraved Metal Keepsake Token",
     tagline: "Heavyweight luxury token for wallets or bags",
-    price: "$27.99",
+    format: "Matte Black or Silver Alloy",
     badge: "Premium Finish",
     features: [
       "Precision matte black or brushed silver alloy",
@@ -151,7 +151,7 @@ export default function SayWithLandingPage() {
 
   const filteredTemplates = TEMPLATE_CATALOG.filter((t) => {
     const matchesCategory = selectedCategory === "All" || t.category === selectedCategory;
-    const matchesSearch = 
+    const matchesSearch =
       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.tag.toLowerCase().includes(searchQuery.toLowerCase());
@@ -164,12 +164,12 @@ export default function SayWithLandingPage() {
       <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border/50">
         <nav className="container mx-auto flex items-center justify-between p-4 px-6">
           <Link href="/" className="flex items-center gap-3 text-2xl font-bold text-primary group">
-            <Image 
-              src="/icons/icon-192x192.png" 
-              alt="SayWith Logo" 
-              width={34} 
-              height={34} 
-              priority 
+            <Image
+              src="/icons/icon-192x192.png"
+              alt="SayWith Logo"
+              width={34}
+              height={34}
+              priority
               className="rounded-lg group-hover:scale-105 transition-transform"
             />
             <span className="tracking-tight text-foreground font-headline">Say<span className="text-primary">With</span></span>
@@ -204,7 +204,7 @@ export default function SayWithLandingPage() {
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center text-center text-white overflow-hidden py-16 px-4">
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-950/40 via-background to-background">
-            <Image 
+            <Image
               src="https://placehold.co/1920x1080.png"
               data-ai-hint="atmospheric night gradient with subtle warm lights"
               alt="SayWith NFC Keepsakes"
@@ -234,7 +234,7 @@ export default function SayWithLandingPage() {
 
             {/* Subtitle */}
             <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-muted-foreground font-light leading-relaxed">
-              Personalized keychains, gift tokens, and physical keepsakes embedded with smart NFC and laser QR codes. 
+              Personalized keychains, gift tokens, and physical keepsakes embedded with smart NFC and laser QR codes.
               Tap with any phone to instantly reveal your personalized videos, music, and heartfelt messages.
             </p>
 
@@ -402,7 +402,7 @@ export default function SayWithLandingPage() {
 
               {/* Search input */}
               <div className="w-full md:w-72">
-                <input 
+                <input
                   type="text"
                   placeholder="Search template name or style..."
                   value={searchQuery}
@@ -420,7 +420,7 @@ export default function SayWithLandingPage() {
                   onClick={() => setSelectedCategory(cat)}
                   className={cn(
                     "px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all",
-                    selectedCategory === cat 
+                    selectedCategory === cat
                       ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-semibold"
                       : "bg-background border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                   )}
@@ -437,7 +437,7 @@ export default function SayWithLandingPage() {
             {/* Template Grid */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTemplates.slice(0, 15).map((template: TemplateItem) => (
-                <div 
+                <div
                   key={template.id}
                   className="bg-background rounded-2xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl flex flex-col group"
                 >
@@ -491,7 +491,7 @@ export default function SayWithLandingPage() {
           </div>
         </section>
 
-        {/* Physical Products / Pricing Section */}
+        {/* Physical Products Section */}
         <section id="keepsakes" className="py-20">
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="text-center max-w-3xl mx-auto">
@@ -504,7 +504,7 @@ export default function SayWithLandingPage() {
 
             <div id="order" className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
               {keepsakeProducts.map((prod, idx) => (
-                <div 
+                <div
                   key={idx}
                   className={cn(
                     "rounded-3xl p-8 flex flex-col justify-between transition-all relative",
@@ -528,9 +528,9 @@ export default function SayWithLandingPage() {
 
                     <h3 className="text-2xl font-bold mt-4">{prod.name}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{prod.tagline}</p>
-                    <div className="mt-6 flex items-baseline gap-1">
-                      <span className="text-4xl font-extrabold">{prod.price}</span>
-                      <span className="text-xs text-muted-foreground">/ one-time</span>
+                    <div className="mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-background/80 border border-border text-xs font-medium text-foreground">
+                      <Gift className="w-3.5 h-3.5 text-primary" />
+                      <span>{prod.format}</span>
                     </div>
 
                     <ul className="mt-8 space-y-3.5 text-sm">
@@ -544,7 +544,7 @@ export default function SayWithLandingPage() {
                   </div>
 
                   <div className="mt-10">
-                    <Button 
+                    <Button
                       className={cn(
                         "w-full py-6 text-base font-semibold gap-2",
                         prod.highlight ? "shadow-lg shadow-primary/25" : ""
@@ -552,7 +552,7 @@ export default function SayWithLandingPage() {
                       variant={prod.highlight ? "default" : "outline"}
                     >
                       <ShoppingBag className="w-4 h-4" />
-                      Order {prod.name.split(" ")[0]} Now
+                      Order & Customize
                     </Button>
                     <p className="text-[11px] text-center text-muted-foreground mt-2.5">
                       Includes lifetime cloud link & template setup
@@ -577,8 +577,8 @@ export default function SayWithLandingPage() {
 
             <div className="mt-12 space-y-4">
               {faqs.map((faq, i) => (
-                <details 
-                  key={i} 
+                <details
+                  key={i}
                   className="group bg-background rounded-2xl border border-border/80 p-5 transition-all [&_summary::-webkit-details-marker]:hidden"
                 >
                   <summary className="flex items-center justify-between cursor-pointer font-bold text-base sm:text-lg select-none list-none text-foreground hover:text-primary transition-colors">
