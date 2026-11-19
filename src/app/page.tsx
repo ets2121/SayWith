@@ -186,7 +186,7 @@ export default function SayWithLandingPage() {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
         <nav className="container mx-auto flex items-center justify-between p-4 px-6">
           <a href="#" className="flex items-center gap-2 text-2xl font-bold text-primary">
-            <Image src="/icons/icon-192x192.png" alt="SayWith Logo" width={32} height={32} />
+            <Image src="/icons/icon-192x192.png" alt="SayWith Logo" width={32} height={32} priority />
             <span>SayWith</span>
           </a>
           <div className="hidden md:flex items-center gap-6">
@@ -207,6 +207,8 @@ export default function SayWithLandingPage() {
                     data-ai-hint="abstract gradient ocean blue"
                     alt="Ocean Blue Gradient with subtle waves"
                     fill
+                    priority
+                    sizes="100vw"
                     style={{objectFit:"cover"}}
                     className="opacity-80"
                 />
@@ -271,6 +273,7 @@ export default function SayWithLandingPage() {
                         alt={qrcode.alt}
                         width={400}
                         height={400}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="rounded-lg shadow-lg"
                         data-ai-hint="qr code"
                       />
@@ -305,6 +308,7 @@ export default function SayWithLandingPage() {
                         alt={template.alt}
                         width={400}
                         height={800}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                         className="rounded-lg shadow-lg"
                         data-ai-hint="social media story"
                       />
@@ -327,6 +331,7 @@ export default function SayWithLandingPage() {
                     alt="About SayWith"
                     width={800}
                     height={800}
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="rounded-lg shadow-2xl"
                 />
             </div>
@@ -374,7 +379,7 @@ export default function SayWithLandingPage() {
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-4">
                       <div className="bg-secondary p-8 rounded-lg shadow-md h-full flex flex-col justify-between">
-                        <p className="text-lg italic text-foreground">"{testimonial.quote}"</p>
+                        <p className="text-lg italic text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
                         <div className="mt-4 flex items-center">
                           <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                             {testimonial.name.charAt(0)}
@@ -396,7 +401,7 @@ export default function SayWithLandingPage() {
         {/* Contact Section */}
         <Section id="contact" className="py-20 bg-gradient-to-b from-primary/5 to-transparent">
           <div className="container mx-auto px-6 text-center max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-headline font-bold">Let's Work Together</h2>
+            <h2 className="text-3xl md:text-4xl font-headline font-bold">Let&apos;s Work Together</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               Got a message worth sharing? We’ll make it shine. Get in touch today.
             </p>
@@ -415,7 +420,14 @@ export default function SayWithLandingPage() {
                   const Icon = socialIcons[link.name];
                   if (!Icon) return null;
                   return (
-                    <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                    <a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.name.charAt(0).toUpperCase() + link.name.slice(1)}
+                      className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center justify-center min-w-[44px] min-h-[44px]"
+                    >
                       <Icon className="h-6 w-6" />
                       <span className="sr-only">{link.name.charAt(0).toUpperCase() + link.name.slice(1)}</span>
                     </a>

@@ -200,14 +200,18 @@ export const useSaywithPlayer = (data: SaywithPlayerData) => {
             video.preload = "auto";
             video.muted = true; // Required by all browsers for initial autoplay
 
-            const startMutedAutoplay = async () => {
-                try {
-                    await video.play();
-                } catch {
-                    // Browser power saving blocked autoplay; #t=0.001 keeps real frame painted
-                }
-            };
-            startMutedAutoplay();
+            // Respect prefers-reduced-motion (Modern Web Guidance & WCAG 2.2)
+            const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!prefersReducedMotion) {
+                const startMutedAutoplay = async () => {
+                    try {
+                        await video.play();
+                    } catch {
+                        // Browser power saving blocked autoplay; #t=0.001 keeps real frame painted
+                    }
+                };
+                startMutedAutoplay();
+            }
         }
         const audio = audioRef.current;
         if (audio) {

@@ -1,9 +1,30 @@
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Poppins, PT_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import "./video-cover.css";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+
+const poppins = Poppins({
+  weight: ["600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+});
+
+const ptSans = PT_Sans({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-pt-sans",
+});
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://saywith.vercel.app"),
@@ -84,19 +105,18 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${poppins.variable} ${ptSans.variable}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=PT+Sans:wght@400;700&family=Caveat:wght@400;700&family=Great+Vibes&family=Orbitron:wght@400;700&family=Exo+2:wght@300;400;700&family=Share+Tech+Mono&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Bebas+Neue&family=Anton&family=Special+Elite&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Great+Vibes&family=Orbitron:wght@400;700&family=Exo+2:wght@300;400;700&family=Share+Tech+Mono&family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@400;700&family=Bebas+Neue&family=Anton&family=Special+Elite&display=swap"
           rel="stylesheet"
         />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-         <meta name="theme-color" content="#000000" />
       </head>
       <body className="font-body antialiased">
         <ServiceWorkerRegistration />

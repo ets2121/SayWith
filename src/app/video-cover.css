@@ -7,6 +7,9 @@
     z-index: 10;
     transition: opacity 0.4s ease-in-out;
     pointer-events: none; /* Allows clicks to pass through to the player */
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .video-cover.hidden {
