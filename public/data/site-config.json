@@ -14,6 +14,11 @@
     "musicSubtitle": "Synchronized music track",
     "letterText": "Every single day with you is a gift I never take for granted. Forever and always. ❤️"
   },
+  "ordering": {
+    "directChatUrl": "https://messenger.com",
+    "platformName": "Messenger",
+    "buttonLabel": "Chat to Order"
+  },
   "socials": {
     "messengerUrl": "https://messenger.com",
     "instagramUrl": "https://instagram.com",

@@ -19,14 +19,11 @@ import {
   Facebook,
   Instagram,
   MessageCircle,
-  Copy,
-  Check,
   Radio,
   Layers,
   Camera,
   Play,
   Pause,
-  Send,
   Maximize2,
   Film,
   type LucideIcon
@@ -162,7 +159,7 @@ const faqs = [
   },
   {
     q: "How do I order after choosing a template?",
-    a: "Simply browse our 50+ templates, choose the one you love, and click 'Inquire to Order' or message us directly on Messenger or Instagram. Send us your template number, photos/video, music choice, and message—we will craft your digital presence and provide your styled QR photo!"
+    a: "Simply browse our 50+ templates, choose the one you love, and click any 'Message to Order' button. Message us directly on your preferred chat app (Messenger, WhatsApp, or Instagram) with your template number, photos/video, music choice, and message—we craft your digital presence and deliver your link and styled QR photo!"
   },
   {
     q: "Can I update the video or message after it is created?",
@@ -180,12 +177,6 @@ export default function SayWithLandingPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isPlayingHero, setIsPlayingHero] = useState<boolean>(true);
-  
-  // Contact / Inquiry modal state
-  const [inquiryOpen, setInquiryOpen] = useState<boolean>(false);
-  const [selectedTemplateForInquiry, setSelectedTemplateForInquiry] = useState<TemplateItem | null>(null);
-  const [selectedUseCase, setSelectedUseCase] = useState<string>("Acrylic Photo Keychains");
-  const [copiedText, setCopiedText] = useState<boolean>(false);
 
   // Full Screen Template Preview Lightbox Modal
   const [fullScreenTemplate, setFullScreenTemplate] = useState<TemplateItem | null>(null);
@@ -197,14 +188,14 @@ export default function SayWithLandingPage() {
       .then((data) => {
         if (data) setSiteConfig(data);
       })
-      .catch(() => {});
+      .catch(() => { });
 
     fetch("/data/templates.json")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && Array.isArray(data)) setTemplates(data);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const filteredTemplates = templates.filter((t) => {
@@ -217,31 +208,33 @@ export default function SayWithLandingPage() {
     return matchesCategory && matchesSearch;
   });
 
-  const openInquiryModal = (template?: TemplateItem, useCaseName?: string) => {
-    if (template) {
-      setSelectedTemplateForInquiry(template);
-    }
-    if (useCaseName) {
-      setSelectedUseCase(useCaseName);
-    }
-    setInquiryOpen(true);
-  };
-
-  const getInquiryMessage = () => {
-    const templateName = selectedTemplateForInquiry
-      ? `Template #${selectedTemplateForInquiry.num} (${selectedTemplateForInquiry.name})`
-      : "one of your 50+ templates";
-    return `Hi SayWith! I want to create a personalized digital presence using ${templateName} for my ${selectedUseCase}. How can I send my photos, music, and message?`;
-  };
-
-  const handleCopyInquiry = () => {
-    navigator.clipboard.writeText(getInquiryMessage());
-    setCopiedText(true);
-    setTimeout(() => setCopiedText(false), 2500);
-  };
-
   const hero = siteConfig.hero || siteConfigDefault.hero;
   const socials = siteConfig.socials || siteConfigDefault.socials;
+  const ordering = (siteConfig as Record<string, unknown>).ordering as
+    | { directChatUrl?: string; platformName?: string; buttonLabel?: string }
+    | undefined;
+
+  // Direct link generator to configured messaging platform (e.g. Messenger, WhatsApp, or Instagram)
+  const getOrderLink = (template?: TemplateItem, useCaseName?: string) => {
+    const directUrl =
+      ordering?.directChatUrl ||
+      socials?.messengerUrl ||
+      socials?.whatsappUrl ||
+      "https://messenger.com";
+
+    // If configured as WhatsApp, append pre-filled message text automatically
+    if (directUrl.includes("wa.me") || directUrl.includes("whatsapp.com")) {
+      const text = template
+        ? `Hi SayWith! I want to order a custom digital presence with Template #${template.num} (${template.name}).`
+        : useCaseName
+        ? `Hi SayWith! I want to order a custom digital presence for ${useCaseName}.`
+        : "Hi SayWith! I want to inquire about ordering a custom digital presence.";
+      const separator = directUrl.includes("?") ? "&" : "?";
+      return `${directUrl}${separator}text=${encodeURIComponent(text)}`;
+    }
+
+    return directUrl;
+  };
 
   return (
     <div className="bg-background text-foreground antialiased selection:bg-primary selection:text-white" suppressHydrationWarning>
@@ -276,14 +269,19 @@ export default function SayWithLandingPage() {
                 Templates
               </Button>
             </a>
-            <Button
-              size="sm"
-              onClick={() => openInquiryModal()}
-              className="gap-2 shadow-lg shadow-primary/20"
+            <a
+              href={getOrderLink()}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <MessageCircle className="w-4 h-4" />
-              Contact to Order
-            </Button>
+              <Button
+                size="sm"
+                className="gap-2 shadow-lg shadow-primary/20"
+              >
+                <MessageCircle className="w-4 h-4" />
+                {ordering?.buttonLabel || "Contact to Order"}
+              </Button>
+            </a>
           </div>
         </nav>
       </header>
@@ -356,15 +354,21 @@ export default function SayWithLandingPage() {
                   Explore 50+ Templates
                 </Button>
               </a>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => openInquiryModal()}
-                className="w-full sm:w-auto text-base gap-2 px-8 py-6 bg-slate-900/80 border-slate-700 hover:bg-slate-800 text-white backdrop-blur-sm"
+              <a
+                href={getOrderLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
               >
-                <MessageCircle className="w-5 h-5 text-primary" />
-                Contact Us to Order
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto text-base gap-2 px-8 py-6 bg-slate-900/80 border-slate-700 hover:bg-slate-800 text-white backdrop-blur-sm"
+                >
+                  <MessageCircle className="w-5 h-5 text-primary" />
+                  {ordering?.buttonLabel || "Contact Us to Order"}
+                </Button>
+              </a>
             </div>
 
             {/* HERO VISUAL MOCKUP: Example Application (Acrylic Keychain + Styled QR Photo + Phone Screen) */}
@@ -999,7 +1003,7 @@ export default function SayWithLandingPage() {
                     )}
                   </div>
 
-                  {/* Card Bottom Details & Inquire CTA */}
+                  {/* Card Bottom Details & Direct Order CTA */}
                   <div className="mt-4 flex-1 flex flex-col justify-between px-1">
                     <div>
                       <div className="flex justify-between items-baseline">
@@ -1020,12 +1024,14 @@ export default function SayWithLandingPage() {
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>NFC & Styled QR</span>
                       </span>
-                      <button
-                        onClick={() => openInquiryModal(template)}
+                      <a
+                        href={getOrderLink(template)}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-primary transition-colors"
                       >
                         Inquire with This <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -1037,10 +1043,16 @@ export default function SayWithLandingPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Plus {filteredTemplates.length - 18} more handcrafted templates available in the catalog.
                 </p>
-                <Button size="lg" onClick={() => openInquiryModal()} className="gap-2">
-                  <MessageCircle className="w-4 h-4" />
-                  Ask Us About Any Template & Style
-                </Button>
+                <a
+                  href={getOrderLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button size="lg" className="gap-2">
+                    <MessageCircle className="w-4 h-4" />
+                    Message Us About Any Template & Style
+                  </Button>
+                </a>
               </div>
             )}
           </div>
@@ -1107,17 +1119,23 @@ export default function SayWithLandingPage() {
                   </div>
 
                   <div className="mt-8">
-                    <Button
-                      onClick={() => openInquiryModal(undefined, useCase.name)}
-                      className={cn(
-                        "w-full py-5 text-sm font-semibold gap-2",
-                        useCase.highlight ? "shadow-lg shadow-primary/25" : ""
-                      )}
-                      variant={useCase.highlight ? "default" : "outline"}
+                    <a
+                      href={getOrderLink(undefined, useCase.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full block"
                     >
-                      <MessageCircle className="w-4 h-4" />
-                      Inquire for This Idea
-                    </Button>
+                      <Button
+                        className={cn(
+                          "w-full py-5 text-sm font-semibold gap-2",
+                          useCase.highlight ? "shadow-lg shadow-primary/25" : ""
+                        )}
+                        variant={useCase.highlight ? "default" : "outline"}
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        Inquire for This Idea
+                      </Button>
+                    </a>
                     <p className="text-[11px] text-center text-muted-foreground mt-2">
                       Includes lifetime cloud link & custom styled QR photo
                     </p>
@@ -1197,7 +1215,7 @@ export default function SayWithLandingPage() {
                 </span>
                 <h4 className="font-bold text-base">2. Send Us a Message</h4>
                 <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                  Reach out on Messenger or Instagram. Tell us your chosen template and how you plan to use it (keychain, gift card, etc.).
+                  Reach out on Messenger, Instagram, or WhatsApp. Tell us your chosen template and how you plan to use it (keychain, gift card, etc.).
                 </p>
               </div>
 
@@ -1212,7 +1230,7 @@ export default function SayWithLandingPage() {
               </div>
             </div>
 
-            {/* Direct Contact Buttons */}
+            {/* Direct Messaging Platform Links */}
             <div className="mt-10 flex flex-wrap justify-center items-center gap-4">
               <a
                 href={socials.messengerUrl || "https://messenger.com"}
@@ -1238,15 +1256,19 @@ export default function SayWithLandingPage() {
                 </Button>
               </a>
 
-              <Button
-                size="lg"
-                variant="secondary"
-                onClick={() => openInquiryModal()}
-                className="w-full sm:w-auto gap-2 px-6 py-6"
-              >
-                <Send className="w-5 h-5 text-primary" />
-                Open Inquiry Details
-              </Button>
+              {socials.whatsappUrl && (
+                <a
+                  href={getOrderLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto"
+                >
+                  <Button size="lg" variant="secondary" className="w-full sm:w-auto gap-2 px-6 py-6 border border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10">
+                    <Smartphone className="w-5 h-5" />
+                    Chat on WhatsApp
+                  </Button>
+                </a>
+              )}
             </div>
           </div>
         </section>
@@ -1358,19 +1380,19 @@ export default function SayWithLandingPage() {
                 )}
               </div>
 
-              {/* Action Buttons in Modal */}
+              {/* Direct Order Link in Full Screen Modal */}
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => {
-                    const temp = fullScreenTemplate;
-                    setFullScreenTemplate(null);
-                    openInquiryModal(temp);
-                  }}
-                  className="w-full gap-2 py-6 bg-primary text-white"
+                <a
+                  href={getOrderLink(fullScreenTemplate)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  Inquire to Order with Template #{fullScreenTemplate.num}
-                </Button>
+                  <Button className="w-full gap-2 py-6 bg-primary text-white">
+                    <MessageCircle className="w-4 h-4" />
+                    Message to Order Template #{fullScreenTemplate.num}
+                  </Button>
+                </a>
                 <Button
                   variant="outline"
                   onClick={() => setFullScreenTemplate(null)}
@@ -1381,105 +1403,6 @@ export default function SayWithLandingPage() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Inquiry & Order Contact Dialog */}
-      <Dialog open={inquiryOpen} onOpenChange={setInquiryOpen}>
-        <DialogContent className="sm:max-w-md bg-background border border-border p-6 rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
-              Contact Us to Order
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Send us a message with your chosen template and how you plan to use it to start creating your digital presence.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 my-2">
-            {/* Selected Template Badge */}
-            <div className="p-3.5 rounded-xl bg-secondary/60 border border-border">
-              <p className="text-xs text-muted-foreground">Selected Template</p>
-              <p className="text-sm font-bold text-foreground mt-0.5">
-                {selectedTemplateForInquiry
-                  ? `Template #${selectedTemplateForInquiry.num} — ${selectedTemplateForInquiry.name}`
-                  : "Any 50+ Template from Showcase"}
-              </p>
-            </div>
-
-            {/* Intended Use Case Selector */}
-            <div className="p-3.5 rounded-xl bg-secondary/60 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Intended Application / Gift Idea</p>
-              <select
-                value={selectedUseCase}
-                onChange={(e) => setSelectedUseCase(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                {exampleUseCases.map((style) => (
-                  <option key={style.id} value={style.name}>
-                    {style.name} ({style.format})
-                  </option>
-                ))}
-                <option value="Greeting Card / Gift Box">Greeting Card / Gift Box</option>
-                <option value="Photo Frame / Desk Display">Photo Frame / Desk Display</option>
-                <option value="Other Creative Gift">Other Creative Gift</option>
-              </select>
-            </div>
-
-            {/* Pre-formatted Message with Copy Action */}
-            <div className="p-3 rounded-xl bg-background border border-border/80">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-[11px] font-semibold text-muted-foreground">Ready-to-Send Message:</span>
-                <button
-                  onClick={handleCopyInquiry}
-                  className="text-[11px] inline-flex items-center gap-1 text-primary hover:underline font-medium"
-                >
-                  {copiedText ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-500" />
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3" />
-                      <span>Copy Text</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              <p className="text-xs text-muted-foreground italic bg-secondary/40 p-2.5 rounded-lg border border-border/40">
-                &ldquo;{getInquiryMessage()}&rdquo;
-              </p>
-            </div>
-
-            {/* Direct Chat Channels */}
-            <div className="space-y-2 pt-2">
-              <a
-                href={socials.messengerUrl || "https://messenger.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block"
-              >
-                <Button className="w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white">
-                  <MessageCircle className="w-4 h-4" />
-                  Send via Messenger
-                </Button>
-              </a>
-
-              <a
-                href={socials.instagramUrl || "https://instagram.com"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block"
-              >
-                <Button variant="outline" className="w-full gap-2 border-pink-500/40 text-pink-500 hover:bg-pink-500/10">
-                  <Instagram className="w-4 h-4" />
-                  Send via Instagram DM
-                </Button>
-              </a>
-            </div>
-          </div>
         </DialogContent>
       </Dialog>
 
