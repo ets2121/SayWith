@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -14,10 +14,8 @@ import {
   CheckCircle2,
   ChevronDown,
   ArrowRight,
-  ShieldCheck,
   Flame,
   Clock,
-  ExternalLink,
   Facebook,
   Instagram,
   MessageCircle,
@@ -25,11 +23,9 @@ import {
   Check,
   Radio,
   Layers,
-  Box,
   Camera,
   Play,
   Pause,
-  Volume2,
   Send,
   type LucideIcon
 } from "lucide-react";
@@ -59,78 +55,78 @@ const occasions = [
     icon: Heart,
     title: "Couples & Anniversaries",
     badge: "Most Popular",
-    description: "Gift your partner a physical keychain linked to 'your song', love letters, and favorite video clips.",
+    description: "Create a digital memory reel linked to 'your song', love letters, and favorite video clips to pair with keychains or anniversary gifts.",
     example: "Template: Cascading Rose Petals & Spotify Vibe Card"
   },
   {
     icon: Clock,
     title: "Long-Distance Love",
     badge: "Emotional Keepsake",
-    description: "Keep each other close across miles. Tap the token whenever you miss them to hear their voice and video.",
+    description: "Keep each other close across miles. Tap the keychain or scan the styled photo whenever you miss them to hear their voice and video.",
     example: "Template: Love Letter Wax Seal & Midnight Serenade"
   },
   {
     icon: Flame,
     title: "Birthdays & Milestones",
-    badge: "Unforgettable Gift",
-    description: "Ditch ordinary paper greeting cards. Hand them a custom keepsake token loaded with memorable footage.",
+    badge: "Unforgettable Surprise",
+    description: "Ditch ordinary paper greeting cards. Give them a digital story loaded with celebratory footage, voice greetings, and personal messages.",
     example: "Template: Golden Hour Glow & Hollywood Premiere"
   },
   {
     icon: Sparkles,
     title: "Memorials & Tributes",
     badge: "Forever Cherished",
-    description: "Preserve the precious laughter, voice, and smile of a loved one or pet close to your heart on a durable keepsake.",
+    description: "Preserve the precious laughter, voice, and smile of a loved one or pet close to your heart on a durable digital keepsake.",
     example: "Template: Cosmic Galaxy Night & Velvet Charcoal"
   }
 ];
 
-const keepsakeStyles = [
+const exampleUseCases = [
   {
     id: "acrylic-keychain",
-    name: "Classic Acrylic NFC Keychain",
-    tagline: "Everyday memory companion with high-gloss finish",
-    format: "Crystal Clear Acrylic",
-    badge: "Bestseller",
-    description: "Our signature double-sided acrylic keepsake. Holds an embedded NFC microchip on one side and your vibrant styled QR code photo on the other.",
+    name: "Acrylic Photo Keychains",
+    tagline: "The most popular way to carry a memory every day",
+    format: "Keychain / Bag Charm Idea",
+    badge: "Top Gift Idea",
+    description: "Slide your SayWith styled QR code photo into a clear acrylic keychain blank and write your memory link onto an embedded NFC tag. Tap with any phone or scan the photo to replay.",
     features: [
-      "Built-in NTAG213 / NTAG215 NFC smart chip",
-      "Scratch-resistant crystal clear acrylic body",
-      "High-resolution custom styled QR code photo insert",
+      "SayWith custom styled QR code photo (print-ready)",
+      "Instant NFC tap link ready for any NTAG chip",
+      "Synchronized music, video clips & personal note",
       "Lifetime unlimited digital taps & scans",
-      "Protective gift pouch included"
+      "Editable anytime without changing the physical item"
     ],
     highlight: true
   },
   {
     id: "couples-set",
-    name: "Couples Matching Set (2x Keychains)",
-    tagline: "For two hearts sharing one cherished memory",
-    format: "Synchronized Dual Pair",
+    name: "Couples Matching Keepsakes",
+    tagline: "For two hearts sharing one cherished digital memory",
+    format: "Twin Keepsake Idea",
     badge: "Couples Favorite",
-    description: "Two matching physical keychains linked to the same shared memory reel, special song, and heartfelt letters. One for you, one for your love.",
+    description: "One digital memory reel shared between two physical items—matching keychains, twin wallet cards, or twin pendants. Both partners tap or scan to relive the same memory.",
     features: [
-      "Two synchronized NFC smart keychains",
-      "Custom couple photo with matching styled QR photo",
-      "Linked to shared video reel, music & message",
-      "Dual-sided: Instant NFC tap + styled QR photo scan",
-      "Premium gift packaging ready to present"
+      "Single synchronized digital story for both partners",
+      "Custom couple photo + twin styled QR photo designs",
+      "Dual-access: Tap with phone NFC or scan styled QR photo",
+      "Replay voice notes, special song & anniversary timeline",
+      "Easy to load onto matching NFC tags or wallet cards"
     ],
     highlight: false
   },
   {
-    id: "memory-token",
-    name: "Pocket Keepsake Token & Photo Card",
-    tagline: "Slim memory token for wallets, bags, or desks",
-    format: "Pocket Token + Styled QR Card",
-    badge: "Sleek & Portable",
-    description: "A sleek palm-sized smart token with embedded NFC antenna, accompanied by a wallet-sized styled QR photo card to keep memories always within reach.",
+    id: "cards-and-tokens",
+    name: "Greeting Cards, Tokens & Frames",
+    tagline: "Elevate physical presents, letters, and desk displays",
+    format: "Cards & Displays Idea",
+    badge: "Creative Gifting",
+    description: "Print your custom styled QR photo for desk frames, slip it into a wallet, or affix an ultra-thin NFC sticker onto greeting cards, gift boxes, and scrapbooks.",
     features: [
-      "Precision durable pocket token with embedded NFC",
-      "Paired wallet-sized styled QR photo print card",
-      "Weather-resistant build crafted to last for years",
-      "Works with all modern iPhone and Android smartphones",
-      "Velvet keepsake pouch included"
+      "High-resolution styled QR photo file for crisp printing",
+      "Compatible with any NFC card, coin token, or sticker",
+      "Surprise the recipient the moment they open the gift",
+      "Zero app download needed for anyone viewing",
+      "Cloud-hosted forever with no recurring fees"
     ],
     highlight: false
   }
@@ -138,20 +134,24 @@ const keepsakeStyles = [
 
 const faqs = [
   {
-    q: "How does the NFC tap work?",
-    a: "Every SayWith keepsake has a built-in NFC (Near Field Communication) chip. Simply hold the top of your iPhone or back of your Android phone near the keychain. A notification banner instantly pops up on your screen. Tap it, and your personalized cinematic story opens immediately in the browser."
+    q: "What does SayWith produce?",
+    a: "SayWith creates the interactive digital presence for your gifts: we craft your personalized multimedia story using your chosen template (video, photos, audio music or voice recordings, and synchronized letter/captions) and deliver your high-resolution custom styled QR code photo along with your dynamic NFC-ready link. Physical items like keychains, tokens, and gift cards are example ways you can use your SayWith memory in the real world!"
+  },
+  {
+    q: "Do you sell physical keychains or tokens?",
+    a: "We specialize in producing the digital presence and the personalized styled QR code photo. Keychains, tokens, and cards shown on our site are examples of how customers bring their digital memories into physical objects. You can easily slip your styled QR photo into an acrylic keychain blank or write the link onto any NFC tag or sticker in seconds."
   },
   {
     q: "What is the styled QR code photo?",
-    a: "Instead of an ordinary black-and-white barcode, we design a custom styled QR code photo. It features your own photo, beautiful borders, and artistic design accents with a scannable QR code harmonized into the picture. Any smartphone camera can scan it instantly, providing the perfect fallback for devices without NFC or when displaying the photo on a desk or wallet."
+    a: "Instead of an ordinary black-and-white barcode, we design a custom styled QR code photo. It features your chosen photo, beautiful borders, and artistic design accents with a scannable QR code harmonized into the picture. Any smartphone camera can scan it instantly, providing the perfect fallback for devices without NFC or when displaying the photo on a desk or in a wallet."
+  },
+  {
+    q: "How does the NFC tap work?",
+    a: "When you or your gift maker writes the SayWith link onto any standard NFC tag or smart keychain (takes 5 seconds with free phone apps like NFC Tools), simply hold the top of your iPhone or back of your Android near it. A notification banner instantly pops up on your screen. Tap it, and your personalized story opens immediately in the browser."
   },
   {
     q: "Does the recipient need to download an app?",
-    a: "No! Absolutely zero apps are required. It opens natively in Safari, Chrome, or your phone's default browser on both iOS and Android. Anyone can experience it in seconds."
-  },
-  {
-    q: "What if someone's phone doesn't have NFC?",
-    a: "Every physical keepsake comes paired with a high-resolution styled QR code photo. Any smartphone camera can simply point at the photo to scan and open the exact same interactive experience instantly."
+    a: "No! Absolutely zero apps are required for anyone viewing or scanning. It opens natively in Safari, Chrome, or your phone's default browser on both iOS and Android in seconds."
   },
   {
     q: "What can I put on my personalized template?",
@@ -159,15 +159,15 @@ const faqs = [
   },
   {
     q: "How do I order after choosing a template?",
-    a: "Simply browse our 50+ templates, choose the one you love, and click 'Inquire to Order' or message us directly on Messenger or Instagram. Send us your template number, photos/video, music choice, and message—we will craft your physical keepsake and deliver it to you!"
+    a: "Simply browse our 50+ templates, choose the one you love, and click 'Inquire to Order' or message us directly on Messenger or Instagram. Send us your template number, photos/video, music choice, and message—we will craft your digital presence and provide your styled QR photo!"
   },
   {
-    q: "Can I update the video or message after receiving my keepsake?",
-    a: "Yes! Your SayWith link is completely dynamic. If you want to change the video, swap photos, or update the letter for a future anniversary, you can update your link anytime without needing a new physical keepsake."
+    q: "Can I update the video or message after it is created?",
+    a: "Yes! Your SayWith link is completely dynamic. If you want to change the video, swap photos, or update the letter for a future anniversary, you can update your memory anytime without needing to change your physical keychain or QR code."
   },
   {
     q: "How long does my digital memory stay online?",
-    a: "Your digital memory is stored with lifetime cloud hosting and unlimited taps. There are zero monthly subscription fees or expiration dates."
+    a: "Your digital memory is stored with lifetime cloud hosting and unlimited taps/scans. There are zero monthly subscription fees or expiration dates."
   }
 ];
 
@@ -179,7 +179,7 @@ export default function SayWithLandingPage() {
   // Contact / Inquiry modal state
   const [inquiryOpen, setInquiryOpen] = useState<boolean>(false);
   const [selectedTemplateForInquiry, setSelectedTemplateForInquiry] = useState<TemplateItem | null>(null);
-  const [selectedKeepsakeStyle, setSelectedKeepsakeStyle] = useState<string>("Classic Acrylic NFC Keychain");
+  const [selectedUseCase, setSelectedUseCase] = useState<string>("Acrylic Photo Keychains");
   const [copiedText, setCopiedText] = useState<boolean>(false);
 
   const filteredTemplates = TEMPLATE_CATALOG.filter((t) => {
@@ -191,12 +191,12 @@ export default function SayWithLandingPage() {
     return matchesCategory && matchesSearch;
   });
 
-  const openInquiryModal = (template?: TemplateItem, keepsakeName?: string) => {
+  const openInquiryModal = (template?: TemplateItem, useCaseName?: string) => {
     if (template) {
       setSelectedTemplateForInquiry(template);
     }
-    if (keepsakeName) {
-      setSelectedKeepsakeStyle(keepsakeName);
+    if (useCaseName) {
+      setSelectedUseCase(useCaseName);
     }
     setInquiryOpen(true);
   };
@@ -205,7 +205,7 @@ export default function SayWithLandingPage() {
     const templateName = selectedTemplateForInquiry
       ? `Template #${selectedTemplateForInquiry.num} (${selectedTemplateForInquiry.name})`
       : "one of your 50+ templates";
-    return `Hi SayWith! I want to order a custom ${selectedKeepsakeStyle} with ${templateName}. How can I send my photos, music, and message?`;
+    return `Hi SayWith! I want to create a personalized digital presence using ${templateName} for my ${selectedUseCase}. How can I send my photos, music, and message?`;
   };
 
   const handleCopyInquiry = () => {
@@ -233,9 +233,9 @@ export default function SayWithLandingPage() {
 
           <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
             <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
-            <a href="#mockups" className="hover:text-primary transition-colors">Showcase</a>
+            <a href="#mockups" className="hover:text-primary transition-colors">Examples & Mockups</a>
             <a href="#templates" className="hover:text-primary transition-colors">50+ Templates</a>
-            <a href="#keepsakes" className="hover:text-primary transition-colors">Keepsake Styles</a>
+            <a href="#use-cases" className="hover:text-primary transition-colors">Use Cases</a>
             <a href="#occasions" className="hover:text-primary transition-colors">Occasions</a>
             <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           </div>
@@ -260,7 +260,7 @@ export default function SayWithLandingPage() {
       </header>
 
       <main>
-        {/* Hero Section with Interactive Mockups */}
+        {/* Hero Section */}
         <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-12 md:py-20 px-4">
           {/* Subtle Ambient Background */}
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-950/30 via-background to-background">
@@ -273,32 +273,32 @@ export default function SayWithLandingPage() {
             <div className="flex justify-center">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs md:text-sm font-semibold mb-6">
                 <Sparkles className="w-4 h-4" />
-                <span>Smart NFC Chips & Custom Styled QR Code Photos</span>
+                <span>The Digital Presence for Keychains, Gifts & Keepsakes</span>
               </div>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-headline font-bold tracking-tight text-center drop-shadow-md text-foreground">
-              Hold the Keepsake. <br />
+              The Digital Heart of Your Keepsake. <br />
               <span className="bg-gradient-to-r from-blue-400 via-primary to-cyan-300 bg-clip-text text-transparent">
-                Tap to Relive the Memory.
+                Tap with NFC. Scan with Styled QR.
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="mt-5 max-w-2xl mx-auto text-center text-sm sm:text-base md:text-lg text-muted-foreground font-light leading-relaxed">
-              Personalized acrylic keychains and gift keepsakes embedded with instant <strong className="text-foreground font-medium">NFC smart chips</strong> and paired with custom <strong className="text-foreground font-medium">styled QR code photos</strong>. Tap with any phone to immediately reveal your personalized video, music, and heartfelt letters.
+              SayWith crafts the interactive <strong className="text-foreground font-medium">digital presence</strong> for your physical gifts. Connect 50+ cinematic templates, personal videos, and favorite music to keychains, tokens, and gift cards using <strong className="text-foreground font-medium">NFC chips</strong> or custom <strong className="text-foreground font-medium">styled QR code photos</strong>.
             </p>
 
             {/* Technology Pill Bar */}
             <div className="mt-6 flex flex-wrap justify-center items-center gap-3 text-xs sm:text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 bg-secondary/80 px-3.5 py-1.5 rounded-full border border-border">
                 <Smartphone className="w-4 h-4 text-cyan-400" />
-                Instant Phone NFC Tap
+                NFC Ready (Instant Phone Tap)
               </span>
               <span className="inline-flex items-center gap-1.5 bg-secondary/80 px-3.5 py-1.5 rounded-full border border-border">
                 <QrCode className="w-4 h-4 text-emerald-400" />
-                Styled QR Code Photo
+                Custom Styled QR Code Photo
               </span>
               <span className="inline-flex items-center gap-1.5 bg-secondary/80 px-3.5 py-1.5 rounded-full border border-border">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
@@ -311,7 +311,7 @@ export default function SayWithLandingPage() {
               <a href="#templates" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto text-base gap-2 px-8 py-6 shadow-xl shadow-primary/25">
                   <Eye className="w-5 h-5" />
-                  Show All 50+ Templates
+                  Explore 50+ Templates
                 </Button>
               </a>
               <Button
@@ -325,7 +325,7 @@ export default function SayWithLandingPage() {
               </Button>
             </div>
 
-            {/* HERO VISUAL MOCKUP: Physical Keepsake + Styled QR Photo + Live Phone Screen */}
+            {/* HERO VISUAL MOCKUP: Example Application (Acrylic Keychain + Styled QR Photo + Phone Screen) */}
             <div className="mt-14 max-w-4xl mx-auto">
               <div className="relative rounded-3xl bg-secondary/40 border border-border/80 p-6 md:p-10 shadow-2xl backdrop-blur-sm overflow-hidden">
                 {/* Decorative background grid and glow */}
@@ -333,15 +333,20 @@ export default function SayWithLandingPage() {
                 <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="text-center mb-8">
-                  <span className="text-xs uppercase tracking-widest text-primary font-semibold">Interactive Showcase</span>
-                  <h3 className="text-xl md:text-2xl font-bold mt-1">From Tangible Keepsake to Digital Screen</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-1">Tap the physical keychain with your phone or point at the styled QR code photo</p>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Example Real-World Application</span>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-bold">Physical Keepsake + SayWith Digital Presence</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground mt-1">
+                    Use your digital presence in an acrylic keychain with an NFC chip, or with your custom styled QR photo card
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                  {/* Left Column: Physical Keepsake & Styled QR Photo Mockup */}
+                  {/* Left Column: Physical Application Example Mockup */}
                   <div className="md:col-span-5 flex flex-col items-center gap-6">
-                    {/* Physical Acrylic Keychain Mockup */}
+                    {/* Example Acrylic Keychain */}
                     <div className="relative flex flex-col items-center group">
                       {/* Metal Ring and Chain */}
                       <div className="w-9 h-9 rounded-full border-4 border-slate-300 dark:border-slate-500 shadow-md flex items-center justify-center -mb-2 z-20">
@@ -358,7 +363,7 @@ export default function SayWithLandingPage() {
                         <div className="flex justify-between items-center z-10">
                           <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
                             <Radio className="w-2.5 h-2.5 animate-pulse" />
-                            NFC Chip Inside
+                            NFC Chip Tap
                           </span>
                           <span className="text-[10px] text-muted-foreground font-mono">NTAG215</span>
                         </div>
@@ -387,7 +392,7 @@ export default function SayWithLandingPage() {
 
                         {/* Bottom Tag */}
                         <div className="text-center z-10 py-1">
-                          <span className="text-[11px] font-medium text-foreground">Acrylic Smart Keychain</span>
+                          <span className="text-[11px] font-medium text-foreground">Example Keychain Usage</span>
                         </div>
                       </div>
                     </div>
@@ -401,8 +406,8 @@ export default function SayWithLandingPage() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-xs font-bold text-foreground truncate">Styled QR Photo</p>
-                        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Custom photo card with scannable QR</p>
-                        <span className="inline-block mt-1 text-[9px] text-emerald-400 font-medium">Camera fallback ready</span>
+                        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">Printable custom photo card</p>
+                        <span className="inline-block mt-1 text-[9px] text-emerald-400 font-medium">Any camera can scan</span>
                       </div>
                     </div>
                   </div>
@@ -424,7 +429,7 @@ export default function SayWithLandingPage() {
                     </div>
                   </div>
 
-                  {/* Right Column: Smartphone Digital Template Mockup */}
+                  {/* Right Column: Smartphone Digital Story Mockup */}
                   <div className="md:col-span-5 flex justify-center">
                     <div className="w-64 sm:w-72 rounded-[36px] bg-slate-900 border-[6px] border-slate-700/80 shadow-2xl overflow-hidden p-2 relative text-white">
                       {/* Phone Speaker Pill / Dynamic Island */}
@@ -458,7 +463,7 @@ export default function SayWithLandingPage() {
                               SayWith Memories
                             </span>
                             <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded-full backdrop-blur-sm">
-                              HD 4K Video
+                              HD Video
                             </span>
                           </div>
 
@@ -481,7 +486,7 @@ export default function SayWithLandingPage() {
                               </button>
                               <div className="min-w-0">
                                 <p className="text-[11px] font-semibold truncate leading-tight">Until I Found You</p>
-                                <p className="text-[9px] text-slate-300 truncate">Custom song / voice note</p>
+                                <p className="text-[9px] text-slate-300 truncate">Synchronized music track</p>
                               </div>
                             </div>
 
@@ -513,19 +518,19 @@ export default function SayWithLandingPage() {
           </div>
         </section>
 
-        {/* Supporting Mockups & Visual Showcase Section */}
+        {/* Examples of Physical Usage Section */}
         <section id="mockups" className="py-20 bg-secondary/30 border-y border-border/50">
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-xs uppercase tracking-widest text-primary font-semibold">Visual Showcase</h2>
-              <p className="text-3xl sm:text-4xl font-headline font-bold mt-2">Crafted Keepsake & Styled QR Photo</p>
+              <h2 className="text-xs uppercase tracking-widest text-primary font-semibold">Real-World Examples</h2>
+              <p className="text-3xl sm:text-4xl font-headline font-bold mt-2">Where You Can Use Your Digital Presence</p>
               <p className="mt-3 text-muted-foreground">
-                See how every piece is carefully designed: physical quality in your hand, personalized art, and instant tap playback.
+                We craft your digital story and custom styled QR photo. Here are the most popular ways customers bring it into the physical world using NFC or QR codes.
               </p>
             </div>
 
             <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Mockup Card 1: Acrylic Smart Keychain */}
+              {/* Mockup Card 1: Keychains & Bag Charms */}
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-blue-900/40 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
@@ -537,16 +542,16 @@ export default function SayWithLandingPage() {
                       </div>
                       <div className="w-8 h-1 rounded-full bg-white/40"></div>
                     </div>
-                    <span className="absolute bottom-2 text-[10px] text-primary font-semibold">Crystal Clear Acrylic</span>
+                    <span className="absolute bottom-2 text-[10px] text-primary font-semibold">Example: Acrylic Keychain</span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Acrylic NFC Keychain</h3>
+                  <h3 className="text-lg font-bold mt-4">Keychains & Bag Charms</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Double-sided durable acrylic with an embedded high-gain NFC chip and your favorite photo on display.
+                    Insert your styled QR photo inside an acrylic keychain blank or program an embedded NFC tag. Tap with any phone to replay.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-primary font-medium">
                   <Radio className="w-3.5 h-3.5" />
-                  <span>Instant Tap Ready</span>
+                  <span>NFC & Styled QR Ready</span>
                 </div>
               </div>
 
@@ -564,11 +569,11 @@ export default function SayWithLandingPage() {
                       </div>
                       <span className="text-[8px] text-muted-foreground font-mono">SCAN ME</span>
                     </div>
-                    <span className="absolute bottom-2 text-[10px] text-rose-400 font-semibold">Artistic Photo Card</span>
+                    <span className="absolute bottom-2 text-[10px] text-rose-400 font-semibold">Printable Photo Card</span>
                   </div>
                   <h3 className="text-lg font-bold mt-4">Styled QR Code Photo</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Not a dull barcode! A custom photo keepsake card with a stylized scannable QR code embedded into the design.
+                    We deliver a high-resolution artistic photo card with your picture and a scannable QR code. Perfect for wallets, desks, or gifts.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-rose-400 font-medium">
@@ -577,7 +582,7 @@ export default function SayWithLandingPage() {
                 </div>
               </div>
 
-              {/* Mockup Card 3: The Phone Tap Action */}
+              {/* Mockup Card 3: Greeting Cards & Gift Boxes */}
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-cyan-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
@@ -594,9 +599,9 @@ export default function SayWithLandingPage() {
                     </div>
                     <span className="absolute bottom-2 text-[10px] text-cyan-400 font-semibold">Instant Web Popup</span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Seamless Phone Tap</h3>
+                  <h3 className="text-lg font-bold mt-4">Cards & Gift Boxes</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Just tap the top of your iPhone or back of your Android. The memory plays natively in Safari or Chrome.
+                    Stick an ultra-thin NFC sticker or print your styled QR photo inside greeting cards, love letters, and anniversary gift packaging.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-cyan-400 font-medium">
@@ -605,7 +610,7 @@ export default function SayWithLandingPage() {
                 </div>
               </div>
 
-              {/* Mockup Card 4: Gift Packaging Presentation */}
+              {/* Mockup Card 4: Desk Displays & Tokens */}
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-amber-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
@@ -615,35 +620,35 @@ export default function SayWithLandingPage() {
                         <Gift className="w-4 h-4" />
                       </div>
                       <div className="text-center">
-                        <p className="text-[10px] font-bold text-amber-200">Ready to Gift</p>
-                        <p className="text-[8px] text-slate-300">Pouch & Photo Card</p>
+                        <p className="text-[10px] font-bold text-amber-200">Pocket Token / Frame</p>
+                        <p className="text-[8px] text-slate-300">Desk Photo & Token</p>
                       </div>
                       <div className="w-12 h-1 rounded-full bg-amber-400/40"></div>
                     </div>
-                    <span className="absolute bottom-2 text-[10px] text-amber-400 font-semibold">Unforgettable Unboxing</span>
+                    <span className="absolute bottom-2 text-[10px] text-amber-400 font-semibold">Framed or Pocket Size</span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Gift Ready Presentation</h3>
+                  <h3 className="text-lg font-bold mt-4">Tokens & Desk Displays</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Arrives packaged with a protective pouch and matching styled QR photo card, ready to hand directly to your special someone.
+                    Keep your loved one&apos;s digital voice and memory on a desk frame or pocket coin token. Tap or scan anytime you want a smile.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
                   <Gift className="w-3.5 h-3.5" />
-                  <span>Complete Gifting Package</span>
+                  <span>Memories On Your Desk</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* How It Works: Physical Keepsake -> Digital Memory */}
+        {/* How It Works: Selecting Template -> Digital Presence Delivered */}
         <section id="how-it-works" className="py-20">
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-xs uppercase tracking-widest text-primary font-semibold">The Experience</h2>
-              <p className="text-3xl sm:text-4xl font-headline font-bold mt-2">How SayWith Brings Memories to Life</p>
+              <h2 className="text-xs uppercase tracking-widest text-primary font-semibold">The Process</h2>
+              <p className="text-3xl sm:text-4xl font-headline font-bold mt-2">How We Create Your Digital Presence</p>
               <p className="mt-3 text-muted-foreground">
-                A seamless bridge between a physical keepsake you can hold and a digital memory you can replay anytime.
+                We design and host your interactive digital story, providing you with your custom styled QR photo and NFC link.
               </p>
             </div>
 
@@ -653,22 +658,7 @@ export default function SayWithLandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
                   1
                 </div>
-                <h3 className="text-lg font-bold">Pick Your Keepsake</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Choose from custom acrylic keychains, couple&apos;s matching pairs, or pocket memory tokens with styled QR photo cards.
-                </p>
-                <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
-                  <Gift className="w-3.5 h-3.5" />
-                  <span>Physical keepsake</span>
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="bg-background/80 p-6 rounded-2xl border border-border/70 flex flex-col items-start relative group hover:border-primary/50 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
-                  2
-                </div>
-                <h3 className="text-lg font-bold">Select a Template</h3>
+                <h3 className="text-lg font-bold">Pick a Template</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Browse 50+ cinematic designs: Falling Rose Petals, Retro Vinyl, Starry Night, Polaroid, or Spotify cards.
                 </p>
@@ -678,18 +668,33 @@ export default function SayWithLandingPage() {
                 </div>
               </div>
 
+              {/* Step 2 */}
+              <div className="bg-background/80 p-6 rounded-2xl border border-border/70 flex flex-col items-start relative group hover:border-primary/50 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                  2
+                </div>
+                <h3 className="text-lg font-bold">Message Us Your Media</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Send us your photos or video clip, favorite background music or voice message, and personal letter via chat.
+                </p>
+                <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
+                  <Music className="w-3.5 h-3.5" />
+                  <span>Media + audio sync</span>
+                </div>
+              </div>
+
               {/* Step 3 */}
               <div className="bg-background/80 p-6 rounded-2xl border border-border/70 flex flex-col items-start relative group hover:border-primary/50 transition-colors">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
                   3
                 </div>
-                <h3 className="text-lg font-bold">Message Us Your Media</h3>
+                <h3 className="text-lg font-bold">Get Your Digital Presence</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Send us your photos or video clip, favorite background music or voice message, and personal note via chat.
+                  We host your memory forever and provide your high-resolution custom styled QR photo card and NFC link.
                 </p>
                 <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
-                  <Music className="w-3.5 h-3.5" />
-                  <span>Media + audio sync</span>
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>Styled QR Photo + Link</span>
                 </div>
               </div>
 
@@ -698,13 +703,13 @@ export default function SayWithLandingPage() {
                 <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
                   4
                 </div>
-                <h3 className="text-lg font-bold">Tap with NFC or Scan</h3>
+                <h3 className="text-lg font-bold">Use in Keychains & Gifts</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Hold any smartphone to the keychain or scan the paired styled QR photo. The personalized story plays instantly!
+                  Load it onto any NFC keychain or print your styled QR photo for cards, frames, or tokens. Tap or scan anytime!
                 </p>
                 <div className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium">
                   <Smartphone className="w-3.5 h-3.5" />
-                  <span>Instant phone tap</span>
+                  <span>Instant NFC & QR access</span>
                 </div>
               </div>
             </div>
@@ -722,7 +727,7 @@ export default function SayWithLandingPage() {
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-headline font-bold">Explore All 50+ Templates</h2>
                 <p className="mt-2 text-muted-foreground max-w-xl">
-                  Choose the exact vibe that fits your gift: from falling rose petals and stardust particles to retro vinyls and movie reels.
+                  Choose the exact vibe for your digital presence: from falling rose petals and stardust particles to retro vinyls and movie reels.
                 </p>
               </div>
 
@@ -818,55 +823,58 @@ export default function SayWithLandingPage() {
           </div>
         </section>
 
-        {/* Physical Keepsake Styles Showcase (Showcase without direct order/pricing) */}
-        <section id="keepsakes" className="py-20">
+        {/* Example Use Cases Showcase */}
+        <section id="use-cases" className="py-20">
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-xs uppercase tracking-widest text-primary font-semibold">Keepsake Styles</h2>
-              <p className="text-3xl sm:text-4xl font-headline font-bold mt-2">Physical Formats to Match Your Memory</p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
+                <Layers className="w-3.5 h-3.5" />
+                <span>Example Applications</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-headline font-bold">Ways to Use Your SayWith Presence</h2>
               <p className="mt-3 text-muted-foreground">
-                Choose the physical format you want. Every piece comes embedded with an instant NFC smart chip and a paired styled QR code photo card.
+                We produce the digital experience and custom styled QR photo. Here are popular ways you or your gift maker can bring it into the physical world.
               </p>
             </div>
 
             <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-              {keepsakeStyles.map((prod) => (
+              {exampleUseCases.map((useCase) => (
                 <div
-                  key={prod.id}
+                  key={useCase.id}
                   className={cn(
                     "rounded-3xl p-8 flex flex-col justify-between transition-all relative",
-                    prod.highlight
+                    useCase.highlight
                       ? "bg-secondary border-2 border-primary shadow-2xl shadow-primary/10"
                       : "bg-secondary/40 border border-border"
                   )}
                 >
-                  {prod.highlight && (
+                  {useCase.highlight && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
-                      Most Popular Style
+                      Top Gift Idea
                     </div>
                   )}
 
                   <div>
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-                        {prod.badge}
+                        {useCase.badge}
                       </span>
                     </div>
 
-                    <h3 className="text-2xl font-bold mt-4">{prod.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{prod.tagline}</p>
+                    <h3 className="text-2xl font-bold mt-4">{useCase.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">{useCase.tagline}</p>
                     
                     <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-background/80 border border-border text-xs font-medium text-foreground">
                       <Gift className="w-3.5 h-3.5 text-primary" />
-                      <span>{prod.format}</span>
+                      <span>{useCase.format}</span>
                     </div>
 
                     <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
-                      {prod.description}
+                      {useCase.description}
                     </p>
 
                     <ul className="mt-6 space-y-3 text-sm">
-                      {prod.features.map((feat, fIdx) => (
+                      {useCase.features.map((feat, fIdx) => (
                         <li key={fIdx} className="flex items-start gap-2.5">
                           <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                           <span className="text-muted-foreground text-xs sm:text-sm">{feat}</span>
@@ -877,15 +885,15 @@ export default function SayWithLandingPage() {
 
                   <div className="mt-8">
                     <Button
-                      onClick={() => openInquiryModal(undefined, prod.name)}
+                      onClick={() => openInquiryModal(undefined, useCase.name)}
                       className={cn(
                         "w-full py-5 text-sm font-semibold gap-2",
-                        prod.highlight ? "shadow-lg shadow-primary/25" : ""
+                        useCase.highlight ? "shadow-lg shadow-primary/25" : ""
                       )}
-                      variant={prod.highlight ? "default" : "outline"}
+                      variant={useCase.highlight ? "default" : "outline"}
                     >
                       <MessageCircle className="w-4 h-4" />
-                      Inquire About This Style
+                      Inquire for This Idea
                     </Button>
                     <p className="text-[11px] text-center text-muted-foreground mt-2">
                       Includes lifetime cloud link & custom styled QR photo
@@ -946,7 +954,7 @@ export default function SayWithLandingPage() {
               Ready to Order? Message Us Directly.
             </h2>
             <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-              We make the ordering process effortless. Pick your favorite template from our showcase, then contact us through your preferred chat app to complete your personalized gift!
+              We make the ordering process effortless. Pick your favorite template from our showcase, then message us on your preferred chat app to receive your custom digital presence and styled QR photo!
             </p>
 
             <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
@@ -956,7 +964,7 @@ export default function SayWithLandingPage() {
                 </span>
                 <h4 className="font-bold text-base">1. Choose a Template</h4>
                 <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                  Browse our 50+ templates and note the template name or number you want for your keepsake.
+                  Browse our 50+ templates and note the template name or number you want for your memory story.
                 </p>
               </div>
 
@@ -966,7 +974,7 @@ export default function SayWithLandingPage() {
                 </span>
                 <h4 className="font-bold text-base">2. Send Us a Message</h4>
                 <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                  Reach out on Messenger, Instagram, or WhatsApp. Tell us which template and keepsake style you chose.
+                  Reach out on Messenger or Instagram. Tell us your chosen template and how you plan to use it (keychain, gift card, etc.).
                 </p>
               </div>
 
@@ -974,9 +982,9 @@ export default function SayWithLandingPage() {
                 <span className="w-8 h-8 rounded-full bg-primary/20 text-primary font-bold text-sm flex items-center justify-center mb-3">
                   C
                 </span>
-                <h4 className="font-bold text-base">3. Send Media & Relax</h4>
+                <h4 className="font-bold text-base">3. Send Media & Get Link</h4>
                 <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                  Send your photos, video clip, song title, or letter. We craft your physical NFC keepsake and ship it to you!
+                  Send your photos, video clip, song title, or letter. We deliver your hosted digital link and custom styled QR photo!
                 </p>
               </div>
             </div>
@@ -1027,7 +1035,7 @@ export default function SayWithLandingPage() {
               <h2 id="faq-heading" className="text-xs uppercase tracking-widest text-primary font-semibold">Common Questions</h2>
               <p className="text-3xl sm:text-4xl font-headline font-bold mt-2">Everything You Need to Know</p>
               <p className="mt-3 text-muted-foreground">
-                How NFC technology, styled QR code photos, and digital templates work together.
+                How our digital presence, styled QR code photos, and physical NFC applications work together.
               </p>
             </div>
 
@@ -1062,7 +1070,7 @@ export default function SayWithLandingPage() {
               Contact Us to Order
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              Send us a message with your chosen template and keepsake style to start customizing your gift.
+              Send us a message with your chosen template and how you plan to use it to start creating your digital presence.
             </DialogDescription>
           </DialogHeader>
 
@@ -1077,19 +1085,22 @@ export default function SayWithLandingPage() {
               </p>
             </div>
 
-            {/* Keepsake Style Selector */}
+            {/* Intended Use Case Selector */}
             <div className="p-3.5 rounded-xl bg-secondary/60 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Keepsake Style</p>
+              <p className="text-xs text-muted-foreground mb-1">Intended Application / Gift Idea</p>
               <select
-                value={selectedKeepsakeStyle}
-                onChange={(e) => setSelectedKeepsakeStyle(e.target.value)}
+                value={selectedUseCase}
+                onChange={(e) => setSelectedUseCase(e.target.value)}
                 className="w-full px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
-                {keepsakeStyles.map((style) => (
+                {exampleUseCases.map((style) => (
                   <option key={style.id} value={style.name}>
                     {style.name} ({style.format})
                   </option>
                 ))}
+                <option value="Greeting Card / Gift Box">Greeting Card / Gift Box</option>
+                <option value="Photo Frame / Desk Display">Photo Frame / Desk Display</option>
+                <option value="Other Creative Gift">Other Creative Gift</option>
               </select>
             </div>
 
@@ -1156,14 +1167,14 @@ export default function SayWithLandingPage() {
             <div className="flex items-center gap-3">
               <Image src="/icons/icon-192x192.png" alt="SayWith Logo" width={32} height={32} className="rounded-lg" />
               <span className="font-headline font-bold text-lg">SayWith</span>
-              <span className="text-xs text-muted-foreground">Smart NFC & Styled QR Keepsakes</span>
+              <span className="text-xs text-muted-foreground">Digital Presence for Smart NFC & QR Keepsakes</span>
             </div>
 
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
-              <a href="#mockups" className="hover:text-primary transition-colors">Showcase</a>
+              <a href="#mockups" className="hover:text-primary transition-colors">Mockups & Examples</a>
               <a href="#templates" className="hover:text-primary transition-colors">Templates</a>
-              <a href="#keepsakes" className="hover:text-primary transition-colors">Keepsakes</a>
+              <a href="#use-cases" className="hover:text-primary transition-colors">Use Cases</a>
               <a href="#contact" className="hover:text-primary transition-colors">Contact to Order</a>
               <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
             </div>
@@ -1185,7 +1196,7 @@ export default function SayWithLandingPage() {
           </div>
 
           <div className="mt-8 pt-6 border-t border-border/40 text-center text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} SayWith. All rights reserved. Smart NFC Tap & Custom Styled QR Code Photo Keepsakes.
+            &copy; {new Date().getFullYear()} SayWith. All rights reserved. The digital presence provider for NFC tap & styled QR code photo memories.
           </div>
         </div>
       </footer>
