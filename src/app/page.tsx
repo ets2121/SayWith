@@ -168,6 +168,10 @@ const faqs = [
   {
     q: "How long does my digital memory stay online?",
     a: "Your digital memory is stored with lifetime cloud hosting and unlimited taps/scans. There are zero monthly subscription fees or expiration dates."
+  },
+  {
+    q: "Can you create a 100% custom template or bespoke design for me?",
+    a: "Yes, absolutely! In addition to our 50+ ready-made templates, we offer bespoke custom template design services. Whether you want custom particle animations, specific wedding color palettes and monograms, an interactive anniversary milestone timeline, or branded corporate themes, message us and we'll craft a one-of-a-kind digital experience for your keepsake."
   }
 ];
 
@@ -1055,6 +1059,38 @@ export default function SayWithLandingPage() {
                 </a>
               </div>
             )}
+
+            {/* Bespoke & Custom Template Design Service Callout */}
+            <div className="mt-16 rounded-3xl border border-primary/40 bg-gradient-to-r from-primary/15 via-background to-cyan-500/15 p-8 md:p-12 shadow-xl relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="max-w-2xl text-center md:text-left">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary-foreground text-xs font-semibold mb-3 border border-primary/30">
+                    <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    <span>Bespoke Design Service</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-headline font-bold text-foreground">
+                    Want a 100% Custom Template or Design?
+                  </h3>
+                  <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+                    Have a unique creative vision? In addition to our 50+ templates, we design and build <strong className="text-foreground font-semibold">bespoke custom templates from scratch</strong>. From custom animations (sakura petals, floating hearts, glowing stardust) to wedding monograms, interactive milestone timelines, and branded corporate themes—we bring your exact vision to life.
+                  </p>
+                </div>
+                <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                  <a
+                    href={getOrderLink(undefined, "100% Custom Template Design")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full md:w-auto"
+                  >
+                    <Button size="lg" className="w-full gap-2 px-8 py-6 shadow-lg shadow-primary/25">
+                      <Sparkles className="w-4 h-4" />
+                      Request a Custom Design
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
