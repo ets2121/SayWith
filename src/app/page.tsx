@@ -159,7 +159,7 @@ export default function SayWithLandingPage() {
   });
 
   return (
-    <div className="bg-background text-foreground antialiased selection:bg-primary selection:text-white">
+    <div className="bg-background text-foreground antialiased selection:bg-primary selection:text-white" suppressHydrationWarning>
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border/50">
         <nav className="container mx-auto flex items-center justify-between p-4 px-6">
