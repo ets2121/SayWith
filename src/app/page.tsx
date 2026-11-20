@@ -194,6 +194,7 @@ function TemplateCard({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [showVolume, setShowVolume] = useState(false);
   const [srcLoaded, setSrcLoaded] = useState(false);
@@ -214,33 +215,38 @@ function TemplateCard({
   // Pause all video when prefers-reduced-motion
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) videoRef.current?.pause();
+    if (mq.matches) {
+      videoRef.current?.pause();
+      setIsPlaying(false);
+    }
   }, [srcLoaded]);
 
-  // ── Desktop hover handlers ─────────────────────────────────────
+  // ── Desktop hover handlers: play with audio on hover, pause on mouse leave ──
   const handleMouseEnter = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
     setShowVolume(true);
     v.muted = false;
     setIsMuted(false);
-    v.play().catch(() => { v.muted = true; setIsMuted(true); });
+    v.play()
+      .then(() => setIsPlaying(true))
+      .catch(() => {
+        // Fallback to muted playback if browser restricts sound without gesture
+        v.muted = true;
+        setIsMuted(true);
+        v.play().then(() => setIsPlaying(true)).catch(() => {});
+      });
   }, []);
 
   const handleMouseLeave = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
     setShowVolume(false);
+    v.pause();
     v.muted = true;
     setIsMuted(true);
+    setIsPlaying(false);
   }, []);
-
-  // ── Touch handler: open fullscreen directly (mobile audio policy) ──
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    // Prevent default only for the frame itself, not child buttons
-    e.currentTarget === e.target && e.preventDefault();
-    onOpenFullScreen();
-  }, [onOpenFullScreen]);
 
   const isVideo = template.previewType === "video" && !!template.previewUrl;
 
@@ -265,7 +271,7 @@ function TemplateCard({
         </button>
       </div>
 
-      {/* ── Phone Frame ─────────────────────────────────────────────── */}
+      {/* ── Phone Frame (Click to open Fullscreen player) ── */}
       <div
         ref={frameRef}
         role="button"
@@ -276,7 +282,6 @@ function TemplateCard({
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpenFullScreen()}
         onMouseEnter={isVideo ? handleMouseEnter : undefined}
         onMouseLeave={isVideo ? handleMouseLeave : undefined}
-        onTouchStart={isVideo ? handleTouchStart : undefined}
       >
         {/* Speaker Notch */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3 bg-black rounded-full z-20 flex items-center justify-center pointer-events-none">
@@ -284,12 +289,12 @@ function TemplateCard({
           <div className="w-1 h-1 rounded-full bg-blue-900" />
         </div>
 
-        {/* Volume indicator — desktop only, fades in on hover */}
+        {/* Volume indicator — desktop only, fades in when playing on hover */}
         {isVideo && (
           <div
             className={cn(
               "absolute top-2.5 right-2.5 z-30 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-md pointer-events-none",
-              showVolume ? "opacity-100 scale-100" : "opacity-0 scale-90"
+              showVolume && isPlaying ? "opacity-100 scale-100" : "opacity-0 scale-90"
             )}
             aria-hidden="true"
           >
@@ -300,10 +305,17 @@ function TemplateCard({
           </div>
         )}
 
+        {/* Play Icon Overlay (visible when paused, fades out when playing) */}
+        {isVideo && !isPlaying && (
+          <div className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl transition-all duration-300 group-hover:scale-110 pointer-events-none z-20">
+            <Play className="w-5 h-5 ml-0.5 text-primary fill-primary" />
+          </div>
+        )}
+
         {/* "Tap to watch" badge — visible only on touch screens via CSS */}
         {isVideo && (
           <div className="absolute bottom-10 inset-x-0 flex justify-center z-20 pointer-events-none tap-to-watch-badge">
-            <span className="px-3 py-1 rounded-full bg-black/70 text-white text-[10px] backdrop-blur-sm">
+            <span className="px-3 py-1 rounded-full bg-black/70 text-white text-[10px] backdrop-blur-sm shadow-md">
               👆 Tap to watch
             </span>
           </div>
@@ -317,7 +329,6 @@ function TemplateCard({
                 ref={videoRef}
                 src={srcLoaded ? template.previewUrl : undefined}
                 poster={template.posterUrl || undefined}
-                autoPlay={srcLoaded}
                 loop
                 muted
                 playsInline
