@@ -11,6 +11,7 @@ const withPWA = require('next-pwa')({
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'placehold.co', pathname: '/**' },
@@ -22,6 +23,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'i.imgur.com', pathname: '/**' },
       { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
       { protocol: 'https', hostname: '**.r2.cloudflarestorage.com', pathname: '/**' },
+      { protocol: 'https', hostname: '**.r2.dev', pathname: '/**' },
       { protocol: 'https', hostname: '**.supabase.co', pathname: '/**' },
     ],
   },
