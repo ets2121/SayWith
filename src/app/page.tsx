@@ -13,6 +13,7 @@ import {
   Eye,
   CheckCircle2,
   ChevronDown,
+  ChevronUp,
   ArrowRight,
   Flame,
   Clock,
@@ -185,6 +186,9 @@ export default function SayWithLandingPage() {
   // Full Screen Template Preview Lightbox Modal
   const [fullScreenTemplate, setFullScreenTemplate] = useState<TemplateItem | null>(null);
 
+  // Expandable Templates Catalog State (clean initial UI vs full 50 catalog view)
+  const [isTemplatesExpanded, setIsTemplatesExpanded] = useState<boolean>(false);
+
   // Runtime live fetch from public/data JSON files so edits in public/data update immediately
   useEffect(() => {
     fetch("/data/site-config.json")
@@ -211,6 +215,11 @@ export default function SayWithLandingPage() {
       `#${t.num}`.includes(searchQuery);
     return matchesCategory && matchesSearch;
   });
+
+  const isFiltering = searchQuery.trim() !== "" || selectedCategory !== "All";
+  const displayedTemplates = (isTemplatesExpanded || isFiltering)
+    ? filteredTemplates
+    : filteredTemplates.slice(0, 12);
 
   const hero = siteConfig.hero || siteConfigDefault.hero;
   const socials = siteConfig.socials || siteConfigDefault.socials;
@@ -315,7 +324,7 @@ export default function SayWithLandingPage() {
           {/* Visible Hero Background with High Priority per Modern Web Guidance */}
           <div className="absolute inset-0 z-0 overflow-hidden">
             <Image
-              src={hero.bgImageUrl || "https://placehold.co/1920x1080/0f172a/38bdf8.png?text=SayWith+Hero+Atmosphere"}
+              src={hero.bgImageUrl || "/images/hero-bg.png"}
               alt="SayWith Memory Keepsake Atmosphere"
               fill
               priority
@@ -323,12 +332,12 @@ export default function SayWithLandingPage() {
               className="transition-opacity duration-700"
               style={{
                 objectFit: "cover",
-                opacity: hero.bgImageOpacity ?? 0.55
+                opacity: hero.bgImageOpacity ?? 0.9
               }}
             />
-            {/* Subtle Vignette & Contrast Overlay so text is easily readable while background remains visible */}
-            <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background"></div>
-            <div className="absolute inset-0 bg-black/25"></div>
+            {/* Soft Vignette Overlay so hero background is vividly visible while text is easy to read */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/30"></div>
           </div>
 
           <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
@@ -1042,13 +1051,36 @@ export default function SayWithLandingPage() {
               ))}
             </div>
 
-            <div className="mt-4 text-xs text-muted-foreground">
-              Showing {filteredTemplates.length} of {templates.length} templates
+            <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted-foreground">
+              <div>
+                Showing <strong className="text-foreground font-semibold">{displayedTemplates.length}</strong> of <strong className="text-foreground font-semibold">{filteredTemplates.length}</strong> templates
+                {!isTemplatesExpanded && !isFiltering && filteredTemplates.length > 12 && (
+                  <span className="ml-2 text-primary font-medium">(Clean view: 12 featured templates shown)</span>
+                )}
+              </div>
+              {filteredTemplates.length > 12 && !isFiltering && (
+                <button
+                  onClick={() => setIsTemplatesExpanded(!isTemplatesExpanded)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline cursor-pointer"
+                >
+                  {isTemplatesExpanded ? (
+                    <>
+                      <span>Collapse to Clean View (12 Items)</span>
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Expand All 50 Templates ({filteredTemplates.length} Available)</span>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Template Grid with Mobile Phone Ratio (aspect-[9/16]) */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredTemplates.slice(0, 18).map((template: TemplateItem) => (
+              {displayedTemplates.map((template: TemplateItem) => (
                 <div
                   key={template.id}
                   className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-4 group"
@@ -1192,23 +1224,38 @@ export default function SayWithLandingPage() {
               ))}
             </div>
 
-            {filteredTemplates.length > 18 && (
-              <div className="mt-14 text-center">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Plus {filteredTemplates.length - 18} more handcrafted templates available in the catalog.
-                </p>
-                <a
-                  href={getOrderLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            {/* Expand / Collapse Control & Action Bar */}
+            <div className="mt-14 flex flex-col items-center justify-center gap-4">
+              {filteredTemplates.length > 12 && !isFiltering && (
+                <Button
+                  size="lg"
+                  variant={isTemplatesExpanded ? "outline" : "default"}
+                  onClick={() => {
+                    setIsTemplatesExpanded(!isTemplatesExpanded);
+                    if (isTemplatesExpanded) {
+                      document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                  className="gap-2 px-8 py-6 text-sm font-semibold shadow-lg shadow-primary/20"
                 >
-                  <Button size="lg" className="gap-2">
-                    <MessageCircle className="w-4 h-4" />
-                    Message Us About Any Template & Style
-                  </Button>
-                </a>
-              </div>
-            )}
+                  {isTemplatesExpanded ? (
+                    <>
+                      <ChevronUp className="w-4 h-4" />
+                      Collapse to Clean View (Show Top 12)
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4" />
+                      Expand & View All {filteredTemplates.length} Templates
+                    </>
+                  )}
+                </Button>
+              )}
+
+              <p className="text-xs text-muted-foreground text-center">
+                All 50 templates are hosted with lifetime cloud storage, unlimited NFC taps, and custom styled QR photo cards.
+              </p>
+            </div>
 
           </div>
         </section>

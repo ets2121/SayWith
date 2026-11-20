@@ -1,7 +1,7 @@
 {
   "hero": {
     "bgImageUrl": "/images/hero-bg.png",
-    "bgImageOpacity": 0.55,
+    "bgImageOpacity": 0.9,
     "badgeText": "⚡ NFC Instant Tap & Styled QR Code Photo",
     "mainTitle": "The Digital Heart of Your Keepsake.",
     "highlightTitle": "Tap with NFC. Scan with Styled QR.",
