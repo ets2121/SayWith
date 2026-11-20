@@ -51,6 +51,8 @@ export const metadata: Metadata = {
     images: ["/icons/icon-512x512.png"],
   },
   other: {
+    "darkreader-lock": "",
+    "color-scheme": "dark",
     "tiktok:creator": "@saywith",
     "tiktok:description": "Turn your message into a visual masterpiece with SayWith.",
     "tiktok:image": "/icons/icon-384x384.png",
@@ -105,8 +107,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`dark ${poppins.variable} ${ptSans.variable}`}>
+    <html lang="en" className={`dark ${poppins.variable} ${ptSans.variable}`} suppressHydrationWarning>
       <head>
+        <meta name="darkreader-lock" content="darkreader-lock" />
+        <meta name="color-scheme" content="dark" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -118,7 +122,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="font-body antialiased">
+      <body className="font-body antialiased" suppressHydrationWarning>
         <ServiceWorkerRegistration />
         {children}
         <Toaster />

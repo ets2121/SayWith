@@ -1,14 +1,14 @@
 {
   "hero": {
-    "bgImageUrl": "https://placehold.co/1920x1080/0f172a/38bdf8.png?text=SayWith+Hero+Atmosphere",
+    "bgImageUrl": "/images/hero-bg.png",
     "bgImageOpacity": 0.55,
-    "badgeText": "The Digital Presence for Keychains, Gifts & Keepsakes",
+    "badgeText": "⚡ NFC Instant Tap & Styled QR Code Photo",
     "mainTitle": "The Digital Heart of Your Keepsake.",
     "highlightTitle": "Tap with NFC. Scan with Styled QR.",
     "description": "SayWith crafts the interactive digital presence for your physical gifts. Connect 50+ cinematic templates, personal videos, and favorite music to keychains, tokens, and gift cards using NFC chips or custom styled QR code photos.",
-    "keychainPhotoUrl": "",
-    "styledQrPhotoUrl": "",
-    "phonePreviewMediaUrl": "",
+    "keychainPhotoUrl": "/images/mockup-keychain-insert.png",
+    "styledQrPhotoUrl": "/images/mockup-styled-qr.jpg",
+    "phonePreviewMediaUrl": "/images/hero-phone-preview.png",
     "phonePreviewMediaType": "image",
     "musicTitle": "Until I Found You",
     "musicSubtitle": "Synchronized music track",
@@ -28,9 +28,24 @@
     "email": "contact@saywith.com"
   },
   "showcaseMedia": {
-    "acrylicKeychainImageUrl": "",
-    "styledQrCardImageUrl": "",
-    "phoneTapImageUrl": "",
-    "giftPackagingImageUrl": ""
+    "acrylicKeychainImageUrl": "/images/showcase-nfc-keychain.png",
+    "styledQrCardImageUrl": "/images/showcase-qr-flatlay.jpg",
+    "phoneTapImageUrl": "/images/showcase-nfc-tap-action.png",
+    "giftPackagingImageUrl": "/images/showcase-gift-packaging.jpg"
+  },
+  "customDesign": {
+    "bannerImageUrl": "/images/custom-template-banner.jpg",
+    "badge": "1-on-1 Bespoke Service",
+    "title": "Bespoke & Custom Template Design Service",
+    "subtitle": "Have a specific creative vision? We design 100% custom, exclusive digital experiences tailored to your story.",
+    "description": "Whether you are celebrating a wedding, an unforgettable proposal, a milestone anniversary, or creating VIP executive gifts, our creative design team will craft a completely custom digital presence from scratch.",
+    "features": [
+      "Custom particle animations (Sakura petals, stardust, fireworks, glowing hearts)",
+      "Bespoke typography, wedding monograms & luxury color palettes",
+      "Interactive multi-scene timeline, photo gallery & audio/video sync",
+      "Direct designer collaboration via chat until you're 100% in love",
+      "High-resolution styled QR photo & ready-to-write NFC instant tap link included"
+    ],
+    "ctaText": "Request a Custom Design"
   }
 }

@@ -217,6 +217,18 @@ export default function SayWithLandingPage() {
   const ordering = (siteConfig as Record<string, unknown>).ordering as
     | { directChatUrl?: string; platformName?: string; buttonLabel?: string }
     | undefined;
+  const customDesign = ((siteConfig as Record<string, unknown>).customDesign ||
+    (siteConfigDefault as Record<string, unknown>).customDesign) as
+    | {
+        bannerImageUrl?: string;
+        badge?: string;
+        title?: string;
+        subtitle?: string;
+        description?: string;
+        features?: string[];
+        ctaText?: string;
+      }
+    | undefined;
 
   // Direct link generator to configured messaging platform (e.g. Messenger, WhatsApp, or Instagram)
   const getOrderLink = (template?: TemplateItem, useCaseName?: string) => {
@@ -257,12 +269,19 @@ export default function SayWithLandingPage() {
             <span className="tracking-tight text-foreground font-headline">Say<span className="text-primary">With</span></span>
           </Link>
 
-          <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
+          <div className="hidden lg:flex items-center gap-5 text-sm font-medium">
             <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
+            <a href="#nfc-feature" className="hover:text-cyan-400 transition-colors flex items-center gap-1 font-semibold text-cyan-400">
+              <Radio className="w-3.5 h-3.5 animate-pulse" />
+              NFC Tap
+            </a>
             <a href="#mockups" className="hover:text-primary transition-colors">Examples & Mockups</a>
             <a href="#templates" className="hover:text-primary transition-colors">50+ Templates</a>
+            <a href="#custom-service" className="hover:text-primary transition-colors flex items-center gap-1 font-semibold text-primary">
+              <Sparkles className="w-3.5 h-3.5" />
+              Custom Design
+            </a>
             <a href="#use-cases" className="hover:text-primary transition-colors">Use Cases</a>
-            <a href="#occasions" className="hover:text-primary transition-colors">Occasions</a>
             <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
           </div>
 
@@ -315,9 +334,9 @@ export default function SayWithLandingPage() {
           <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
             {/* Top Badge */}
             <div className="flex justify-center">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/40 text-primary-foreground text-xs md:text-sm font-semibold mb-6 backdrop-blur-md shadow-sm">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span>{hero.badgeText || "The Digital Presence for Keychains, Gifts & Keepsakes"}</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-xs md:text-sm font-semibold mb-6 backdrop-blur-md shadow-md">
+                <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+                <span>{hero.badgeText || "⚡ NFC Instant Tap & Styled QR Code Photo"}</span>
               </div>
             </div>
 
@@ -334,20 +353,30 @@ export default function SayWithLandingPage() {
               {hero.description}
             </p>
 
+            {/* NFC Tap Explainer Highlight Banner */}
+            <div className="mt-6 max-w-2xl mx-auto rounded-2xl bg-slate-900/90 border border-cyan-500/40 p-3.5 px-5 flex items-center justify-center gap-3.5 backdrop-blur-md shadow-xl">
+              <div className="w-9 h-9 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                <Radio className="w-4 h-4 animate-pulse" />
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 font-medium text-left">
+                <strong className="text-cyan-300 font-bold">NFC Instant Tap Feature:</strong> Hold any phone near the keychain to launch your interactive story in 1 second. <span className="text-primary font-semibold">Zero app downloads or logins required.</span>
+              </p>
+            </div>
+
             {/* Technology Pill Bar */}
-            <div className="mt-6 flex flex-wrap justify-center items-center gap-3 text-xs sm:text-sm text-slate-200">
-              <span className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-700/80 backdrop-blur-sm">
-                <Smartphone className="w-4 h-4 text-cyan-400" />
-                NFC Ready (Instant Phone Tap)
-              </span>
+            <div className="mt-5 flex flex-wrap justify-center items-center gap-3 text-xs sm:text-sm text-slate-200">
+              <a href="#nfc-feature" className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-cyan-500/40 text-cyan-300 backdrop-blur-sm hover:bg-cyan-950/60 transition-colors">
+                <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                <span>NFC Instant Tap (How It Works)</span>
+              </a>
               <span className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-700/80 backdrop-blur-sm">
                 <QrCode className="w-4 h-4 text-emerald-400" />
                 Custom Styled QR Code Photo
               </span>
-              <span className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-slate-700/80 backdrop-blur-sm">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                No App Download Needed
-              </span>
+              <a href="#custom-service" className="inline-flex items-center gap-1.5 bg-slate-900/80 px-3.5 py-1.5 rounded-full border border-primary/40 text-primary-foreground backdrop-blur-sm hover:bg-primary/20 transition-colors">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>Custom Template Design Available</span>
+              </a>
             </div>
 
             {/* Action Buttons */}
@@ -613,6 +642,116 @@ export default function SayWithLandingPage() {
           </div>
         </section>
 
+        {/* Dedicated NFC Instant Tap Feature Spotlight Section */}
+        <section id="nfc-feature" className="py-20 bg-gradient-to-b from-slate-950 via-slate-900/90 to-background border-y border-cyan-800/40 relative overflow-hidden">
+          {/* Glowing Ambient Backdrop */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+          <div className="container mx-auto px-6 max-w-6xl relative z-10">
+            <div className="text-center max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs md:text-sm font-semibold mb-4 shadow-sm">
+                <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+                <span>NFC Instant Tap Feature</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold text-white tracking-tight">
+                How NFC Tap Works <span className="text-cyan-400">Like Magic</span>
+              </h2>
+              <p className="mt-3 text-base sm:text-lg text-slate-300">
+                No apps to download. No accounts to register. Simply hold your phone to the keychain, and your personalized digital memory instantly springs to life.
+              </p>
+            </div>
+
+            {/* 3 Step NFC Flow with Styled QR Bonus */}
+            <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Step 1 */}
+              <div className="rounded-2xl bg-slate-900/80 border border-cyan-500/30 p-6 flex flex-col justify-between hover:border-cyan-400/60 transition-all shadow-xl group">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition-transform">
+                      <Radio className="w-6 h-6 animate-pulse" />
+                    </div>
+                    <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800">
+                      Step 1 • Hardware
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Embedded NFC Chip</h3>
+                  <p className="mt-2 text-sm text-slate-300 leading-relaxed">
+                    Inside the acrylic keychain or token blank sits an ultra-durable NTAG215 microchip programmed with your permanent SayWith link. It requires zero batteries and lasts for decades.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-slate-800 text-xs text-cyan-400 font-medium flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>Battery-free & lifetime durable</span>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="rounded-2xl bg-slate-900/80 border border-primary/40 p-6 flex flex-col justify-between hover:border-primary transition-all shadow-xl group">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 text-primary flex items-center justify-center font-bold text-xl group-hover:scale-110 transition-transform">
+                      <Smartphone className="w-6 h-6" />
+                    </div>
+                    <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-primary/20 text-primary-foreground border border-primary/30">
+                      Step 2 • 1-Second Tap
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Hold Phone Near It</h3>
+                  <p className="mt-2 text-sm text-slate-300 leading-relaxed">
+                    Touch the top of any iPhone (iPhone XS or newer) or the back of any Android phone near the keychain. A native banner immediately illuminates on the screen without unlocking any app.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-slate-800 text-xs text-primary font-medium flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>Works natively on iOS & Android</span>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="rounded-2xl bg-slate-900/80 border border-emerald-500/30 p-6 flex flex-col justify-between hover:border-emerald-400/60 transition-all shadow-xl group">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center font-bold text-xl group-hover:scale-110 transition-transform">
+                      <Film className="w-6 h-6" />
+                    </div>
+                    <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
+                      Step 3 • Experience
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Instant Story Plays</h3>
+                  <p className="mt-2 text-sm text-slate-300 leading-relaxed">
+                    Tap the notification, and Safari or Chrome opens directly into your personalized full-screen story. Your video, music note, subtitles, and heartfelt message play in high fidelity.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-slate-800 text-xs text-emerald-400 font-medium flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>Synchronized music + video reel</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Styled QR Camera Fallback Notice */}
+            <div className="mt-8 rounded-2xl bg-slate-900/60 border border-slate-800 p-4 md:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-primary shrink-0">
+                  <QrCode className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">Bonus: Dual Access with Styled QR Code Photo</p>
+                  <p className="text-xs text-slate-400">
+                    If someone has a device without NFC, our matching custom styled QR photo card can be scanned by any smartphone camera instantly.
+                  </p>
+                </div>
+              </div>
+              <a href="#templates" className="shrink-0 w-full sm:w-auto">
+                <Button size="sm" variant="outline" className="w-full sm:w-auto border-cyan-500/50 text-cyan-300 hover:bg-cyan-950">
+                  Browse 50+ Styles
+                </Button>
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* Examples of Physical Usage Section */}
         <section id="mockups" className="py-20 bg-secondary/30 border-y border-border/50">
           <div className="container mx-auto px-6 max-w-6xl">
@@ -632,7 +771,7 @@ export default function SayWithLandingPage() {
                     {siteConfig.showcaseMedia?.acrylicKeychainImageUrl ? (
                       <img
                         src={siteConfig.showcaseMedia.acrylicKeychainImageUrl}
-                        alt="Acrylic Keychain Example"
+                        alt="Classic Acrylic NFC Keychain"
                         className="w-full h-full object-cover rounded-lg"
                         loading="lazy"
                         decoding="async"
@@ -646,11 +785,13 @@ export default function SayWithLandingPage() {
                         <div className="w-8 h-1 rounded-full bg-white/40"></div>
                       </div>
                     )}
-                    <span className="absolute bottom-2 text-[10px] text-primary font-semibold">Example: Acrylic Keychain</span>
+                    <span className="absolute bottom-2 text-[10px] text-primary font-semibold bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      Acrylic NFC Keychain
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Keychains & Bag Charms</h3>
+                  <h3 className="text-lg font-bold mt-4">Classic Acrylic Keychain</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Insert your styled QR photo inside an acrylic keychain blank or program an embedded NFC tag. Tap with any phone to replay.
+                    Insert your photo inside an acrylic keychain blank with an embedded NFC tag. Tap with any phone or scan to replay your digital memory.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-primary font-medium">
@@ -666,7 +807,7 @@ export default function SayWithLandingPage() {
                     {siteConfig.showcaseMedia?.styledQrCardImageUrl ? (
                       <img
                         src={siteConfig.showcaseMedia.styledQrCardImageUrl}
-                        alt="Styled QR Photo Card Example"
+                        alt="Styled QR Photo Card Flatlay"
                         className="w-full h-full object-cover rounded-lg"
                         loading="lazy"
                         decoding="async"
@@ -682,11 +823,13 @@ export default function SayWithLandingPage() {
                         <span className="text-[8px] text-muted-foreground font-mono">SCAN ME</span>
                       </div>
                     )}
-                    <span className="absolute bottom-2 text-[10px] text-rose-400 font-semibold">Printable Photo Card</span>
+                    <span className="absolute bottom-2 text-[10px] text-rose-300 font-semibold bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      Printable Photo Card
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Styled QR Code Photo</h3>
+                  <h3 className="text-lg font-bold mt-4">Styled QR Photo Card</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    We deliver a high-resolution artistic photo card with your picture and a scannable QR code. Perfect for wallets, desks, or gifts.
+                    We deliver a high-resolution artistic photo card featuring your portrait and a custom scannable QR code. Perfect for wallets, desks, or framed keepsakes.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-rose-400 font-medium">
@@ -695,14 +838,17 @@ export default function SayWithLandingPage() {
                 </div>
               </div>
 
-              {/* Mockup Card 3: Greeting Cards & Gift Boxes */}
-              <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
+              {/* Mockup Card 3: Smartphone Tapping Keychain (NFC in Action) */}
+              <div className="bg-background rounded-2xl border border-cyan-500/50 p-5 flex flex-col justify-between hover:border-cyan-400 transition-all hover:shadow-xl shadow-cyan-500/10 group relative">
+                <div className="absolute -top-3 right-4 bg-cyan-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-md">
+                  NFC in Action
+                </div>
                 <div>
-                  <div className="h-44 rounded-xl bg-gradient-to-br from-cyan-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
+                  <div className="h-44 rounded-xl bg-gradient-to-br from-cyan-900/40 via-secondary to-background border border-cyan-500/30 flex flex-col items-center justify-center relative overflow-hidden p-4">
                     {siteConfig.showcaseMedia?.phoneTapImageUrl ? (
                       <img
                         src={siteConfig.showcaseMedia.phoneTapImageUrl}
-                        alt="Phone Tap Action"
+                        alt="Smartphone Tapping Keychain - NFC in Action"
                         className="w-full h-full object-cover rounded-lg"
                         loading="lazy"
                         decoding="async"
@@ -719,27 +865,29 @@ export default function SayWithLandingPage() {
                         <span className="text-[8px] text-center text-slate-400">Zero App Needed</span>
                       </div>
                     )}
-                    <span className="absolute bottom-2 text-[10px] text-cyan-400 font-semibold">Instant Web Popup</span>
+                    <span className="absolute bottom-2 text-[10px] text-cyan-300 font-semibold bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      ⚡ Instant Phone Tap
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Cards & Gift Boxes</h3>
+                  <h3 className="text-lg font-bold mt-4">NFC Tap in Action</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Stick an ultra-thin NFC sticker or print your styled QR photo inside greeting cards, love letters, and anniversary gift packaging.
+                    Simply hold your smartphone over the keychain. The embedded NFC antenna triggers a notification in 1 second, opening your story automatically.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-cyan-400 font-medium">
                   <Smartphone className="w-3.5 h-3.5" />
-                  <span>iOS & Android Compatible</span>
+                  <span>iOS & Android Native</span>
                 </div>
               </div>
 
-              {/* Mockup Card 4: Desk Displays & Tokens */}
+              {/* Mockup Card 4: Gift Packaging & Unboxing */}
               <div className="bg-background rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-lg group">
                 <div>
                   <div className="h-44 rounded-xl bg-gradient-to-br from-amber-900/30 via-secondary to-background border border-border flex flex-col items-center justify-center relative overflow-hidden p-4">
                     {siteConfig.showcaseMedia?.giftPackagingImageUrl ? (
                       <img
                         src={siteConfig.showcaseMedia.giftPackagingImageUrl}
-                        alt="Gift Packaging Presentation"
+                        alt="Gift Packaging & Unboxing Presentation"
                         className="w-full h-full object-cover rounded-lg"
                         loading="lazy"
                         decoding="async"
@@ -756,16 +904,18 @@ export default function SayWithLandingPage() {
                         <div className="w-12 h-1 rounded-full bg-amber-400/40"></div>
                       </div>
                     )}
-                    <span className="absolute bottom-2 text-[10px] text-amber-400 font-semibold">Framed or Pocket Size</span>
+                    <span className="absolute bottom-2 text-[10px] text-amber-300 font-semibold bg-black/60 px-2 py-0.5 rounded-full backdrop-blur-sm">
+                      Unboxing Experience
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold mt-4">Tokens & Desk Displays</h3>
+                  <h3 className="text-lg font-bold mt-4">Gift Box Unboxing</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                    Keep your loved one&apos;s digital voice and memory on a desk frame or pocket coin token. Tap or scan anytime you want a smile.
+                    Present your keychain or styled QR photo in an elegant gift box. When they open it and tap with their phone, it delivers an unforgettable surprise.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs text-amber-400 font-medium">
                   <Gift className="w-3.5 h-3.5" />
-                  <span>Memories On Your Desk</span>
+                  <span>Unforgettable Gift Surprise</span>
                 </div>
               </div>
             </div>
@@ -1060,34 +1210,106 @@ export default function SayWithLandingPage() {
               </div>
             )}
 
-            {/* Bespoke & Custom Template Design Service Callout */}
-            <div className="mt-16 rounded-3xl border border-primary/40 bg-gradient-to-r from-primary/15 via-background to-cyan-500/15 p-8 md:p-12 shadow-xl relative overflow-hidden">
-              <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="max-w-2xl text-center md:text-left">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary-foreground text-xs font-semibold mb-3 border border-primary/30">
-                    <Sparkles className="w-3.5 h-3.5 text-primary" />
-                    <span>Bespoke Design Service</span>
+          </div>
+        </section>
+
+        {/* Dedicated Bespoke & Custom Template Design Service Section */}
+        <section id="custom-service" className="py-24 bg-gradient-to-b from-secondary/40 via-background to-secondary/30 border-t border-border/50 relative overflow-hidden">
+          {/* Ambient Glow */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[140px] pointer-events-none"></div>
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+          <div className="container mx-auto px-6 max-w-6xl relative z-10">
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-primary-foreground border border-primary/40 text-xs md:text-sm font-semibold mb-4 shadow-sm">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span>{customDesign?.badge || "1-on-1 Bespoke Service"}</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tight text-white">
+                {customDesign?.title || "Bespoke & Custom Template Design Service"}
+              </h2>
+              <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed">
+                {customDesign?.description ||
+                  "Have a unique creative vision? In addition to our 50+ templates, our design team builds 100% custom, exclusive digital experiences for weddings, anniversaries, proposals, brand launches, and VIP gifts."}
+              </p>
+            </div>
+
+            {/* Custom Design Feature Showcase with High-Res Banner */}
+            <div className="mt-14 rounded-3xl bg-slate-950/80 border border-primary/30 shadow-2xl p-6 sm:p-10 lg:p-12 overflow-hidden relative">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                {/* Left: Custom Design Banner Image */}
+                <div className="lg:col-span-6 relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group">
+                  <div className="aspect-[16/10] sm:aspect-[16/9] w-full relative">
+                    <img
+                      src={customDesign?.bannerImageUrl || "/images/custom-template-banner.jpg"}
+                      alt="SayWith Bespoke Custom Template Design Showcase"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
+                      <div>
+                        <p className="text-sm font-bold drop-shadow">100% Exclusive Design</p>
+                        <p className="text-xs text-slate-300 drop-shadow">Made uniquely for you & your loved one</p>
+                      </div>
+                      <span className="text-[11px] font-mono bg-primary/80 px-2.5 py-1 rounded-full text-white backdrop-blur-sm">
+                        Bespoke
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-headline font-bold text-foreground">
-                    Want a 100% Custom Template or Design?
-                  </h3>
-                  <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Have a unique creative vision? In addition to our 50+ templates, we design and build <strong className="text-foreground font-semibold">bespoke custom templates from scratch</strong>. From custom animations (sakura petals, floating hearts, glowing stardust) to wedding monograms, interactive milestone timelines, and branded corporate themes—we bring your exact vision to life.
-                  </p>
                 </div>
-                <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                  <a
-                    href={getOrderLink(undefined, "100% Custom Template Design")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full md:w-auto"
-                  >
-                    <Button size="lg" className="w-full gap-2 px-8 py-6 shadow-lg shadow-primary/25">
-                      <Sparkles className="w-4 h-4" />
-                      Request a Custom Design
-                    </Button>
-                  </a>
+
+                {/* Right: What You Get in Custom Design */}
+                <div className="lg:col-span-6 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-4">
+                      Tailored Digital Magic Crafted From Scratch
+                    </h3>
+                    <p className="text-sm text-slate-300 leading-relaxed mb-6">
+                      Collaborate directly with our design team. We write personalized code, animate custom particle effects, integrate your favorite songs, and format your styled QR photo card to match your exact celebration.
+                    </p>
+
+                    <div className="space-y-3.5">
+                      {(
+                        customDesign?.features || [
+                          "Custom particle animations (Sakura petals, stardust, fireworks, glowing hearts)",
+                          "Bespoke typography, wedding monograms & luxury color palettes",
+                          "Interactive multi-scene timeline, photo gallery & audio/video sync",
+                          "Direct designer collaboration via chat until you're 100% in love",
+                          "High-resolution styled QR photo & ready-to-write NFC instant tap link included"
+                        ]
+                      ).map((feat, idx) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-sm text-slate-200">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CTAs */}
+                  <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row gap-4">
+                    <a
+                      href={getOrderLink(undefined, "Bespoke Custom Template Design")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:w-auto flex-1"
+                    >
+                      <Button size="lg" className="w-full gap-2 py-6 text-base shadow-xl shadow-primary/30">
+                        <Sparkles className="w-5 h-5" />
+                        {customDesign?.ctaText || "Request a Custom Design"}
+                      </Button>
+                    </a>
+                    <a href="#templates" className="w-full sm:w-auto">
+                      <Button size="lg" variant="outline" className="w-full sm:w-auto py-6 border-slate-700 text-slate-300 hover:bg-slate-800">
+                        View 50+ Ready Catalog
+                      </Button>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1452,10 +1674,12 @@ export default function SayWithLandingPage() {
               <span className="text-xs text-muted-foreground">Digital Presence for Smart NFC & QR Keepsakes</span>
             </div>
 
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
               <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
+              <a href="#nfc-feature" className="hover:text-cyan-400 text-cyan-400 font-semibold transition-colors">NFC Tap</a>
               <a href="#mockups" className="hover:text-primary transition-colors">Mockups & Examples</a>
-              <a href="#templates" className="hover:text-primary transition-colors">Templates</a>
+              <a href="#templates" className="hover:text-primary transition-colors">50+ Templates</a>
+              <a href="#custom-service" className="hover:text-primary text-primary font-semibold transition-colors">Custom Design</a>
               <a href="#use-cases" className="hover:text-primary transition-colors">Use Cases</a>
               <a href="#contact" className="hover:text-primary transition-colors">Contact to Order</a>
               <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
@@ -1486,7 +1710,7 @@ export default function SayWithLandingPage() {
           </div>
 
           <div className="mt-8 pt-6 border-t border-border/40 text-center text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} SayWith. All rights reserved. The digital presence provider for NFC tap & styled QR code photo memories.
+            &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span> SayWith. All rights reserved. The digital presence provider for NFC tap & styled QR code photo memories.
           </div>
         </div>
       </footer>
