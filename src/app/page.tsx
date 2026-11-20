@@ -251,7 +251,7 @@ function TemplateCard({
   const isVideo = template.previewType === "video" && !!template.previewUrl;
 
   return (
-    <div className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-4 group">
+    <div className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-3.5 sm:p-4 group max-w-sm sm:max-w-none mx-auto w-full">
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
@@ -381,27 +381,27 @@ function TemplateCard({
       {/* Card Bottom */}
       <div className="mt-4 flex-1 flex flex-col justify-between px-1">
         <div>
-          <div className="flex justify-between items-baseline">
-            <h4 className="font-headline font-bold text-base text-foreground group-hover:text-primary transition-colors">
+          <div className="flex justify-between items-baseline gap-2">
+            <h4 className="font-headline font-bold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
               {template.name}
             </h4>
-            <span className="text-[11px] text-muted-foreground uppercase font-medium">{template.category}</span>
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground uppercase font-medium shrink-0">{template.category}</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{template.desc}</p>
         </div>
-        <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-          <span className="text-xs text-primary font-medium flex items-center gap-1">
+        <div className="mt-4 pt-3 border-t border-border flex items-center justify-between gap-2">
+          <span className="text-[11px] sm:text-xs text-primary font-medium flex items-center gap-1 shrink-0">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>NFC &amp; Styled QR</span>
+            <span>NFC &amp; QR</span>
           </span>
           <a
             href={orderLink}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-primary transition-colors min-h-[44px]"
+            className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-foreground hover:text-primary transition-colors min-h-[44px] shrink-0"
           >
-            Inquire with This <ArrowRight className="w-3.5 h-3.5" />
+            Inquire with This <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </a>
         </div>
       </div>
@@ -1241,7 +1241,7 @@ export default function SayWithLandingPage() {
 
         {/* 50+ Templates Showcase with Mobile Phone Ratio Cards & Full Screen Buttons */}
         <section id="templates" className="py-20 bg-secondary/30 border-t border-border/50">
-          <div className="container mx-auto px-6 max-w-6xl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
@@ -1312,7 +1312,7 @@ export default function SayWithLandingPage() {
             </div>
 
             {/* Template Grid with Mobile Phone Ratio (aspect-[9/16]) */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-6 lg:gap-8">
               {displayedTemplates.map((template: TemplateItem) => (
                 <TemplateCard
                   key={template.id}
