@@ -52,3 +52,25 @@
     background-position: center;
     background-size: 48px 48px;
 }
+
+/* "Tap to watch" badge: show only on touch-primary devices (mobile), hide on desktop hover devices */
+.tap-to-watch-badge {
+  display: none;
+}
+@media (pointer: coarse) {
+  .tap-to-watch-badge {
+    display: flex;
+  }
+}
+
+/* Reduce motion: pause all auto-playing videos */
+@media (prefers-reduced-motion: reduce) {
+  video[autoplay] {
+    animation: none;
+  }
+}
+
+/* Modal scroll containment for mobile */
+[role="dialog"] {
+  overscroll-behavior: contain;
+}

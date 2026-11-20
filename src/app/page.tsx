@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -27,6 +27,8 @@ import {
   Pause,
   Maximize2,
   Film,
+  Volume2,
+  VolumeX,
   type LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -175,6 +177,226 @@ const faqs = [
     a: "Yes, absolutely! In addition to our 50+ ready-made templates, we offer bespoke custom template design services. Whether you want custom particle animations, specific wedding color palettes and monograms, an interactive anniversary milestone timeline, or branded corporate themes, message us and we'll craft a one-of-a-kind digital experience for your keepsake."
   }
 ];
+
+// ─── TemplateCard ────────────────────────────────────────────────────────────
+// Self-contained card: hover → unmute audio (desktop); tap → fullscreen (mobile)
+// Uses IntersectionObserver for lazy src to avoid unneeded network requests on
+// browsers that don't support loading="lazy" on <video> (Firefox, Safari).
+
+function TemplateCard({
+  template,
+  onOpenFullScreen,
+  orderLink,
+}: {
+  template: TemplateItem;
+  onOpenFullScreen: () => void;
+  orderLink: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
+  const [showVolume, setShowVolume] = useState(false);
+  const [srcLoaded, setSrcLoaded] = useState(false);
+
+  // Lazy-load: set src only when card enters viewport
+  useEffect(() => {
+    if (!template.previewUrl || template.previewType !== "video") return;
+    const el = frameRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setSrcLoaded(true); obs.disconnect(); } },
+      { rootMargin: "200px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [template.previewUrl, template.previewType]);
+
+  // Pause all video when prefers-reduced-motion
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) videoRef.current?.pause();
+  }, [srcLoaded]);
+
+  // ── Desktop hover handlers ─────────────────────────────────────
+  const handleMouseEnter = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    setShowVolume(true);
+    v.muted = false;
+    setIsMuted(false);
+    v.play().catch(() => { v.muted = true; setIsMuted(true); });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    setShowVolume(false);
+    v.muted = true;
+    setIsMuted(true);
+  }, []);
+
+  // ── Touch handler: open fullscreen directly (mobile audio policy) ──
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    // Prevent default only for the frame itself, not child buttons
+    e.currentTarget === e.target && e.preventDefault();
+    onOpenFullScreen();
+  }, [onOpenFullScreen]);
+
+  const isVideo = template.previewType === "video" && !!template.previewUrl;
+
+  return (
+    <div className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-4 group">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-secondary border border-border text-foreground">
+            #{template.num}
+          </span>
+          <span className="text-[11px] font-semibold text-primary">{template.tag}</span>
+        </div>
+        <button
+          onClick={onOpenFullScreen}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 min-h-[36px] rounded-lg bg-secondary hover:bg-primary hover:text-white transition-colors text-xs font-medium text-muted-foreground"
+          title="View full screen mobile preview"
+          aria-label={`View ${template.name} full screen`}
+        >
+          <Maximize2 className="w-3.5 h-3.5" />
+          <span className="text-[11px]">Full Screen</span>
+        </button>
+      </div>
+
+      {/* ── Phone Frame ─────────────────────────────────────────────── */}
+      <div
+        ref={frameRef}
+        role="button"
+        tabIndex={0}
+        aria-label={`Watch ${template.name} preview`}
+        className="relative w-full aspect-[9/16] rounded-[24px] bg-slate-950 border-[4px] border-slate-800 shadow-xl overflow-hidden group-hover:border-primary/60 transition-colors cursor-pointer select-none"
+        onClick={onOpenFullScreen}
+        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpenFullScreen()}
+        onMouseEnter={isVideo ? handleMouseEnter : undefined}
+        onMouseLeave={isVideo ? handleMouseLeave : undefined}
+        onTouchStart={isVideo ? handleTouchStart : undefined}
+      >
+        {/* Speaker Notch */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3 bg-black rounded-full z-20 flex items-center justify-center pointer-events-none">
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-800 mr-1.5" />
+          <div className="w-1 h-1 rounded-full bg-blue-900" />
+        </div>
+
+        {/* Volume indicator — desktop only, fades in on hover */}
+        {isVideo && (
+          <div
+            className={cn(
+              "absolute top-2.5 right-2.5 z-30 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-md pointer-events-none",
+              showVolume ? "opacity-100 scale-100" : "opacity-0 scale-90"
+            )}
+            aria-hidden="true"
+          >
+            {isMuted
+              ? <VolumeX className="w-4 h-4 text-white" />
+              : <Volume2 className="w-4 h-4 text-primary" />
+            }
+          </div>
+        )}
+
+        {/* "Tap to watch" badge — visible only on touch screens via CSS */}
+        {isVideo && (
+          <div className="absolute bottom-10 inset-x-0 flex justify-center z-20 pointer-events-none tap-to-watch-badge">
+            <span className="px-3 py-1 rounded-full bg-black/70 text-white text-[10px] backdrop-blur-sm">
+              👆 Tap to watch
+            </span>
+          </div>
+        )}
+
+        {/* Media Content */}
+        {template.previewUrl ? (
+          template.previewType === "video" ? (
+            <div className="relative w-full h-full bg-black">
+              <video
+                ref={videoRef}
+                src={srcLoaded ? template.previewUrl : undefined}
+                poster={template.posterUrl || undefined}
+                autoPlay={srcLoaded}
+                loop
+                muted
+                playsInline
+                preload="none"
+                width={324}
+                height={576}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 text-[9px] text-white backdrop-blur-sm pointer-events-none">
+                <Film className="w-2.5 h-2.5 text-primary" />
+                <span>Video Preview</span>
+              </div>
+            </div>
+          ) : (
+            <div className="relative w-full h-full bg-black">
+              <img
+                src={template.previewUrl}
+                alt={`${template.name} mobile screenshot`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          )
+        ) : (
+          <div className={cn("w-full h-full p-4 pt-8 flex flex-col justify-between bg-gradient-to-br text-white relative", template.accent)}>
+            <div className="flex justify-between items-center text-[10px] opacity-75">
+              <span>9:41</span>
+              <span className="font-semibold uppercase tracking-wider text-[9px] bg-black/30 px-2 py-0.5 rounded-full">{template.category}</span>
+            </div>
+            <div className="my-auto text-center p-3 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10">
+              <Sparkles className="w-6 h-6 mx-auto mb-2 text-white/80 animate-pulse" />
+              <h4 className="font-headline font-bold text-lg leading-tight">{template.name}</h4>
+              <p className="text-[10px] text-white/80 mt-1.5 leading-relaxed line-clamp-3">{template.desc}</p>
+            </div>
+            <div className="space-y-1.5">
+              <div className="p-2 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-between text-[10px]">
+                <div className="flex items-center gap-1.5 truncate">
+                  <Music className="w-3 h-3 text-cyan-300 shrink-0" />
+                  <span className="truncate">Music Sync Ready</span>
+                </div>
+                <span className="text-[8px] bg-white/20 px-1.5 py-0.5 rounded">NFC</span>
+              </div>
+              <p className="text-[8px] text-center text-white/70">Tap phone to replay</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Card Bottom */}
+      <div className="mt-4 flex-1 flex flex-col justify-between px-1">
+        <div>
+          <div className="flex justify-between items-baseline">
+            <h4 className="font-headline font-bold text-base text-foreground group-hover:text-primary transition-colors">
+              {template.name}
+            </h4>
+            <span className="text-[11px] text-muted-foreground uppercase font-medium">{template.category}</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{template.desc}</p>
+        </div>
+        <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+          <span className="text-xs text-primary font-medium flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>NFC &amp; Styled QR</span>
+          </span>
+          <a
+            href={orderLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-primary transition-colors min-h-[44px]"
+          >
+            Inquire with This <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function SayWithLandingPage() {
   const [siteConfig, setSiteConfig] = useState(siteConfigDefault);
@@ -1081,146 +1303,12 @@ export default function SayWithLandingPage() {
             {/* Template Grid with Mobile Phone Ratio (aspect-[9/16]) */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {displayedTemplates.map((template: TemplateItem) => (
-                <div
+                <TemplateCard
                   key={template.id}
-                  className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-4 group"
-                >
-                  {/* Top Bar with Number & Full Screen Action */}
-                  <div className="flex items-center justify-between mb-3 px-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-secondary border border-border text-foreground">
-                        #{template.num}
-                      </span>
-                      <span className="text-[11px] font-semibold text-primary">
-                        {template.tag}
-                      </span>
-                    </div>
-
-                    {/* Full Screen Button */}
-                    <button
-                      onClick={() => setFullScreenTemplate(template)}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary hover:bg-primary hover:text-white transition-colors text-xs font-medium text-muted-foreground"
-                      title="View full screen mobile preview"
-                      aria-label={`View ${template.name} full screen`}
-                    >
-                      <Maximize2 className="w-3.5 h-3.5" />
-                      <span className="text-[11px]">Full Screen</span>
-                    </button>
-                  </div>
-
-                  {/* MOBILE PHONE FRAME CONTAINER (aspect-[9/16] Mobile Ratio) */}
-                  <div className="relative w-full aspect-[9/16] rounded-[24px] bg-slate-950 border-[4px] border-slate-800 shadow-xl overflow-hidden flex flex-col justify-between group-hover:border-primary/60 transition-colors">
-                    {/* Phone Top Speaker Notch */}
-                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3 bg-black rounded-full z-20 flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-800 mr-1.5"></div>
-                      <div className="w-1 h-1 rounded-full bg-blue-900"></div>
-                    </div>
-
-                    {/* Full Screen Overlay Button inside phone screen */}
-                    <button
-                      onClick={() => setFullScreenTemplate(template)}
-                      className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full bg-black/60 hover:bg-primary text-white backdrop-blur-md flex items-center justify-center transition-all shadow-md group-hover:scale-110"
-                      title="Expand full screen"
-                    >
-                      <Maximize2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Phone Screen Media Content (Dynamic Image or Video) */}
-                    {template.previewUrl ? (
-                      template.previewType === "video" ? (
-                        <div className="relative w-full h-full bg-black">
-                          <video
-                            src={template.previewUrl}
-                            poster={template.posterUrl || undefined}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            preload="metadata"
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 text-[9px] text-white backdrop-blur-sm">
-                            <Film className="w-2.5 h-2.5 text-primary" />
-                            <span>Video Preview</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="relative w-full h-full bg-black">
-                          <img
-                            src={template.previewUrl}
-                            alt={`${template.name} mobile screenshot`}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        </div>
-                      )
-                    ) : (
-                      /* Stylized Mobile Template Mockup (When screenshot URL is yet to be set) */
-                      <div className={cn("w-full h-full p-4 pt-8 flex flex-col justify-between bg-gradient-to-br text-white relative", template.accent)}>
-                        <div className="flex justify-between items-center text-[10px] opacity-75">
-                          <span>9:41</span>
-                          <span className="font-semibold uppercase tracking-wider text-[9px] bg-black/30 px-2 py-0.5 rounded-full">
-                            {template.category}
-                          </span>
-                        </div>
-
-                        {/* Template Center Visual */}
-                        <div className="my-auto text-center p-3 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10">
-                          <Sparkles className="w-6 h-6 mx-auto mb-2 text-white/80 animate-pulse" />
-                          <h4 className="font-headline font-bold text-lg leading-tight">{template.name}</h4>
-                          <p className="text-[10px] text-white/80 mt-1.5 leading-relaxed line-clamp-3">
-                            {template.desc}
-                          </p>
-                        </div>
-
-                        {/* Mobile Bottom Audio & Letter Simulation */}
-                        <div className="space-y-1.5">
-                          <div className="p-2 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-between text-[10px]">
-                            <div className="flex items-center gap-1.5 truncate">
-                              <Music className="w-3 h-3 text-cyan-300 shrink-0" />
-                              <span className="truncate">Music Sync Ready</span>
-                            </div>
-                            <span className="text-[8px] bg-white/20 px-1.5 py-0.5 rounded">NFC</span>
-                          </div>
-                          <p className="text-[8px] text-center text-white/70">Tap phone to replay</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Bottom Details & Direct Order CTA */}
-                  <div className="mt-4 flex-1 flex flex-col justify-between px-1">
-                    <div>
-                      <div className="flex justify-between items-baseline">
-                        <h4 className="font-headline font-bold text-base text-foreground group-hover:text-primary transition-colors">
-                          {template.name}
-                        </h4>
-                        <span className="text-[11px] text-muted-foreground uppercase font-medium">
-                          {template.category}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
-                        {template.desc}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                      <span className="text-xs text-primary font-medium flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>NFC & Styled QR</span>
-                      </span>
-                      <a
-                        href={getOrderLink(template)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-primary transition-colors"
-                      >
-                        Inquire with This <ArrowRight className="w-3.5 h-3.5" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                  template={template}
+                  onOpenFullScreen={() => setFullScreenTemplate(template)}
+                  orderLink={getOrderLink(template)}
+                />
               ))}
             </div>
 
@@ -1645,7 +1733,7 @@ export default function SayWithLandingPage() {
 
       {/* FULL SCREEN TEMPLATE PREVIEW MODAL */}
       <Dialog open={!!fullScreenTemplate} onOpenChange={(open) => !open && setFullScreenTemplate(null)}>
-        <DialogContent className="sm:max-w-xl max-h-[95vh] overflow-y-auto bg-slate-950 border border-slate-800 p-6 text-white rounded-3xl">
+        <DialogContent className="sm:max-w-xl max-h-[100dvh] overflow-y-auto overscroll-contain bg-slate-950 border border-slate-800 p-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:p-6 text-white rounded-3xl">
           {fullScreenTemplate && (
             <div>
               <DialogHeader className="mb-4">
@@ -1670,11 +1758,12 @@ export default function SayWithLandingPage() {
               {/* Full Mobile Screen Frame */}
               <div className="relative w-full aspect-[9/16] max-w-[340px] mx-auto rounded-[32px] bg-black border-[6px] border-slate-700 shadow-2xl overflow-hidden my-4">
                 {/* Speaker notch */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-3 bg-slate-900 rounded-full z-20"></div>
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-16 h-3 bg-slate-900 rounded-full z-20" />
 
                 {fullScreenTemplate.previewUrl ? (
                   fullScreenTemplate.previewType === "video" ? (
                     <video
+                      key={fullScreenTemplate.id}
                       src={fullScreenTemplate.previewUrl}
                       poster={fullScreenTemplate.posterUrl || undefined}
                       controls
