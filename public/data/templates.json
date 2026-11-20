@@ -8,8 +8,8 @@
     "tag": "Popular",
     "accent": "from-blue-600 to-indigo-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-01.mp4",
-    "posterUrl": "/templates/thumbnails/template-01.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-01.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-01.jpg"
   },
   {
     "id": "Template2",
@@ -20,8 +20,8 @@
     "tag": "Clean",
     "accent": "from-zinc-800 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-02.mp4",
-    "posterUrl": "/templates/thumbnails/template-02.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-02.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-02.jpg"
   },
   {
     "id": "Template3",
@@ -32,8 +32,8 @@
     "tag": "OLED",
     "accent": "from-stone-900 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-03.mp4",
-    "posterUrl": "/templates/thumbnails/template-03.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-03.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-03.jpg"
   },
   {
     "id": "Template4",
@@ -44,8 +44,8 @@
     "tag": "Sweet",
     "accent": "from-amber-200 to-orange-100",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-04.mp4",
-    "posterUrl": "/templates/thumbnails/template-04.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-04.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-04.jpg"
   },
   {
     "id": "Template5",
@@ -56,8 +56,8 @@
     "tag": "Vibrant",
     "accent": "from-fuchsia-500 to-cyan-500",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-05.mp4",
-    "posterUrl": "/templates/thumbnails/template-05.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-05.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-05.jpg"
   },
   {
     "id": "Template6",
@@ -68,8 +68,8 @@
     "tag": "Modern",
     "accent": "from-zinc-900 to-zinc-700",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-06.mp4",
-    "posterUrl": "/templates/thumbnails/template-06.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-06.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-06.jpg"
   },
   {
     "id": "Template7",
@@ -80,8 +80,8 @@
     "tag": "Soft",
     "accent": "from-violet-300 to-emerald-200",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-07.mp4",
-    "posterUrl": "/templates/thumbnails/template-07.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-07.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-07.jpg"
   },
   {
     "id": "Template8",
@@ -92,8 +92,8 @@
     "tag": "Energetic",
     "accent": "from-red-500 to-orange-500",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-08.mp4",
-    "posterUrl": "/templates/thumbnails/template-08.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-08.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-08.jpg"
   },
   {
     "id": "Template9",
@@ -104,8 +104,8 @@
     "tag": "Audio",
     "accent": "from-emerald-600 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-09.mp4",
-    "posterUrl": "/templates/thumbnails/template-09.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-09.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-09.jpg"
   },
   {
     "id": "Template10",
@@ -116,8 +116,8 @@
     "tag": "Bestseller",
     "accent": "from-green-500 to-zinc-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-10.mp4",
-    "posterUrl": "/templates/thumbnails/template-10.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-10.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-10.jpg"
   },
   {
     "id": "Template11",
@@ -128,8 +128,8 @@
     "tag": "Retro",
     "accent": "from-amber-900 to-stone-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-11.mp4",
-    "posterUrl": "/templates/thumbnails/template-11.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-11.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-11.jpg"
   },
   {
     "id": "Template12",
@@ -140,8 +140,8 @@
     "tag": "Golden",
     "accent": "from-yellow-200 via-pink-300 to-blue-400",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-12.mp4",
-    "posterUrl": "/templates/thumbnails/template-12.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-12.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-12.jpg"
   },
   {
     "id": "Template13",
@@ -152,8 +152,8 @@
     "tag": "Gallery",
     "accent": "from-stone-100 to-stone-300",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-13.mp4",
-    "posterUrl": "/templates/thumbnails/template-13.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-13.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-13.jpg"
   },
   {
     "id": "Template14",
@@ -164,8 +164,8 @@
     "tag": "Handmade",
     "accent": "from-amber-100 to-yellow-200",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-14.mp4",
-    "posterUrl": "/templates/thumbnails/template-14.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-14.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-14.jpg"
   },
   {
     "id": "Template15",
@@ -176,8 +176,8 @@
     "tag": "Wedding",
     "accent": "from-rose-200 via-red-200 to-amber-100",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-15.mp4",
-    "posterUrl": "/templates/thumbnails/template-15.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-15.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-15.jpg"
   },
   {
     "id": "Template16",
@@ -188,8 +188,8 @@
     "tag": "Calligraphy",
     "accent": "from-rose-100 to-pink-200",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-16.mp4",
-    "posterUrl": "/templates/thumbnails/template-16.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-16.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-16.jpg"
   },
   {
     "id": "Template17",
@@ -200,8 +200,8 @@
     "tag": "Minimal",
     "accent": "from-black to-zinc-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-17.mp4",
-    "posterUrl": "/templates/thumbnails/template-17.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-17.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-17.jpg"
   },
   {
     "id": "Template18",
@@ -212,8 +212,8 @@
     "tag": "Bright",
     "accent": "from-gray-100 to-slate-200",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-18.mp4",
-    "posterUrl": "/templates/thumbnails/template-18.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-18.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-18.jpg"
   },
   {
     "id": "Template19",
@@ -224,8 +224,8 @@
     "tag": "Reels",
     "accent": "from-purple-900 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-19.mp4",
-    "posterUrl": "/templates/thumbnails/template-19.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-19.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-19.jpg"
   },
   {
     "id": "Template20",
@@ -236,8 +236,8 @@
     "tag": "Luxury",
     "accent": "from-zinc-950 to-neutral-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-20.mp4",
-    "posterUrl": "/templates/thumbnails/template-20.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-20.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-20.jpg"
   },
   {
     "id": "Template21",
@@ -248,8 +248,8 @@
     "tag": "Studio",
     "accent": "from-neutral-200 to-gray-300",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-21.mp4",
-    "posterUrl": "/templates/thumbnails/template-21.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-21.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-21.jpg"
   },
   {
     "id": "Template22",
@@ -260,8 +260,8 @@
     "tag": "Carbon",
     "accent": "from-neutral-800 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-22.mp4",
-    "posterUrl": "/templates/thumbnails/template-22.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-22.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-22.jpg"
   },
   {
     "id": "Template23",
@@ -272,8 +272,8 @@
     "tag": "Cyber",
     "accent": "from-cyan-500 to-blue-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-23.mp4",
-    "posterUrl": "/templates/thumbnails/template-23.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-23.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-23.jpg"
   },
   {
     "id": "Template24",
@@ -284,8 +284,8 @@
     "tag": "Sci-Fi",
     "accent": "from-blue-900 to-slate-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-24.mp4",
-    "posterUrl": "/templates/thumbnails/template-24.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-24.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-24.jpg"
   },
   {
     "id": "Template25",
@@ -296,8 +296,8 @@
     "tag": "Terminal",
     "accent": "from-fuchsia-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-25.mp4",
-    "posterUrl": "/templates/thumbnails/template-25.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-25.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-25.jpg"
   },
   {
     "id": "Template26",
@@ -308,8 +308,8 @@
     "tag": "Poetry",
     "accent": "from-amber-50 to-stone-200",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-26.mp4",
-    "posterUrl": "/templates/thumbnails/template-26.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-26.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-26.jpg"
   },
   {
     "id": "Template27",
@@ -320,8 +320,8 @@
     "tag": "Romantic",
     "accent": "from-rose-100 to-amber-100",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-27.mp4",
-    "posterUrl": "/templates/thumbnails/template-27.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-27.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-27.jpg"
   },
   {
     "id": "Template28",
@@ -332,8 +332,8 @@
     "tag": "Calm",
     "accent": "from-slate-800 to-slate-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-28.mp4",
-    "posterUrl": "/templates/thumbnails/template-28.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-28.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-28.jpg"
   },
   {
     "id": "Template29",
@@ -344,8 +344,8 @@
     "tag": "Keepsake",
     "accent": "from-zinc-900 to-stone-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-29.mp4",
-    "posterUrl": "/templates/thumbnails/template-29.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-29.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-29.jpg"
   },
   {
     "id": "Template30",
@@ -356,8 +356,8 @@
     "tag": "Bold",
     "accent": "from-red-600 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-30.mp4",
-    "posterUrl": "/templates/thumbnails/template-30.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-30.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-30.jpg"
   },
   {
     "id": "Template31",
@@ -368,8 +368,8 @@
     "tag": "Modern",
     "accent": "from-stone-900 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-31.mp4",
-    "posterUrl": "/templates/thumbnails/template-31.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-31.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-31.jpg"
   },
   {
     "id": "Template32",
@@ -380,8 +380,8 @@
     "tag": "Focus",
     "accent": "from-neutral-900 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-32.mp4",
-    "posterUrl": "/templates/thumbnails/template-32.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-32.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-32.jpg"
   },
   {
     "id": "Template33",
@@ -392,8 +392,8 @@
     "tag": "Polaroid",
     "accent": "from-stone-200 to-neutral-400",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-33.mp4",
-    "posterUrl": "/templates/thumbnails/template-33.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-33.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-33.jpg"
   },
   {
     "id": "Template34",
@@ -404,8 +404,8 @@
     "tag": "Vintage",
     "accent": "from-amber-100 to-yellow-100",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-34.mp4",
-    "posterUrl": "/templates/thumbnails/template-34.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-34.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-34.jpg"
   },
   {
     "id": "Template35",
@@ -416,8 +416,8 @@
     "tag": "Cinema",
     "accent": "from-amber-500 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-35.mp4",
-    "posterUrl": "/templates/thumbnails/template-35.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-35.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-35.jpg"
   },
   {
     "id": "Template36",
@@ -428,8 +428,8 @@
     "tag": "Pure",
     "accent": "from-white to-gray-200",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-36.mp4",
-    "posterUrl": "/templates/thumbnails/template-36.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-36.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-36.jpg"
   },
   {
     "id": "Template37",
@@ -440,8 +440,8 @@
     "tag": "Reels",
     "accent": "from-zinc-950 to-neutral-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-37.mp4",
-    "posterUrl": "/templates/thumbnails/template-37.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-37.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-37.jpg"
   },
   {
     "id": "Template38",
@@ -452,8 +452,8 @@
     "tag": "Dreamy",
     "accent": "from-indigo-950 to-slate-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-38.mp4",
-    "posterUrl": "/templates/thumbnails/template-38.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-38.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-38.jpg"
   },
   {
     "id": "Template39",
@@ -464,8 +464,8 @@
     "tag": "Social",
     "accent": "from-black to-zinc-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-39.mp4",
-    "posterUrl": "/templates/thumbnails/template-39.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-39.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-39.jpg"
   },
   {
     "id": "Template40",
@@ -476,8 +476,8 @@
     "tag": "Intimate",
     "accent": "from-neutral-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-40.mp4",
-    "posterUrl": "/templates/thumbnails/template-40.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-40.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-40.jpg"
   },
   {
     "id": "Template41",
@@ -488,8 +488,8 @@
     "tag": "Particles",
     "accent": "from-orange-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-41.mp4",
-    "posterUrl": "/templates/thumbnails/template-41.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-41.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-41.jpg"
   },
   {
     "id": "Template42",
@@ -500,8 +500,8 @@
     "tag": "Passion",
     "accent": "from-pink-900 to-rose-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-42.mp4",
-    "posterUrl": "/templates/thumbnails/template-42.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-42.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-42.jpg"
   },
   {
     "id": "Template43",
@@ -512,8 +512,8 @@
     "tag": "Story",
     "accent": "from-black to-slate-900",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-43.mp4",
-    "posterUrl": "/templates/thumbnails/template-43.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-43.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-43.jpg"
   },
   {
     "id": "Template44",
@@ -524,8 +524,8 @@
     "tag": "Love",
     "accent": "from-rose-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-44.mp4",
-    "posterUrl": "/templates/thumbnails/template-44.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-44.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-44.jpg"
   },
   {
     "id": "Template45",
@@ -536,8 +536,8 @@
     "tag": "Letterbox",
     "accent": "from-zinc-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-45.mp4",
-    "posterUrl": "/templates/thumbnails/template-45.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-45.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-45.jpg"
   },
   {
     "id": "Template46",
@@ -548,8 +548,8 @@
     "tag": "Magical",
     "accent": "from-pink-950 to-purple-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-46.mp4",
-    "posterUrl": "/templates/thumbnails/template-46.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-46.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-46.jpg"
   },
   {
     "id": "Template47",
@@ -560,8 +560,8 @@
     "tag": "Stardust",
     "accent": "from-violet-950 to-indigo-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-47.mp4",
-    "posterUrl": "/templates/thumbnails/template-47.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-47.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-47.jpg"
   },
   {
     "id": "Template48",
@@ -572,8 +572,8 @@
     "tag": "Tech",
     "accent": "from-blue-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-48.mp4",
-    "posterUrl": "/templates/thumbnails/template-48.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-48.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-48.jpg"
   },
   {
     "id": "Template49",
@@ -584,8 +584,8 @@
     "tag": "Bestseller",
     "accent": "from-rose-900 to-red-950",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-49.mp4",
-    "posterUrl": "/templates/thumbnails/template-49.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-49.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-49.jpg"
   },
   {
     "id": "Template50",
@@ -596,7 +596,7 @@
     "tag": "Bestseller",
     "accent": "from-indigo-950 to-black",
     "previewType": "video",
-    "previewUrl": "/templates/videos/template-50.mp4",
-    "posterUrl": "/templates/thumbnails/template-50.jpg"
+    "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-50.mp4",
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-50.jpg"
   }
 ]
