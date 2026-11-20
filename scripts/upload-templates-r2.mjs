@@ -79,7 +79,11 @@ console.log(`🌐 Public Base   : ${publicBaseUrl || '(Not specified, will use r
 if (isDryRun) console.log('⚠️  Mode          : DRY RUN (no files will be uploaded)');
 
 // Find template assets
-const localAssetsDir = path.resolve(projectRoot, 'public', 'templates');
+let localAssetsDir = path.resolve(projectRoot, '..', 'assets', 'cloudflare_templates');
+if (!fs.existsSync(path.join(localAssetsDir, 'videos'))) {
+  localAssetsDir = path.resolve(projectRoot, 'public', 'templates');
+}
+
 const videosDir = path.join(localAssetsDir, 'videos');
 const thumbsDir = path.join(localAssetsDir, 'thumbnails');
 
