@@ -1225,36 +1225,68 @@ export default function SayWithLandingPage() {
             </div>
 
             {/* Expand / Collapse Control & Action Bar */}
-            <div className="mt-14 flex flex-col items-center justify-center gap-4">
-              {filteredTemplates.length > 12 && !isFiltering && (
+            <div className="mt-14 rounded-2xl bg-secondary/40 border border-border/80 p-6 flex flex-col items-center justify-center gap-5 text-center">
+              <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl">
+                {filteredTemplates.length > 12 && !isFiltering && (
+                  <Button
+                    size="lg"
+                    variant={isTemplatesExpanded ? "outline" : "default"}
+                    onClick={() => {
+                      setIsTemplatesExpanded(!isTemplatesExpanded);
+                      if (isTemplatesExpanded) {
+                        document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                    className="gap-2 px-8 py-6 text-sm font-semibold shadow-lg shadow-primary/20 flex-1 sm:flex-initial"
+                  >
+                    {isTemplatesExpanded ? (
+                      <>
+                        <ChevronUp className="w-4 h-4" />
+                        Collapse to Clean View (Show Top 12)
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4" />
+                        Expand & View All {filteredTemplates.length} Templates
+                      </>
+                    )}
+                  </Button>
+                )}
+
                 <Button
                   size="lg"
-                  variant={isTemplatesExpanded ? "outline" : "default"}
+                  variant="outline"
                   onClick={() => {
-                    setIsTemplatesExpanded(!isTemplatesExpanded);
-                    if (isTemplatesExpanded) {
-                      document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
-                    }
+                    document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="gap-2 px-8 py-6 text-sm font-semibold shadow-lg shadow-primary/20"
+                  className="gap-2 px-6 py-6 text-sm font-medium border-border/80 hover:bg-secondary flex-1 sm:flex-initial"
+                  title="Scroll back to top of template catalog"
                 >
-                  {isTemplatesExpanded ? (
-                    <>
-                      <ChevronUp className="w-4 h-4" />
-                      Collapse to Clean View (Show Top 12)
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown className="w-4 h-4" />
-                      Expand & View All {filteredTemplates.length} Templates
-                    </>
-                  )}
+                  <ChevronUp className="w-4 h-4 text-primary" />
+                  Top of Templates
                 </Button>
-              )}
 
-              <p className="text-xs text-muted-foreground text-center">
-                All 50 templates are hosted with lifetime cloud storage, unlimited NFC taps, and custom styled QR photo cards.
-              </p>
+                <a href="#custom-service" className="flex-1 sm:flex-initial">
+                  <Button
+                    size="lg"
+                    variant="ghost"
+                    className="gap-2 px-6 py-6 text-sm font-medium hover:text-primary"
+                  >
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Bespoke Custom Service ↓
+                  </Button>
+                </a>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">
+                  Showing {displayedTemplates.length} of {filteredTemplates.length} templates
+                </span>
+                <span>•</span>
+                <span>Lifetime Cloud Hosting</span>
+                <span>•</span>
+                <span>Unlimited NFC Taps & Styled QR Scans</span>
+              </div>
             </div>
 
           </div>
@@ -1761,6 +1793,38 @@ export default function SayWithLandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Sticky Quick-Navigation Pill when full catalog is expanded */}
+      {isTemplatesExpanded && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="flex items-center gap-2 bg-slate-950/90 border border-primary/50 text-white rounded-full p-2 pl-4 pr-2.5 shadow-2xl backdrop-blur-md">
+            <span className="text-xs font-semibold text-slate-200 hidden sm:inline">
+              Catalog: <strong className="text-primary">{displayedTemplates.length}</strong> Templates
+            </span>
+            <div className="h-4 w-px bg-slate-800 hidden sm:block"></div>
+            <button
+              onClick={() => {
+                setIsTemplatesExpanded(false);
+                document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
+            >
+              <ChevronUp className="w-3.5 h-3.5" />
+              <span>Collapse to 12</span>
+            </button>
+            <button
+              onClick={() => {
+                document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-white font-medium transition-colors shadow-md cursor-pointer"
+              title="Scroll to top of templates"
+            >
+              <ChevronUp className="w-3.5 h-3.5" />
+              <span>Top ↑</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
