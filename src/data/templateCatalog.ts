@@ -2,13 +2,15 @@ export interface TemplateItem {
   id: string;
   num: number;
   name: string;
-  category: 'Romantic & Warm' | 'Music & Mixtape' | 'Animated Particles' | 'Vintage & Retro' | 'Cinematic & Reels' | 'Minimalist & Modern' | 'Futuristic & Sci-Fi';
+  category: 'Romantic & Warm' | 'Music & Mixtape' | 'Animated Particles' | 'Vintage & Retro' | 'Cinematic & Reels' | 'Minimalist & Modern' | 'Futuristic & Sci-Fi' | string;
   desc: string;
   tag: string;
   accent: string;
   previewType?: 'image' | 'video';
   previewUrl?: string;
   posterUrl?: string;
+  duration?: number;     // Video loop duration in seconds with decimal/micro precision (e.g. 4.8 or 4.65)
+  durationMs?: number;   // Video loop duration in milliseconds (e.g. 4800 or 4650)
 }
 
 export const TEMPLATE_CATEGORIES = [

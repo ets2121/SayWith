@@ -28,7 +28,7 @@ flowchart LR
 For best mobile and desktop performance:
 - **Aspect Ratio**: `9:16` (Vertical Mobile Phone format, e.g., `720×1280` or `1080×1920`).
 - **Video Format**: `.mp4` (H.264 codec + AAC audio).
-- **Duration**: Recommended `4` to `10` seconds (loops smoothly).
+- **Duration**: Recommended `4` to `10` seconds (loops smoothly). You can also trim the preview loop point in the JSON (see `durationMs` / `duration` fields below).
 - **Thumbnail / Poster**: `.jpg` (first frame or representative screenshot of the template).
 - **File Naming Convention**:
   - Video: `template-51.mp4`
@@ -85,26 +85,36 @@ Open [`public/data/templates.json`](file:///c:/Users/Admin/Desktop/PROJECTS/SayW
     "accent": "from-indigo-900 via-purple-900 to-black",
     "previewType": "video",
     "previewUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-51.mp4",
-    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-51.jpg"
+    "posterUrl": "https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-51.jpg",
+    "durationMs": 6500
   }
 ```
+
+> [!TIP]
+> `durationMs` / `duration` are **optional**. If omitted, the video loops natively for its full length.
+> Both fields tell the UI's loop logic to restart the video at that exact point — giving you frame-accurate control over the preview loop without re-encoding the file.
+> - **`durationMs`** (recommended) — loop restart point in **milliseconds** (e.g. `6500` = 6.5 s). Use for sub-second precision.
+> - **`duration`** (alternative) — loop restart point in **seconds** (e.g. `6.5`). Same effect, different unit.
+> - If **both** are set, `durationMs` takes priority.
 
 ---
 
 ## Field Reference Table
 
-| Field | Type | Description | Example |
-| :--- | :--- | :--- | :--- |
-| `id` | `number` | Unique sequential integer ID | `51` |
-| `num` | `string` | Display number for badges and order references | `"51"` |
-| `name` | `string` | Title of the template displayed on card and modal | `"Celestial Starlight"` |
-| `category` | `string` | One of the categories: `Love & Romance`, `Anniversary`, `Birthday`, `Memorial & Tribute`, `Special Occasion`, `Minimalist`, `Modern & Creative`, `Artistic & Story` | `"Anniversary"` |
-| `tag` | `string` | Short 2–3 word highlight tag | `"Constellation & Gold"` |
-| `desc` | `string` | Concise description (1–2 sentences) | `"Cosmic golden starfield with glowing..."` |
-| `accent` | `string` | Tailwind gradient classes used as fallback poster background | `"from-indigo-900 via-purple-900 to-black"` |
-| `previewType` | `string` | `"video"` or `"image"` | `"video"` |
-| `previewUrl` | `string` | Direct public link to `.mp4` on Cloudflare R2 | `"https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-51.mp4"` |
-| `posterUrl` | `string` | Direct public link to `.jpg` thumbnail poster on Cloudflare R2 | `"https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-51.jpg"` |
+| Field | Type | Required | Description | Example |
+| :--- | :--- | :---: | :--- | :--- |
+| `id` | `number` | ✅ | Unique sequential integer ID | `51` |
+| `num` | `string` | ✅ | Display number for badges and order references | `"51"` |
+| `name` | `string` | ✅ | Title of the template displayed on card and modal | `"Celestial Starlight"` |
+| `category` | `string` | ✅ | One of the categories: `Love & Romance`, `Anniversary`, `Birthday`, `Memorial & Tribute`, `Special Occasion`, `Minimalist`, `Modern & Creative`, `Artistic & Story` | `"Anniversary"` |
+| `tag` | `string` | ✅ | Short 2–3 word highlight tag | `"Constellation & Gold"` |
+| `desc` | `string` | ✅ | Concise description (1–2 sentences) | `"Cosmic golden starfield with glowing..."` |
+| `accent` | `string` | ✅ | Tailwind gradient classes used as fallback poster background | `"from-indigo-900 via-purple-900 to-black"` |
+| `previewType` | `string` | ✅ | `"video"` or `"image"` | `"video"` |
+| `previewUrl` | `string` | ✅ | Direct public link to `.mp4` on Cloudflare R2 | `"https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/videos/template-51.mp4"` |
+| `posterUrl` | `string` | ✅ | Direct public link to `.jpg` thumbnail poster on Cloudflare R2 | `"https://pub-4ec77915cbb84de6b020ec75ce082114.r2.dev/templates/thumbnails/template-51.jpg"` |
+| `durationMs` | `number` | ☑️ Optional | Loop restart point in **milliseconds** — the video resets to 0 when it reaches this timestamp (sub-second precision). Takes priority over `duration` when both are set. | `6500` *(= 6.5 s)* |
+| `duration` | `number` | ☑️ Optional | Loop restart point in **seconds** (e.g. `6.5`). Use if you prefer seconds over milliseconds. Ignored when `durationMs` is also set. | `6.5` |
 
 ---
 
@@ -125,4 +135,5 @@ Open [`public/data/templates.json`](file:///c:/Users/Admin/Desktop/PROJECTS/SayW
 - [ ] Rendered 9:16 MP4 video and JPG poster.
 - [ ] Uploaded files to Cloudflare R2.
 - [ ] Added new item in [`public/data/templates.json`](file:///c:/Users/Admin/Desktop/PROJECTS/SayWith_System/SayWith/public/data/templates.json).
+- [ ] *(Optional)* Set `durationMs` or `duration` to trim the preview loop point.
 - [ ] Saved file — no rebuild needed for local dev; changes display instantly!

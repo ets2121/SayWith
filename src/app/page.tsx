@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
@@ -188,6 +188,27 @@ export default function SayWithLandingPage() {
 
   // Full Screen Template Preview Lightbox Modal
   const [fullScreenTemplate, setFullScreenTemplate] = useState<TemplateItem | null>(null);
+  const modalVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Frame-accurate custom loop duration for full-screen modal
+  useEffect(() => {
+    const v = modalVideoRef.current;
+    if (!v || !fullScreenTemplate) return;
+    const limit = fullScreenTemplate.durationMs
+      ? fullScreenTemplate.durationMs / 1000
+      : fullScreenTemplate.duration;
+    if (!limit || limit <= 0) return;
+
+    let animId: number;
+    const checkTime = () => {
+      if (v && !v.paused && v.currentTime >= limit) {
+        v.currentTime = 0;
+      }
+      animId = requestAnimationFrame(checkTime);
+    };
+    animId = requestAnimationFrame(checkTime);
+    return () => cancelAnimationFrame(animId);
+  }, [fullScreenTemplate]);
 
   // Runtime live fetch from public/data JSON files so edits in public/data update immediately
   useEffect(() => {
@@ -1490,6 +1511,7 @@ export default function SayWithLandingPage() {
                 {fullScreenTemplate.previewUrl ? (
                   fullScreenTemplate.previewType === "video" ? (
                     <video
+                      ref={modalVideoRef}
                       key={fullScreenTemplate.id}
                       src={fullScreenTemplate.previewUrl}
                       poster={fullScreenTemplate.posterUrl || undefined}
@@ -1497,6 +1519,14 @@ export default function SayWithLandingPage() {
                       autoPlay
                       loop
                       playsInline
+                      onTimeUpdate={(e) => {
+                        const limit = fullScreenTemplate.durationMs
+                          ? fullScreenTemplate.durationMs / 1000
+                          : fullScreenTemplate.duration;
+                        if (limit && limit > 0 && e.currentTarget.currentTime >= limit) {
+                          e.currentTarget.currentTime = 0;
+                        }
+                      }}
                       className="w-full h-full object-cover"
                     />
                   ) : (

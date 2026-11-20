@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -37,6 +37,27 @@ export default function TemplatesPage() {
   const [fullScreenTemplate, setFullScreenTemplate] =
     useState<TemplateItem | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const modalVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Frame-accurate duration clamp for /templates page modal video
+  useEffect(() => {
+    const v = modalVideoRef.current;
+    if (!v || !fullScreenTemplate) return;
+    const limit = fullScreenTemplate.durationMs
+      ? fullScreenTemplate.durationMs / 1000
+      : fullScreenTemplate.duration;
+    if (!limit || limit <= 0) return;
+
+    let animId: number;
+    const checkTime = () => {
+      if (v && !v.paused && v.currentTime >= limit) {
+        v.currentTime = 0;
+      }
+      animId = requestAnimationFrame(checkTime);
+    };
+    animId = requestAnimationFrame(checkTime);
+    return () => cancelAnimationFrame(animId);
+  }, [fullScreenTemplate]);
 
   // Runtime live fetch from public/data JSON files so edits update immediately
   useEffect(() => {
@@ -304,6 +325,7 @@ export default function TemplatesPage() {
                 {fullScreenTemplate.previewUrl ? (
                   fullScreenTemplate.previewType === "video" ? (
                     <video
+                      ref={modalVideoRef}
                       key={fullScreenTemplate.id}
                       src={fullScreenTemplate.previewUrl}
                       poster={fullScreenTemplate.posterUrl || undefined}
@@ -311,6 +333,14 @@ export default function TemplatesPage() {
                       autoPlay
                       loop
                       playsInline
+                      onTimeUpdate={(e) => {
+                        const limit = fullScreenTemplate.durationMs
+                          ? fullScreenTemplate.durationMs / 1000
+                          : fullScreenTemplate.duration;
+                        if (limit && limit > 0 && e.currentTarget.currentTime >= limit) {
+                          e.currentTarget.currentTime = 0;
+                        }
+                      }}
                       className="w-full h-full object-cover"
                     />
                   ) : (

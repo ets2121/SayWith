@@ -59,6 +59,27 @@ export function TemplateCard({
     }
   }, [srcLoaded]);
 
+  // Frame-accurate custom loop duration / microsecond cutoff
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const limit = template.durationMs
+      ? template.durationMs / 1000
+      : template.duration;
+    if (!limit || limit <= 0) return;
+
+    let animId: number;
+    const checkTime = () => {
+      if (v && !v.paused && v.currentTime >= limit) {
+        v.currentTime = 0;
+      }
+      animId = requestAnimationFrame(checkTime);
+    };
+
+    animId = requestAnimationFrame(checkTime);
+    return () => cancelAnimationFrame(animId);
+  }, [template.duration, template.durationMs, isPlaying]);
+
   // ── Desktop hover handlers: play with audio on hover, pause on mouse leave ──
   const handleMouseEnter = useCallback(() => {
     const v = videoRef.current;
@@ -180,6 +201,14 @@ export function TemplateCard({
                 preload="none"
                 width={324}
                 height={576}
+                onTimeUpdate={(e) => {
+                  const limit = template.durationMs
+                    ? template.durationMs / 1000
+                    : template.duration;
+                  if (limit && limit > 0 && e.currentTarget.currentTime >= limit) {
+                    e.currentTarget.currentTime = 0;
+                  }
+                }}
                 className="w-full h-full object-cover"
               />
               <div className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 z-10 flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-black/60 text-[8px] sm:text-[9px] text-white backdrop-blur-sm pointer-events-none">
