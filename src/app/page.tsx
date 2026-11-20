@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
@@ -44,6 +44,7 @@ import {
   TEMPLATE_CATEGORIES,
   type TemplateItem
 } from "@/data/templateCatalog";
+import { TemplateCard } from "@/components/common/TemplateCard";
 import siteConfigDefault from "../../public/data/site-config.json";
 import templatesDefault from "../../public/data/templates.json";
 
@@ -178,237 +179,6 @@ const faqs = [
   }
 ];
 
-// ─── TemplateCard ────────────────────────────────────────────────────────────
-// Self-contained card: hover → unmute audio (desktop); tap → fullscreen (mobile)
-// Uses IntersectionObserver for lazy src to avoid unneeded network requests on
-// browsers that don't support loading="lazy" on <video> (Firefox, Safari).
-
-function TemplateCard({
-  template,
-  onOpenFullScreen,
-  orderLink,
-}: {
-  template: TemplateItem;
-  onOpenFullScreen: () => void;
-  orderLink: string;
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [showVolume, setShowVolume] = useState(false);
-  const [srcLoaded, setSrcLoaded] = useState(false);
-
-  // Lazy-load: set src only when card enters viewport
-  useEffect(() => {
-    if (!template.previewUrl || template.previewType !== "video") return;
-    const el = frameRef.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setSrcLoaded(true); obs.disconnect(); } },
-      { rootMargin: "200px" }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [template.previewUrl, template.previewType]);
-
-  // Pause all video when prefers-reduced-motion
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) {
-      videoRef.current?.pause();
-      setIsPlaying(false);
-    }
-  }, [srcLoaded]);
-
-  // ── Desktop hover handlers: play with audio on hover, pause on mouse leave ──
-  const handleMouseEnter = useCallback(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    setShowVolume(true);
-    v.muted = false;
-    setIsMuted(false);
-    v.play()
-      .then(() => setIsPlaying(true))
-      .catch(() => {
-        // Fallback to muted playback if browser restricts sound without gesture
-        v.muted = true;
-        setIsMuted(true);
-        v.play().then(() => setIsPlaying(true)).catch(() => {});
-      });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    setShowVolume(false);
-    v.pause();
-    v.muted = true;
-    setIsMuted(true);
-    setIsPlaying(false);
-  }, []);
-
-  const isVideo = template.previewType === "video" && !!template.previewUrl;
-
-  return (
-    <div className="bg-background rounded-3xl border border-border/80 overflow-hidden hover:border-primary/50 transition-all hover:shadow-2xl flex flex-col p-3.5 sm:p-4 group max-w-sm sm:max-w-none mx-auto w-full">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between mb-3 px-1">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-secondary border border-border text-foreground">
-            #{template.num}
-          </span>
-          <span className="text-[11px] font-semibold text-primary">{template.tag}</span>
-        </div>
-        <button
-          onClick={onOpenFullScreen}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 min-h-[36px] rounded-lg bg-secondary hover:bg-primary hover:text-white transition-colors text-xs font-medium text-muted-foreground"
-          title="View full screen mobile preview"
-          aria-label={`View ${template.name} full screen`}
-        >
-          <Maximize2 className="w-3.5 h-3.5" />
-          <span className="text-[11px]">Full Screen</span>
-        </button>
-      </div>
-
-      {/* ── Phone Frame (Click to open Fullscreen player) ── */}
-      <div
-        ref={frameRef}
-        role="button"
-        tabIndex={0}
-        aria-label={`Watch ${template.name} preview`}
-        className="relative w-full aspect-[9/16] rounded-[24px] bg-slate-950 border-[4px] border-slate-800 shadow-xl overflow-hidden group-hover:border-primary/60 transition-colors cursor-pointer select-none"
-        onClick={onOpenFullScreen}
-        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onOpenFullScreen()}
-        onMouseEnter={isVideo ? handleMouseEnter : undefined}
-        onMouseLeave={isVideo ? handleMouseLeave : undefined}
-      >
-        {/* Speaker Notch */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-3 bg-black rounded-full z-20 flex items-center justify-center pointer-events-none">
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-800 mr-1.5" />
-          <div className="w-1 h-1 rounded-full bg-blue-900" />
-        </div>
-
-        {/* Volume indicator — desktop only, fades in when playing on hover */}
-        {isVideo && (
-          <div
-            className={cn(
-              "absolute top-2.5 right-2.5 z-30 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-md pointer-events-none",
-              showVolume && isPlaying ? "opacity-100 scale-100" : "opacity-0 scale-90"
-            )}
-            aria-hidden="true"
-          >
-            {isMuted
-              ? <VolumeX className="w-4 h-4 text-white" />
-              : <Volume2 className="w-4 h-4 text-primary" />
-            }
-          </div>
-        )}
-
-        {/* Play Icon Overlay (visible when paused, fades out when playing) */}
-        {isVideo && !isPlaying && (
-          <div className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl transition-all duration-300 group-hover:scale-110 pointer-events-none z-20">
-            <Play className="w-5 h-5 ml-0.5 text-primary fill-primary" />
-          </div>
-        )}
-
-        {/* "Tap to watch" badge — visible only on touch screens via CSS */}
-        {isVideo && (
-          <div className="absolute bottom-10 inset-x-0 flex justify-center z-20 pointer-events-none tap-to-watch-badge">
-            <span className="px-3 py-1 rounded-full bg-black/70 text-white text-[10px] backdrop-blur-sm shadow-md">
-              👆 Tap to watch
-            </span>
-          </div>
-        )}
-
-        {/* Media Content */}
-        {template.previewUrl ? (
-          template.previewType === "video" ? (
-            <div className="relative w-full h-full bg-black">
-              <video
-                ref={videoRef}
-                src={srcLoaded ? template.previewUrl : undefined}
-                poster={template.posterUrl || undefined}
-                loop
-                muted
-                playsInline
-                preload="none"
-                width={324}
-                height={576}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 text-[9px] text-white backdrop-blur-sm pointer-events-none">
-                <Film className="w-2.5 h-2.5 text-primary" />
-                <span>Video Preview</span>
-              </div>
-            </div>
-          ) : (
-            <div className="relative w-full h-full bg-black">
-              <img
-                src={template.previewUrl}
-                alt={`${template.name} mobile screenshot`}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          )
-        ) : (
-          <div className={cn("w-full h-full p-4 pt-8 flex flex-col justify-between bg-gradient-to-br text-white relative", template.accent)}>
-            <div className="flex justify-between items-center text-[10px] opacity-75">
-              <span>9:41</span>
-              <span className="font-semibold uppercase tracking-wider text-[9px] bg-black/30 px-2 py-0.5 rounded-full">{template.category}</span>
-            </div>
-            <div className="my-auto text-center p-3 rounded-2xl bg-black/25 backdrop-blur-md border border-white/10">
-              <Sparkles className="w-6 h-6 mx-auto mb-2 text-white/80 animate-pulse" />
-              <h4 className="font-headline font-bold text-lg leading-tight">{template.name}</h4>
-              <p className="text-[10px] text-white/80 mt-1.5 leading-relaxed line-clamp-3">{template.desc}</p>
-            </div>
-            <div className="space-y-1.5">
-              <div className="p-2 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-between text-[10px]">
-                <div className="flex items-center gap-1.5 truncate">
-                  <Music className="w-3 h-3 text-cyan-300 shrink-0" />
-                  <span className="truncate">Music Sync Ready</span>
-                </div>
-                <span className="text-[8px] bg-white/20 px-1.5 py-0.5 rounded">NFC</span>
-              </div>
-              <p className="text-[8px] text-center text-white/70">Tap phone to replay</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Card Bottom */}
-      <div className="mt-4 flex-1 flex flex-col justify-between px-1">
-        <div>
-          <div className="flex justify-between items-baseline gap-2">
-            <h4 className="font-headline font-bold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
-              {template.name}
-            </h4>
-            <span className="text-[10px] sm:text-[11px] text-muted-foreground uppercase font-medium shrink-0">{template.category}</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{template.desc}</p>
-        </div>
-        <div className="mt-4 pt-3 border-t border-border flex items-center justify-between gap-2">
-          <span className="text-[11px] sm:text-xs text-primary font-medium flex items-center gap-1 shrink-0">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>NFC &amp; QR</span>
-          </span>
-          <a
-            href={orderLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-foreground hover:text-primary transition-colors min-h-[44px] shrink-0"
-          >
-            Inquire with This <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function SayWithLandingPage() {
   const [siteConfig, setSiteConfig] = useState(siteConfigDefault);
   const [templates, setTemplates] = useState<TemplateItem[]>(templatesDefault as TemplateItem[]);
@@ -418,9 +188,6 @@ export default function SayWithLandingPage() {
 
   // Full Screen Template Preview Lightbox Modal
   const [fullScreenTemplate, setFullScreenTemplate] = useState<TemplateItem | null>(null);
-
-  // Expandable Templates Catalog State (clean initial UI vs full 50 catalog view)
-  const [isTemplatesExpanded, setIsTemplatesExpanded] = useState<boolean>(false);
 
   // Runtime live fetch from public/data JSON files so edits in public/data update immediately
   useEffect(() => {
@@ -450,9 +217,7 @@ export default function SayWithLandingPage() {
   });
 
   const isFiltering = searchQuery.trim() !== "" || selectedCategory !== "All";
-  const displayedTemplates = (isTemplatesExpanded || isFiltering)
-    ? filteredTemplates
-    : filteredTemplates.slice(0, 12);
+  const displayedTemplates = filteredTemplates.slice(0, 8);
 
   const hero = siteConfig.hero || siteConfigDefault.hero;
   const socials = siteConfig.socials || siteConfigDefault.socials;
@@ -518,7 +283,9 @@ export default function SayWithLandingPage() {
               NFC Tap
             </a>
             <a href="#mockups" className="hover:text-primary transition-colors">Examples & Mockups</a>
-            <a href="#templates" className="hover:text-primary transition-colors">50+ Templates</a>
+            <Link href="/templates" className="hover:text-primary transition-colors font-semibold text-primary">
+              50+ Templates
+            </Link>
             <a href="#custom-service" className="hover:text-primary transition-colors flex items-center gap-1 font-semibold text-primary">
               <Sparkles className="w-3.5 h-3.5" />
               Custom Design
@@ -528,12 +295,12 @@ export default function SayWithLandingPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <a href="#templates">
+            <Link href="/templates">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex gap-2">
                 <Eye className="w-4 h-4 text-primary" />
-                Templates
+                50+ Templates
               </Button>
-            </a>
+            </Link>
             <a
               href={getOrderLink()}
               target="_blank"
@@ -1239,41 +1006,40 @@ export default function SayWithLandingPage() {
           </div>
         </section>
 
-        {/* 50+ Templates Showcase with Mobile Phone Ratio Cards & Full Screen Buttons */}
-        <section id="templates" className="py-20 bg-secondary/30 border-t border-border/50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* Templates Showcase Preview (2 Columns on Mobile) */}
+        <section id="templates" className="py-16 sm:py-20 bg-secondary/30 border-t border-border/50">
+          <div className="container mx-auto px-3 sm:px-6 lg:px-8 max-w-7xl">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Interactive Showcase Catalog</span>
+                  <span>Featured Keepsake Designs</span>
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-headline font-bold">Explore All 50+ Templates</h2>
-                <p className="mt-2 text-muted-foreground max-w-xl">
-                  Shown in actual mobile phone ratio. Tap the full-screen button on any card to preview the full high-res layout or video.
+                <h2 className="text-2xl sm:text-4xl font-headline font-bold">Explore Popular Templates</h2>
+                <p className="mt-2 text-xs sm:text-sm text-muted-foreground max-w-xl">
+                  Shown in actual mobile phone ratio. Tap any card to preview full-screen with music. Browse our full 50+ template catalog with instant search on the dedicated templates page.
                 </p>
               </div>
 
-              {/* Search input */}
-              <div className="w-full md:w-72">
-                <input
-                  type="text"
-                  placeholder="Search template name, #, or style..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
+              {/* View All Templates CTA button in header */}
+              <div className="flex items-center gap-3">
+                <Link href="/templates" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto gap-2 py-5 px-6 shadow-lg shadow-primary/20 text-xs sm:text-sm font-semibold">
+                    <span>View All 50+ Templates</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
               </div>
             </div>
 
-            {/* Category Filter Pills */}
-            <div className="mt-8 flex flex-wrap gap-2 pb-2">
+            {/* Category Filter Pills (Quick filter for the preview) */}
+            <div className="mt-8 flex flex-wrap gap-1.5 sm:gap-2 pb-2">
               {TEMPLATE_CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={cn(
-                    "px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all",
+                    "px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer",
                     selectedCategory === cat
                       ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-semibold"
                       : "bg-background border border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -1284,35 +1050,21 @@ export default function SayWithLandingPage() {
               ))}
             </div>
 
-            <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
               <div>
-                Showing <strong className="text-foreground font-semibold">{displayedTemplates.length}</strong> of <strong className="text-foreground font-semibold">{filteredTemplates.length}</strong> templates
-                {!isTemplatesExpanded && !isFiltering && filteredTemplates.length > 12 && (
-                  <span className="ml-2 text-primary font-medium">(Clean view: 12 featured templates shown)</span>
+                Showing top <strong className="text-foreground font-semibold">{displayedTemplates.length}</strong> featured designs
+                {selectedCategory !== "All" && (
+                  <span className="ml-1.5 text-primary">in {selectedCategory}</span>
                 )}
               </div>
-              {filteredTemplates.length > 12 && !isFiltering && (
-                <button
-                  onClick={() => setIsTemplatesExpanded(!isTemplatesExpanded)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline cursor-pointer"
-                >
-                  {isTemplatesExpanded ? (
-                    <>
-                      <span>Collapse to Clean View (12 Items)</span>
-                      <ChevronUp className="w-3.5 h-3.5" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Expand All 50 Templates ({filteredTemplates.length} Available)</span>
-                      <ChevronDown className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-              )}
+              <Link href="/templates" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                <span>Open Full Catalog ({templates.length} Total)</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
 
-            {/* Template Grid with Mobile Phone Ratio (aspect-[9/16]) */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-6 lg:gap-8">
+            {/* ── RESPONSIVE TEMPLATE GRID (2 Columns on Mobile!) ── */}
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
               {displayedTemplates.map((template: TemplateItem) => (
                 <TemplateCard
                   key={template.id}
@@ -1323,68 +1075,32 @@ export default function SayWithLandingPage() {
               ))}
             </div>
 
-            {/* Expand / Collapse Control & Action Bar */}
-            <div className="mt-14 rounded-2xl bg-secondary/40 border border-border/80 p-6 flex flex-col items-center justify-center gap-5 text-center">
-              <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl">
-                {filteredTemplates.length > 12 && !isFiltering && (
-                  <Button
-                    size="lg"
-                    variant={isTemplatesExpanded ? "outline" : "default"}
-                    onClick={() => {
-                      setIsTemplatesExpanded(!isTemplatesExpanded);
-                      if (isTemplatesExpanded) {
-                        document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
-                    className="gap-2 px-8 py-6 text-sm font-semibold shadow-lg shadow-primary/20 flex-1 sm:flex-initial"
-                  >
-                    {isTemplatesExpanded ? (
-                      <>
-                        <ChevronUp className="w-4 h-4" />
-                        Collapse to Clean View (Show Top 12)
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="w-4 h-4" />
-                        Expand & View All {filteredTemplates.length} Templates
-                      </>
-                    )}
-                  </Button>
-                )}
-
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => {
-                    document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="gap-2 px-6 py-6 text-sm font-medium border-border/80 hover:bg-secondary flex-1 sm:flex-initial"
-                  title="Scroll back to top of template catalog"
-                >
-                  <ChevronUp className="w-4 h-4 text-primary" />
-                  Top of Templates
-                </Button>
-
-                <a href="#custom-service" className="flex-1 sm:flex-initial">
-                  <Button
-                    size="lg"
-                    variant="ghost"
-                    className="gap-2 px-6 py-6 text-sm font-medium hover:text-primary"
-                  >
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    Bespoke Custom Service ↓
-                  </Button>
-                </a>
+            {/* High-Converting CTA Banner to Dedicated Templates Page */}
+            <div className="mt-12 rounded-3xl bg-gradient-to-r from-primary/10 via-secondary/70 to-primary/10 border border-primary/20 p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+              <div>
+                <span className="text-xs font-mono font-bold text-primary uppercase tracking-wider">
+                  Full Interactive Catalog
+                </span>
+                <h3 className="text-xl sm:text-2xl font-headline font-bold text-foreground mt-1">
+                  Looking for more? Browse all 50+ templates
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-xl leading-relaxed">
+                  Search by theme, filter by romance, anniversary, memorial, or birthday, and listen to music synchronization on our dedicated catalog page.
+                </p>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">
-                  Showing {displayedTemplates.length} of {filteredTemplates.length} templates
-                </span>
-                <span>•</span>
-                <span>Lifetime Cloud Hosting</span>
-                <span>•</span>
-                <span>Unlimited NFC Taps & Styled QR Scans</span>
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+                <Link href="/templates" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto gap-2 py-6 px-8 text-sm font-bold shadow-xl shadow-primary/25">
+                    <span>Explore All 50+ Templates</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <a href="#custom-service" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto py-6 px-6 text-sm font-medium border-border/80 hover:bg-secondary">
+                    Custom Bespoke Design
+                  </Button>
+                </a>
               </div>
             </div>
 
@@ -1893,38 +1609,6 @@ export default function SayWithLandingPage() {
           </div>
         </div>
       </footer>
-
-      {/* Floating Sticky Quick-Navigation Pill when full catalog is expanded */}
-      {isTemplatesExpanded && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="flex items-center gap-2 bg-slate-950/90 border border-primary/50 text-white rounded-full p-2 pl-4 pr-2.5 shadow-2xl backdrop-blur-md">
-            <span className="text-xs font-semibold text-slate-200 hidden sm:inline">
-              Catalog: <strong className="text-primary">{displayedTemplates.length}</strong> Templates
-            </span>
-            <div className="h-4 w-px bg-slate-800 hidden sm:block"></div>
-            <button
-              onClick={() => {
-                setIsTemplatesExpanded(false);
-                document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors cursor-pointer"
-            >
-              <ChevronUp className="w-3.5 h-3.5" />
-              <span>Collapse to 12</span>
-            </button>
-            <button
-              onClick={() => {
-                document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="inline-flex items-center gap-1.5 text-xs px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary/90 text-white font-medium transition-colors shadow-md cursor-pointer"
-              title="Scroll to top of templates"
-            >
-              <ChevronUp className="w-3.5 h-3.5" />
-              <span>Top ↑</span>
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
